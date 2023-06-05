@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_profit&loss/Api_all_profit_&_loss.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_customers_Class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +51,9 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
     }
   }
 
+  var customerNameController = TextEditingController();
+  var customer = '';
+
   String? _selectedType;
   List<String> _selectedTypeList = [
     'Received',
@@ -92,14 +97,14 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: Container(
-                height: 135.0,
+                height: 150,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -107,7 +112,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 3,
                           child: Text(
                             "Customer",
@@ -115,63 +120,124 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select account',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedAccount,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedAccount = newValue.toString();
-                                    print(
-                                        "Customer Si no ===========>: $newValue");
-                                    // Profit & Loss
-
-                                    //
-                                  });
-                                },
-                                items: allCustomersData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.customerName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    value: location.customerSlNo,
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getCustomers(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllCustomersClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            customer = '';
+                                          }
+                                        },
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: customerNameController,
+                                        decoration: const InputDecoration(
+                                            hintText: 'Select Customer')),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allCustomersData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllCustomersClass suggestion) {
+                                      customerNameController.text = suggestion.displayName!;
+                                      setState(() {
+                                        _selectedAccount = suggestion.customerSlNo.toString();
+                                      });
+                                      // category = suggestion.slug;
+                                      // directoryBloc.add(
+                                      //     DirectoryEventSearch(
+                                      //         searchController.text
+                                      //             .trim(),
+                                      //         '10',
+                                      //         "az",
+                                      //         category));
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Select account',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: const Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedAccount,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedAccount = newValue.toString();
+                            //         print(
+                            //             "Customer Si no ===========>: $newValue");
+                            //         // Profit & Loss
+                            //
+                            //         //
+                            //       });
+                            //     },
+                            //     items: allCustomersData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.customerSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Date :",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
@@ -188,20 +254,20 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: firstPickedDate == null
                                       ? DateFormat('yyyy-MM-dd')
                                           .format(DateTime.now())
                                       : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -215,7 +281,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                           ),
                         ),
                         Container(
-                          child: Text("to"),
+                          child: const Text("to"),
                         ),
                         Expanded(
                           flex: 1,
@@ -229,20 +295,20 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: secondPickedDate == null
                                       ? DateFormat('yyyy-MM-dd')
                                           .format(DateTime.now())
                                       : secondPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -257,14 +323,14 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
-                          // setState(() {
-                          //   isLoading = true;
-                          // });
+                          setState(() {
+                            isLoading = true;
+                          });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getProfitLoss(
@@ -277,38 +343,39 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                             print(
                                 "secondPickedDate ++++++=====::${secondPickedDate}");
 
-                            for (int i = 0;
-                                i <= allProfitLossData.length;
-                                i++) {
-                              for (int k = 0;
-                                  k < allProfitLossData[i].saleDetails!.length;
-                                  k++) {
-                                selesDetailslist
-                                    .add(allProfitLossData[i].saleDetails![k]);
-                                print(
-                                    "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh${selesDetailslist[k].productName}");
-                              }
-                              print(
-                                  "ddddddddddddddddddddddddddddddddddddddddddd${allProfitLossData[i].saleDetails![0].productName}");
-                            }
+                            // for (int i = 0;
+                            //     i <= allProfitLossData.length;
+                            //     i++) {
+                            //   for (int k = 0;
+                            //       k < allProfitLossData[i].saleDetails!.length;
+                            //       k++) {
+                            //     selesDetailslist
+                            //         .add(allProfitLossData[i].saleDetails![k]);
+                            //     print(
+                            //         "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh${selesDetailslist[k].productName}");
+                            //   }
+                            //   print(
+                            //       "ddddddddddddddddddddddddddddddddddddddddddd${allProfitLossData[i].saleDetails![0].productName}");
+                            //
+                       // }
                           });
-                          // Future.delayed(Duration(seconds: 3), () {
-                          //   setState(() {
-                          //     isLoading = false;
-                          //   });
-                          // });
+                          Future.delayed(const Duration(seconds: 3), () {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
                         },
                         child: Container(
                           height: 35.0,
                           width: 85.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -323,11 +390,14 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
+           isLoading? const Center(
+             child: CircularProgressIndicator(),
+           ):
            Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -342,7 +412,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                               showCheckboxColumn: true,
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
-                              columns: [
+                              columns: const [
                                 DataColumn(
                                   label: Center(child: Text('Product Id')),
                                 ),
@@ -372,39 +442,221 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                   cells: <DataCell>[
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].productIDNo}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].productCode}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].productIDNo}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].productName}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].productName}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].productName}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].saleDetailsTotalQuantity}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].saleDetailsTotalQuantity}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].saleDetailsTotalQuantity}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].purchaseRate}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].purchaseRate}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].purchaseRate}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].purchasedAmount}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].purchasedAmount}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].purchasedAmount}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].saleDetailsTotalAmount}')),
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].saleDetailsTotalAmount}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].saleDetailsTotalAmount}')),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProfitLossData[0].saleDetails![index].profitLoss}')),
-                                    )
+                                          child: Container(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProfitLossData[
+                                              index]
+                                                  .saleDetails!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProfitLossData[index].saleDetails![j].profitLoss}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
+                                      // Center(
+                                      //     child: Text(
+                                      //         '${allProfitLossData[0].saleDetails![index].profitLoss}')),
+                                    ),
                                   ],
                                 ),
                               ),

@@ -93,8 +93,9 @@ class CounterProvider extends ChangeNotifier {
 
   //Customers/////////////
   List<AllCustomersClass> allCustomerslist = [];
-  getCustomers(BuildContext context) async {
+  Future<List<AllCustomersClass>>getCustomers(BuildContext context) async {
     allCustomerslist = await ApiAllCustomers.GetApiAllCustomers(context);
+    return allCustomerslist;
     notifyListeners();
   }
 

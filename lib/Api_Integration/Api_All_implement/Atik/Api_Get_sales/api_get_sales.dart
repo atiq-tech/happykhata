@@ -18,6 +18,20 @@ class ApiGetSales {
     String Link = "${BaseUrl}api/v1/getSales";
     List<Sales> getSaleslist = [];
     Sales sales;
+    double totalSalesSubtotal = 0.0;
+    String totalSalesSt;
+    double totalVat = 0.0;
+    String totalVt;
+    double totalDiscount = 0.0;
+    String totalDiscnt;
+    // double totalVat = 0.0;
+    // String totalVt;
+    // double totalVat = 0.0;
+    // String totalVt;
+    // double totalVat = 0.0;
+    // String totalVt;
+    // double totalVat = 0.0;
+    // String totalVt;
     try {
       Response response = await Dio().post(Link,
           data: {
@@ -41,6 +55,11 @@ class ApiGetSales {
       for (var i in data["sales"]) {
         sales = Sales.fromJson(i);
         getSaleslist.add(sales);
+
+        totalSalesSubtotal += double.parse(
+            "${Sales.fromJson(i).saleMasterSubTotalAmount}");
+        totalSalesSt = totalSalesSubtotal.toStringAsFixed(2);
+        GetStorage().write("totalSalesSubtotal", totalSalesSt);
       }
 
       print("getSaleslist getSaleslist length is ${getSaleslist.length}");

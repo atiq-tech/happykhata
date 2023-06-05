@@ -171,14 +171,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Search Type:",
@@ -190,13 +190,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
@@ -204,7 +204,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'Please select a type',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -245,13 +245,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 },
                                 items: _searchTypes.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),
@@ -264,7 +264,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                 isAllTypeClicked == true
                     ? Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 1,
                             child: Text(
                               "Record Type:",
@@ -276,13 +276,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Expanded(
                             flex: 3,
                             child: Container(
-                                margin: EdgeInsets.only(top: 5, bottom: 5),
+                                margin: const EdgeInsets.only(top: 5, bottom: 5),
                                 height: 30,
-                                padding: EdgeInsets.only(left: 5, right: 5),
+                                padding: const EdgeInsets.only(left: 5, right: 5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                    color: Color.fromARGB(255, 7, 125, 180),
+                                    color: const Color.fromARGB(255, 7, 125, 180),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -290,7 +290,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     isExpanded: true,
-                                    hint: Text(
+                                    hint: const Text(
                                       'Please select a record type',
                                       style: TextStyle(
                                         fontSize: 14,
@@ -311,13 +311,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     },
                                     items: _recordType.map((location) {
                                       return DropdownMenuItem(
+                                        value: location,
                                         child: Text(
                                           location,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 14,
                                           ),
                                         ),
-                                        value: location,
                                       );
                                     }).toList(),
                                   ),
@@ -333,7 +333,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Customer:",
@@ -345,13 +345,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -359,7 +359,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select a customer',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -413,13 +413,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       },
                                       items: get_all_customer.map((location) {
                                         return DropdownMenuItem(
+                                          value: location.customerSlNo,
                                           child: Text(
                                             "${location.customerName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.customerSlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -431,7 +431,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Product:",
@@ -443,13 +443,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -457,7 +457,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         "Please select a product",
                                         style: TextStyle(
                                           fontSize: 14,
@@ -493,14 +493,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       items: Allcustomer_productsbyProduct.map(
                                           (location) {
                                         return DropdownMenuItem(
+                                          value: location.productSlNo,
                                           child: Text(
                                             "${location.productName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                             overflow: TextOverflow.visible,
                                           ),
-                                          value: location.productSlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -511,7 +511,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           ), //Product
                           Row(
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Record Type:",
@@ -523,13 +523,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
                                     height: 30,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    padding: const EdgeInsets.only(left: 5, right: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 7, 125, 180),
+                                        color: const Color.fromARGB(255, 7, 125, 180),
                                         width: 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
@@ -537,7 +537,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         isExpanded: true,
-                                        hint: Text(
+                                        hint: const Text(
                                           'Please select a record type',
                                           style: TextStyle(
                                             fontSize: 14,
@@ -571,13 +571,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                         },
                                         items: _recordType.map((location) {
                                           return DropdownMenuItem(
+                                            value: location,
                                             child: Text(
                                               location,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            value: location,
                                           );
                                         }).toList(),
                                       ),
@@ -595,7 +595,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Employee:",
@@ -607,13 +607,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -621,7 +621,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select an Employee',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -641,13 +641,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       },
                                       items: get_all_Employee.map((location) {
                                         return DropdownMenuItem(
+                                          value: location.employeeSlNo,
                                           child: Text(
                                             "${location.employeeName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.employeeSlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -659,7 +659,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           // Employee
                           Row(
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Record Type:",
@@ -671,13 +671,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
                                     height: 30,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    padding: const EdgeInsets.only(left: 5, right: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 7, 125, 180),
+                                        color: const Color.fromARGB(255, 7, 125, 180),
                                         width: 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
@@ -685,7 +685,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         isExpanded: true,
-                                        hint: Text(
+                                        hint: const Text(
                                           'Please select a record type',
                                           style: TextStyle(
                                             fontSize: 14,
@@ -708,13 +708,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                         },
                                         items: _recordType.map((location) {
                                           return DropdownMenuItem(
+                                            value: location,
                                             child: Text(
                                               location,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            value: location,
                                           );
                                         }).toList(),
                                       ),
@@ -732,7 +732,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Customer:",
@@ -744,13 +744,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -758,7 +758,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select a Customer',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -784,13 +784,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       },
                                       items: get_all_customer.map((location) {
                                         return DropdownMenuItem(
+                                          value: location.customerSlNo,
                                           child: Text(
                                             "${location.customerName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.customerSlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -802,7 +802,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Category:",
@@ -814,13 +814,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -828,7 +828,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select a Category',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -848,13 +848,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       items: FetchCustomerwiseCategory.map(
                                           (location) {
                                         return DropdownMenuItem(
+                                          value: location.productCategorySlNo,
                                           child: Text(
                                             "${location.productCategoryName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.productCategorySlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -871,7 +871,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 1,
                             child: Text(
                               "Product:",
@@ -883,13 +883,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Expanded(
                             flex: 3,
                             child: Container(
-                              margin: EdgeInsets.only(top: 5, bottom: 5),
+                              margin: const EdgeInsets.only(top: 5, bottom: 5),
                               height: 30,
-                              padding: EdgeInsets.only(left: 5, right: 5),
+                              padding: const EdgeInsets.only(left: 5, right: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
@@ -897,7 +897,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   isExpanded: true,
-                                  hint: Text(
+                                  hint: const Text(
                                     'Please select a Product',
                                     style: TextStyle(
                                       fontSize: 14,
@@ -920,13 +920,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   },
                                   items: FetchAllProductList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location.productSlNo,
                                       child: Text(
                                         "${location.productName}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location.productSlNo,
                                     );
                                   }).toList(),
                                 ),
@@ -941,7 +941,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 1,
                             child: Text(
                               "Product:",
@@ -953,13 +953,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Expanded(
                             flex: 3,
                             child: Container(
-                              margin: EdgeInsets.only(top: 5, bottom: 5),
+                              margin: const EdgeInsets.only(top: 5, bottom: 5),
                               height: 30,
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
@@ -967,7 +967,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   isExpanded: true,
-                                  hint: Text(
+                                  hint: const Text(
                                     'Please select a Product',
                                     style: TextStyle(
                                       fontSize: 14,
@@ -984,13 +984,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
 
                                   items: FetchAllProductList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location.productSlNo,
                                       child: Text(
                                         "${location.productName}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location.productSlNo,
                                     );
                                   }).toList(),
                                 ),
@@ -1006,7 +1006,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "User:",
@@ -1018,13 +1018,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -1032,7 +1032,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select a Product',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -1073,13 +1073,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       items: FetchUserBySummaryProductlist.map(
                                           (location) {
                                         return DropdownMenuItem(
+                                          value: location.userSlNo,
                                           child: Text(
                                             "${location.fullName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.userSlNo,
                                         );
                                       }).toList(),
                                     ),
@@ -1356,7 +1356,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
 
                           Row(
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Record Type:",
@@ -1368,13 +1368,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
                                     height: 30,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    padding: const EdgeInsets.only(left: 5, right: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 7, 125, 180),
+                                        color: const Color.fromARGB(255, 7, 125, 180),
                                         width: 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
@@ -1382,7 +1382,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         isExpanded: true,
-                                        hint: Text(
+                                        hint: const Text(
                                           'Please select a record type',
                                           style: TextStyle(
                                             fontSize: 14,
@@ -1405,13 +1405,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                         },
                                         items: _recordType.map((location) {
                                           return DropdownMenuItem(
+                                            value: location,
                                             child: Text(
                                               location,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            value: location,
                                           );
                                         }).toList(),
                                       ),
@@ -1422,7 +1422,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                         ],
                       )
                     : Container(),
-                Container(
+                SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: Row(
@@ -1431,13 +1431,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -1450,24 +1450,22 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 // fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: firstPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : firstPickedDate,
-                                hintStyle: TextStyle(
+                                hintText: firstPickedDate ?? DateFormat('yyyy-MM-dd')
+                                        .format(DateTime.now()),
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -1481,18 +1479,18 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                         ),
                       ),
                       Container(
-                        child: Text("To"),
+                        child: const Text("To"),
                       ),
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -1505,24 +1503,22 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 //fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: secondPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : secondPickedDate,
-                                hintStyle: TextStyle(
+                                hintText: secondPickedDate ?? DateFormat('yyyy-MM-dd')
+                                        .format(DateTime.now()),
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -1542,8 +1538,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    color: Color.fromARGB(255, 3, 91, 150),
-                    padding: EdgeInsets.all(1.0),
+                    color: const Color.fromARGB(255, 3, 91, 150),
+                    padding: const EdgeInsets.all(1.0),
                     child: InkWell(
                       onTap: () {
                         setState(() {
@@ -1710,7 +1706,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             );
                           }
                         });
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -1720,10 +1716,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                         height: 30.0,
                         width: 120.0,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 4, 113, 185),
+                          color: const Color.fromARGB(255, 4, 113, 185),
                           borderRadius: BorderRadius.circular(3.0),
                         ),
-                        child: Center(
+                        child: const Center(
                             child: Text(
                           "Show Report",
                           style: TextStyle(color: Colors.white),
@@ -1735,119 +1731,293 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
           data == 'showAllWithoutDetails'
               ? Expanded(
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : Container(
+                      ? const Center(child: CircularProgressIndicator())
+                      : SizedBox(
                           width: double.infinity,
                           height: double.infinity,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: Container(
-                                // color: Colors.red,
-                                // padding:EdgeInsets.only(bottom: 16.0),
-                                child: DataTable(
-                                  showCheckboxColumn: true,
-                                  border: TableBorder.all(
-                                      color: Colors.black54, width: 1),
-                                  columns: [
-                                    DataColumn(
-                                      label: Center(child: Text('Invoice No')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Date')),
-                                    ),
-                                    DataColumn(
-                                      label:
-                                          Center(child: Text('Customer Name')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Saved By')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Sub Total')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Discount')),
-                                    ),
-                                    DataColumn(
-                                      label:
-                                          Center(child: Text('Transport Cost')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Total')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Paid')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Due')),
-                                    ),
-                                  ],
-                                  rows: List.generate(
-                                    allGetSalesData.length,
-                                    (int index) => DataRow(
-                                      cells: <DataCell>[
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    // color: Colors.red,
+                                    // padding:EdgeInsets.only(bottom: 16.0),
+                                    child: DataTable(
+                                      showCheckboxColumn: true,
+                                      border: TableBorder.all(
+                                          color: Colors.black54, width: 1),
+                                      columns: const [
+                                        DataColumn(
+                                          label: Center(child: Text('Invoice No')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterSaleDate}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Date')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].customerName}')),
+                                        DataColumn(
+                                          label:
+                                              Center(child: Text('Customer Name')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].addBy}')),
+                                        DataColumn(
+                                          label:
+                                          Center(child: Text('Employee Name')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                        DataColumn(
+                                          label: Center(child: Text('Saved By')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Sub Total')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterFreight}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Vat')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Discount')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterDueAmount}')),
+                                        DataColumn(
+                                          label:
+                                              Center(child: Text('Transport Cost')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Total')),
+                                        ),
+                                        DataColumn(
+                                          label: Center(child: Text('Paid')),
+                                        ),
+                                        DataColumn(
+                                          label: Center(child: Text('Due')),
+                                        ),
+                                      ],
+                                      rows: List.generate(
+                                        allGetSalesData.length,
+                                        (int index) => DataRow(
+                                          cells: <DataCell>[
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterSaleDate}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].customerName}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].employeeName}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].addBy}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterTaxAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterFreight}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterDueAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Row(
+                                      children: [
+                                        Text(//111111
+                                          "Sub Total:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//2222
+                                          "Total Vat:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//3333333333
+                                          "Total Discount:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize:14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//4444444
+                                          "Total TC.:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//5555555
+                                          "Total:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//6666666
+                                          "Total Paid:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")},",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5.0),
+                                        Text(//77777777
+                                          "Total Due:",
+                                          style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        allGetSalesData
+                                            .length ==
+                                            0
+                                            ? Text(
+                                          "0",
+                                          style: TextStyle(
+                                              fontSize: 14),
+                                        )
+                                            : Text(
+                                          "${GetStorage().read("totalSalesSubtotal")}",
+                                          style: TextStyle(
+                                              fontSize: 14),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
@@ -1856,8 +2026,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
               : data == 'showAllWithDetails'
                   ? Expanded(
                       child: isLoading
-                          ? Center(child: CircularProgressIndicator())
-                          : Container(
+                          ? const Center(child: CircularProgressIndicator())
+                          : SizedBox(
                               width: double.infinity,
                               height: double.infinity,
                               child: SingleChildScrollView(
@@ -1871,7 +2041,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       showCheckboxColumn: true,
                                       border: TableBorder.all(
                                           color: Colors.black54, width: 1),
-                                      columns: [
+                                      columns: const [
                                         DataColumn(
                                           label:
                                               Center(child: Text('Invoice No')),
@@ -1937,7 +2107,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                             ),
                                             DataCell(
                                               Center(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                 // color: Colors.green,
                                                 width: MediaQuery.of(context)
                                                         .size
@@ -1962,7 +2132,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                             ),
                                             DataCell(
                                               Center(
-                                                child: Container(
+                                                child: SizedBox(
                                                   // color: Colors.green,
                                                   width: MediaQuery.of(context)
                                                           .size
@@ -1988,7 +2158,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                             ),
                                             DataCell(
                                               Center(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                 // color: Colors.green,
                                                 width: MediaQuery.of(context)
                                                         .size
@@ -2013,7 +2183,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                             ),
                                             DataCell(
                                               Center(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                 // color: Colors.green,
                                                 width: MediaQuery.of(context)
                                                         .size
@@ -2048,8 +2218,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                   : data == 'showByCustomerWithoutDetails'
                       ? Expanded(
                           child: isLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : Container(
+                              ? const Center(child: CircularProgressIndicator())
+                              : SizedBox(
                                   width: double.infinity,
                                   height: double.infinity,
                                   child: SingleChildScrollView(
@@ -2061,7 +2231,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                           showCheckboxColumn: true,
                                           border: TableBorder.all(
                                               color: Colors.black54, width: 1),
-                                          columns: [
+                                          columns: const [
                                             DataColumn(
                                               label: Center(
                                                   child: Text('Invoice No')),
@@ -2132,10 +2302,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                 DataCell(
                                                   Center(
                                                       child: Text(
-                                                          "${allGetSalesRecordData[index].employeeName}" ==
-                                                                  null
-                                                              ? ''
-                                                              : "${allGetSalesRecordData[index].employeeName}")),
+                                                          "${allGetSalesRecordData[index].employeeName}" ?? '')),
                                                 ),
                                                 DataCell(
                                                   Center(
@@ -2189,8 +2356,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                       : data == 'showByCustomerWithDetails'
                           ? Expanded(
                               child: isLoading
-                                  ? Center(child: CircularProgressIndicator())
-                                  : Container(
+                                  ? const Center(child: CircularProgressIndicator())
+                                  : SizedBox(
                                       width: double.infinity,
                                       height: double.infinity,
                                       child: SingleChildScrollView(
@@ -2203,7 +2370,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                               border: TableBorder.all(
                                                   color: Colors.black54,
                                                   width: 1),
-                                              columns: [
+                                              columns: const [
                                                 DataColumn(
                                                   label: Center(
                                                       child:
@@ -2268,10 +2435,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                     DataCell(
                                                       Center(
                                                           child: Text(
-                                                              "${allGetSalesRecordData[index].employeeName}" ==
-                                                                      null
-                                                                  ? ''
-                                                                  : "${allGetSalesRecordData[index].employeeName}")),
+                                                              "${allGetSalesRecordData[index].employeeName}" ?? '')),
                                                     ),
                                                     DataCell(
                                                       Center(
@@ -2280,7 +2444,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                     ),
                                                     DataCell(
                                                       Center(
-                                                          child: Container(
+                                                          child: SizedBox(
                                                         // color: Colors.green,
                                                         width: MediaQuery.of(
                                                                     context)
@@ -2315,7 +2479,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                     ),
                                                     DataCell(
                                                       Center(
-                                                          child: Container(
+                                                          child: SizedBox(
                                                         width: MediaQuery.of(
                                                                     context)
                                                                 .size
@@ -2349,7 +2513,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                     ),
                                                     DataCell(
                                                       Center(
-                                                          child: Container(
+                                                          child: SizedBox(
                                                         //color: Colors.green,
                                                         width: MediaQuery.of(
                                                                     context)
@@ -2384,7 +2548,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                     ),
                                                     DataCell(
                                                       Center(
-                                                          child: Container(
+                                                          child: SizedBox(
                                                         width: MediaQuery.of(
                                                                     context)
                                                                 .size
@@ -2428,9 +2592,9 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           : data == 'showByEmployeeWithoutDetails'
                               ? Expanded(
                                   child: isLoading
-                                      ? Center(
+                                      ? const Center(
                                           child: CircularProgressIndicator())
-                                      : Container(
+                                      : SizedBox(
                                           width: double.infinity,
                                           height: double.infinity,
                                           child: SingleChildScrollView(
@@ -2445,7 +2609,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                   border: TableBorder.all(
                                                       color: Colors.black54,
                                                       width: 1),
-                                                  columns: [
+                                                  columns: const [
                                                     DataColumn(
                                                       label: Center(
                                                           child: Text(
@@ -2578,10 +2742,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               : data == 'showByEmployeeWithDetails'
                                   ? Expanded(
                                       child: isLoading
-                                          ? Center(
+                                          ? const Center(
                                               child:
                                                   CircularProgressIndicator())
-                                          : Container(
+                                          : SizedBox(
                                               width: double.infinity,
                                               height: double.infinity,
                                               child: SingleChildScrollView(
@@ -2597,7 +2761,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                       border: TableBorder.all(
                                                           color: Colors.black54,
                                                           width: 1),
-                                                      columns: [
+                                                      columns: const [
                                                         DataColumn(
                                                           label: Center(
                                                               child: Text(
@@ -2706,10 +2870,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                   : data == 'showByCategoryDetails'
                                       ? Expanded(
                                           child: isLoading
-                                              ? Center(
+                                              ? const Center(
                                                   child:
                                                       CircularProgressIndicator())
-                                              : Container(
+                                              : SizedBox(
                                                   width: double.infinity,
                                                   height: double.infinity,
                                                   child: SingleChildScrollView(
@@ -2730,7 +2894,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                                   color: Colors
                                                                       .black54,
                                                                   width: 1),
-                                                          columns: [
+                                                          columns: const [
                                                             DataColumn(
                                                               label: Center(
                                                                   child: Text(
@@ -2820,10 +2984,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       : data == 'showByQuantityDetails'
                                           ? Expanded(
                                               child: isLoading
-                                                  ? Center(
+                                                  ? const Center(
                                                       child:
                                                           CircularProgressIndicator())
-                                                  : Container(
+                                                  : SizedBox(
                                                       width: double.infinity,
                                                       height: double.infinity,
                                                       child:
@@ -2844,7 +3008,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                                   color: Colors
                                                                       .black54,
                                                                   width: 1),
-                                                              columns: [
+                                                              columns: const [
                                                                 DataColumn(
                                                                   label: Center(
                                                                       child: Text(
@@ -2935,10 +3099,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                           : data == 'showBySummaryDetails'
                                               ? Expanded(
                                                   child: isLoading
-                                                      ? Center(
+                                                      ? const Center(
                                                           child:
                                                               CircularProgressIndicator())
-                                                      : Container(
+                                                      : SizedBox(
                                                           width:
                                                               double.infinity,
                                                           height:
@@ -2960,7 +3124,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                                       color: Colors
                                                                           .black54,
                                                                       width: 1),
-                                                                  columns: [
+                                                                  columns: const [
                                                                     DataColumn(
                                                                       label: Center(
                                                                           child:
@@ -3018,10 +3182,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                       'showByUserWithoutDetails'
                                                   ? Expanded(
                                                       child: isLoading
-                                                          ? Center(
+                                                          ? const Center(
                                                               child:
                                                                   CircularProgressIndicator())
-                                                          : Container(
+                                                          : SizedBox(
                                                               width: double
                                                                   .infinity,
                                                               height: double
@@ -3047,7 +3211,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                                               .black54,
                                                                           width:
                                                                               1),
-                                                                      columns: [
+                                                                      columns: const [
                                                                         DataColumn(
                                                                           label:
                                                                               Center(child: Text('Invoice No')),
@@ -3153,10 +3317,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                           'showByUserWithDetails'
                                                       ? Expanded(
                                                           child: isLoading
-                                                              ? Center(
+                                                              ? const Center(
                                                                   child:
                                                                       CircularProgressIndicator())
-                                                              : Container(
+                                                              : SizedBox(
                                                                   width: double
                                                                       .infinity,
                                                                   height: double
@@ -3180,7 +3344,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                                                           border: TableBorder.all(
                                                                               color: Colors.black54,
                                                                               width: 1),
-                                                                          columns: [
+                                                                          columns: const [
                                                                             DataColumn(
                                                                               label: Center(child: Text('Invoice No')),
                                                                             ),

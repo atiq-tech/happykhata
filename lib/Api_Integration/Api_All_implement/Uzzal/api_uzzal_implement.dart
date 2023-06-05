@@ -487,14 +487,7 @@ class Api_Uzzal_implement_Class {
             "${salseRecordModelClass.purchaseMasterSubTotalAmount}");
         totalSaless = totalSales.toStringAsFixed(2);
         GetStorage().write("totalSales", totalSaless);
-        //     for (var i in data['sales']) {
-        //   item = Sales.fromJson(i);
-        //   salesList.add(item);
-        //   totalSales += double.parse("${item.saleMasterPaidAmount}");
-        //   totalSaless = totalSales.toStringAsFixed(2);
-        //   GetStorage().write("totalSales", totalSaless);
-        //   // print(sales_recordlist[0].saleDetails![0].productName);my help section
-        // }
+
       }
       print(
           "sales_recordlist===========================> ${sales_recordlist.length}  ");

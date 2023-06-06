@@ -114,7 +114,7 @@ class Sales {
     customerMobile = json['Customer_Mobile'];
     customerAddress = json['Customer_Address'];
     customerType = json['Customer_Type'];
-    employeeName = json['Employee_Name'];
+    employeeName = json['Employee_Name']??'';
     brunchName = json['Brunch_name'];
   }
 

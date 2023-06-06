@@ -24,14 +24,14 @@ class ApiGetSales {
     String totalVt;
     double totalDiscount = 0.0;
     String totalDiscnt;
-    // double totalVat = 0.0;
-    // String totalVt;
-    // double totalVat = 0.0;
-    // String totalVt;
-    // double totalVat = 0.0;
-    // String totalVt;
-    // double totalVat = 0.0;
-    // String totalVt;
+    double totalTransCost = 0.0;
+    String totalTC;
+    double totalTotal = 0.0;
+    String totalT;
+    double totalPaid = 0.0;
+    String totalPd;
+    double totalDue = 0.0;
+    String totalD;
     try {
       Response response = await Dio().post(Link,
           data: {
@@ -60,51 +60,42 @@ class ApiGetSales {
             "${Sales.fromJson(i).saleMasterSubTotalAmount}");
         totalSalesSt = totalSalesSubtotal.toStringAsFixed(2);
         GetStorage().write("totalSalesSubtotal", totalSalesSt);
-      }
+        //vat
+        totalVat += double.parse(
+            "${Sales.fromJson(i).saleMasterTaxAmount}");
+        totalVt = totalVat.toStringAsFixed(2);
+        GetStorage().write("totalVat", totalVt);
+        //discount
+        totalDiscount += double.parse(
+            "${Sales.fromJson(i).saleMasterTotalDiscountAmount}");
+        totalDiscnt = totalDiscount.toStringAsFixed(2);
+        GetStorage().write("totalDiscount", totalDiscnt);
+        //TransCost
+        totalTransCost += double.parse(
+            "${Sales.fromJson(i).saleMasterFreight}");
+        totalTC = totalTransCost.toStringAsFixed(2);
+        GetStorage().write("totalTransCost", totalTC);
+        //Total
+        totalTotal += double.parse(
+            "${Sales.fromJson(i).saleMasterTotalSaleAmount}");
+        totalT = totalTotal.toStringAsFixed(2);
+        GetStorage().write("totalTotal", totalT);
+        //Paid
+        totalPaid += double.parse(
+            "${Sales.fromJson(i).saleMasterPaidAmount}");
+        totalPd = totalPaid.toStringAsFixed(2);
+        GetStorage().write("totalPaid", totalPd);
+        //Due
+        totalDue += double.parse(
+            "${Sales.fromJson(i).saleMasterDueAmount}");
+        totalD = totalDue.toStringAsFixed(2);
+        GetStorage().write("totalDue", totalD);
 
+      }
       print("getSaleslist getSaleslist length is ${getSaleslist.length}");
     } catch (e) {
       print("Something is wrong getSaleslist=======:$e");
     }
     return getSaleslist;
   }
-
-  //
-  //  static FetchAllSalseData(
-  //   context,
-  //   String? dateFrom,
-  //   String? dateTo,
-  // ) async {
-  //   String link = "${BaseUrl}api/v1/getSales";
-  //   List<Sales> salesList = [];
-  //   double totalSales = 0.0;
-  //   String totalSaless;
-
-  //   Sales item;
-  //   try {
-  //     Response response = await Dio().post(link,
-  //         data: {
-  //           "dateFrom": "$dateFrom",
-  //           "dateTo": "$dateTo",
-  //         },
-  //         options: Options(headers: {
-  //           "Content-Type": "application/json",
-  //           "Authorization": "Bearer ${GetStorage().read("token")}",
-  //         }));
-  //     // print(response.data);
-  //     var data = jsonDecode(response.data);
-  //     //   print(item);
-  //     for (var i in data['sales']) {
-  //       item = Sales.fromJson(i);
-  //       salesList.add(item);
-  //       totalSales += double.parse("${item.saleMasterPaidAmount}");
-  //       totalSaless = totalSales.toStringAsFixed(2);
-  //       GetStorage().write("totalSales", totalSaless);
-  //       // print(sales_recordlist[0].saleDetails![0].productName);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  //   return salesList;
-  // }
 }

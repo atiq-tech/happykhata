@@ -1746,6 +1746,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
                                     // color: Colors.red,
@@ -1864,159 +1865,186 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       ),
                                     ),
                                   ),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Row(
+                                  SizedBox(height: 10.0),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(//111111
-                                          "Sub Total:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
+                                        Row(
+                                          children: [
+                                            Text(//111111
+                                              "Sub Total              :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalSalesSubtotal")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize: 14),
+                                        Row(
+                                          children: [
+                                            Text(//2222
+                                              "Total Vat               :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalVat")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(width: 5.0),
-                                        Text(//2222
-                                          "Total Vat:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
+                                        Row(
+                                          children: [
+                                            Text(//3333333333
+                                              "Total Discount     :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalDiscount")}",
+                                              style: TextStyle(
+                                                  fontSize:14),
+                                            ),
+                                          ],
                                         ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize: 14),
+                                        Row(
+                                          children: [
+                                            Text(//4444444
+                                              "Total Trans.Cost  :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalTransCost")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(width: 5.0),
-                                        Text(//3333333333
-                                          "Total Discount:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
+                                        Row(
+                                          children: [
+                                            Text(//5555555
+                                              "Total                      :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalTotal")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize:14),
+                                        Row(
+                                          children: [
+                                            Text(//6666666
+                                              "Total Paid             :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalPaid")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(width: 5.0),
-                                        Text(//4444444
-                                          "Total TC.:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
+                                        Row(
+
+                                          children: [
+                                            Text(//77777777
+                                              "Total Due              :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetSalesData
+                                                .length ==
+                                                0
+                                                ? Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalDue")}",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        ),
-                                        SizedBox(width: 5.0),
-                                        Text(//5555555
-                                          "Total:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
-                                        ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        ),
-                                        SizedBox(width: 5.0),
-                                        Text(//6666666
-                                          "Total Paid:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
-                                        ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")},",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        ),
-                                        SizedBox(width: 5.0),
-                                        Text(//77777777
-                                          "Total Due:",
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 14),
-                                        ),
-                                        allGetSalesData
-                                            .length ==
-                                            0
-                                            ? Text(
-                                          "0",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        )
-                                            : Text(
-                                          "${GetStorage().read("totalSalesSubtotal")}",
-                                          style: TextStyle(
-                                              fontSize: 14),
-                                        ),
+
                                       ],
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
@@ -2226,128 +2254,312 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     scrollDirection: Axis.vertical,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      child: Container(
-                                        child: DataTable(
-                                          showCheckboxColumn: true,
-                                          border: TableBorder.all(
-                                              color: Colors.black54, width: 1),
-                                          columns: const [
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Invoice No')),
-                                            ),
-                                            DataColumn(
-                                              label:
-                                                  Center(child: Text('Date')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Customer Name')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Employee Name')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Saved By')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Sub Total')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(child: Text('Vat')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child: Text('Discount')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(
-                                                  child:
-                                                      Text('Transport Cost')),
-                                            ),
-                                            DataColumn(
-                                              label:
-                                                  Center(child: Text('Total')),
-                                            ),
-                                            DataColumn(
-                                              label:
-                                                  Center(child: Text('Paid')),
-                                            ),
-                                            DataColumn(
-                                              label: Center(child: Text('Due')),
-                                            ),
-                                          ],
-                                          rows: List.generate(
-                                            allGetSalesData.length,
-                                            (int index) => DataRow(
-                                              cells: <DataCell>[
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: DataTable(
+                                              showCheckboxColumn: true,
+                                              border: TableBorder.all(
+                                                  color: Colors.black54, width: 1),
+                                              columns: const [
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Invoice No')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].saleMasterSaleDate}')),
+                                                DataColumn(
+                                                  label:
+                                                      Center(child: Text('Date')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].customerName}')),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Customer Name')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          "${allGetSalesRecordData[index].employeeName}" ?? '')),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Employee Name')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].addBy}')),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Saved By')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Sub Total')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          "${allGetSalesData[index].saleMasterTaxAmount}")),
+                                                DataColumn(
+                                                  label: Center(child: Text('Vat')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Discount')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          "${allGetSalesData[index].saleMasterFreight}")),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child:
+                                                          Text('Transport Cost')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                                DataColumn(
+                                                  label:
+                                                      Center(child: Text('Total')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                                DataColumn(
+                                                  label:
+                                                      Center(child: Text('Paid')),
                                                 ),
-                                                DataCell(
-                                                  Center(
-                                                      child: Text(
-                                                          '${allGetSalesData[index].saleMasterDueAmount}')),
+                                                DataColumn(
+                                                  label: Center(child: Text('Due')),
                                                 ),
+                                              ],
+                                              rows: List.generate(
+                                                allGetSalesData.length,
+                                                (int index) => DataRow(
+                                                  cells: <DataCell>[
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].saleMasterSaleDate}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].customerName}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].employeeName}' == null ? '' : '${allGetSalesData[index].employeeName}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].addBy}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              "${allGetSalesData[index].saleMasterTaxAmount}")),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              "${allGetSalesData[index].saleMasterFreight}")),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allGetSalesData[index].saleMasterDueAmount}')),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 10.0),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(//111111
+                                                      "Sub Total              :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalSalesSubtotal")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(//2222
+                                                      "Total Vat               :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalVat")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(//3333333333
+                                                      "Total Discount     :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalDiscount")}",
+                                                      style: TextStyle(
+                                                          fontSize:14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(//4444444
+                                                      "Total Trans.Cost  :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalTransCost")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(//5555555
+                                                      "Total                      :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalTotal")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(//6666666
+                                                      "Total Paid             :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalPaid")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+
+                                                  children: [
+                                                    Text(//77777777
+                                                      "Total Due              :  ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 14),
+                                                    ),
+                                                    allGetSalesData
+                                                        .length ==
+                                                        0
+                                                        ? Text(
+                                                      "0",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    )
+                                                        : Text(
+                                                      "${GetStorage().read("totalDue")}",
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+
                                               ],
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
                                   ),

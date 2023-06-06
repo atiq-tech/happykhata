@@ -2,12 +2,17 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/sales_cart_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by_employee_modelclass.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/hive/hive/product.dart';
 import 'package:poss/home_page.dart';
@@ -28,8 +33,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _paidController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _discountPercentController =
-      TextEditingController();
+  final TextEditingController _discountPercentController = TextEditingController();
   final TextEditingController _previousDueController = TextEditingController();
   final TextEditingController _mobileNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -38,6 +42,10 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   final TextEditingController _VatController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _transportController = TextEditingController();
+  var customerController = TextEditingController();
+  var empluyeeNameController = TextEditingController();
+  var categoryController = TextEditingController();
+  var productController = TextEditingController();
 
   List<String> salesByList = ['A', 'B', 'C', 'D'];
   List<String> customerList = ['General Customer', 'C0123', 'C0456', 'C0789'];
@@ -118,10 +126,6 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     final All_Category = Provider.of<CategoryWiseStockProvider>(context)
         .provideCategoryWiseStockList;
 
-    ////////
-    ///
-    ///
-    ///
     final CategoryWiseProductList =
         Provider.of<AllProductProvider>(context).CategoryWiseProductList;
     print("All_Employee List ======== >${All_Employee.length}");
@@ -133,7 +137,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     return Scaffold(
       appBar: CustomAppBar(title: "Sales Entry"),
       body: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -142,9 +146,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
               Container(
                 height: 30,
                 width: double.infinity,
-                margin: EdgeInsets.only(bottom: 8),
-                color: Color.fromARGB(255, 7, 125, 180),
-                child: Center(
+                margin: const EdgeInsets.only(bottom: 8),
+                color: const Color.fromARGB(255, 7, 125, 180),
+                child: const Center(
                   child: Text(
                     'Sales Information',
                     style: TextStyle(
@@ -158,17 +162,18 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
               Container(
                 height: 110.0,
                 width: double.infinity,
-                margin: EdgeInsets.only(bottom: 10),
-                padding: EdgeInsets.only(left: 6.0, right: 6.0),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180),
+                      width: 1.0),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Text(
                           "Invoice no",
@@ -183,7 +188,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ), // Invoice no drop down
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Sales By",
@@ -194,47 +199,112 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
-                            height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select Employee',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedSalesBy,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedSalesBy = newValue!;
-                                    print(
-                                        "Employee Si No ===============> ${newValue}");
-                                    employeeSlNo = newValue.toString();
-                                  });
-                                },
-                                items: All_Employee.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.employeeName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context).Fatch_By_all_Employee(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<By_all_employee_ModelClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            employeeSlNo = '';
+                                          }
+                                        },
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: empluyeeNameController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Customer',
+                                          suffix: employeeSlNo == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                empluyeeNameController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        ),
                                     ),
-                                    value: location.employeeSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.employeeName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Employee.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.employeeName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (By_all_employee_ModelClass suggestion) {
+                                      empluyeeNameController.text = suggestion.employeeName!;
+                                      setState(() {
+                                        employeeSlNo = suggestion.employeeSlNo.toString();
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: const Text(
+                            //       'Select Employee',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedSalesBy,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedSalesBy = newValue!;
+                            //         print(
+                            //             "Employee Si No ===============> ${newValue}");
+                            //         employeeSlNo = newValue.toString();
+                            //       });
+                            //     },
+                            //     items: All_Employee.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.employeeName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.employeeSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
@@ -244,14 +314,15 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         _selectedDate();
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 5, right: 5, bottom: 5),
+                        margin:
+                            const EdgeInsets.only(top: 5, right: 5, bottom: 5),
                         height: 32,
                         width: double.infinity,
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 5, bottom: 5, left: 5, right: 5),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Color.fromARGB(255, 7, 125, 180),
+                            color: const Color.fromARGB(255, 7, 125, 180),
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(10.0),
@@ -265,7 +336,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                       .format("dd - MMM - yyyy")
                                   : firstPickedDate!,
                             ),
-                            Icon(Icons.calendar_month)
+                            const Icon(Icons.calendar_month)
                           ],
                         ),
                       ),
@@ -281,11 +352,12 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
               Container(
                 height: 225.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180),
+                      width: 1.0),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -293,7 +365,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Sales Type",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
@@ -305,7 +377,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               child: Radio(
                                   fillColor: MaterialStateColor.resolveWith(
                                     (states) =>
-                                        Color.fromARGB(255, 5, 114, 165),
+                                        const Color.fromARGB(255, 5, 114, 165),
                                   ),
                                   value: "retail",
                                   groupValue: level,
@@ -316,7 +388,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     });
                                   }),
                             ),
-                            Text("retail"),
+                            const Text("retail"),
                           ],
                         ),
                         Row(
@@ -326,7 +398,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               child: Radio(
                                   fillColor: MaterialStateColor.resolveWith(
                                     (states) =>
-                                        Color.fromARGB(255, 5, 114, 165),
+                                        const Color.fromARGB(255, 5, 114, 165),
                                   ),
                                   value: "wholesale",
                                   groupValue: level,
@@ -337,14 +409,14 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     });
                                   }),
                             ),
-                            Text("wholesale"),
+                            const Text("wholesale"),
                           ],
                         ),
                       ],
                     ), // radio button
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Customer",
@@ -355,89 +427,216 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5),
-                            height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select Customer',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedCustomer,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    print("customerSlNo ======> ${newValue}");
-                                    _selectedCustomer = newValue.toString();
-                                    customerSlNo = newValue.toString();
-                                    if (_selectedCustomer ==
-                                        "General Customer") {
-                                      isVisible = true;
-                                      isEnabled = true;
-                                    } else {
-                                      isEnabled = false;
-                                      isVisible = false;
-                                    }
-                                    //  print(_selectedCustomer);
-                                    print(isVisible);
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context)
+                                  .Fatch_By_all_Customer(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<By_all_Customer>>
+                                      snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                          onChanged: (newValue) {
+                                                print("On change Value is $newValue");
+                                                if (newValue == '') {
+                                                  customerSlNo = '';
+                                                }
+                                              },
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                            controller: customerController,
+                                            decoration: InputDecoration(
+                                                hintText: 'Select Customer',
+                                              suffix: customerSlNo == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    customerController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
+                                            ),
+                                        ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element
+                                              .displayName!
+                                              .toLowerCase()
+                                              .contains(pattern
+                                                  .toString()
+                                                  .toLowerCase()))
+                                          .take(All_Customer.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(
+                                            child: Text(
+                                          "${suggestion.displayName}",
+                                          style: const TextStyle(fontSize: 12),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (By_all_Customer suggestion) {
+                                      customerController.text =
+                                          suggestion.displayName!;
+                                      setState(() {
+                                        customerSlNo =
+                                            suggestion.customerSlNo.toString();
 
-                                    final results = [
-                                      All_Customer.where((m) => m.customerSlNo!
+                                        print(
+                                            "customerSlNo ======> ${suggestion.customerSlNo}");
+                                        _selectedCustomer =
+                                            suggestion.customerSlNo.toString();
+                                        customerSlNo =
+                                            suggestion.customerSlNo.toString();
+                                        if (_selectedCustomer ==
+                                            "General Customer") {
+                                          isVisible = true;
+                                          isEnabled = true;
+                                        } else {
+                                          isEnabled = false;
+                                          isVisible = false;
+                                        }
+                                        //  print(_selectedCustomer);
+                                        print(isVisible);
+
+                                        final results = [
+                                          All_Customer.where((m) => m
+                                              .customerSlNo!
                                               .contains(
-                                                  '$newValue')) // or Testing 123
-                                          .toList(),
-                                    ];
-                                    results.forEach((element) {
-                                      element.add(element.first);
-                                      print("dfhsghdfkhgkh");
-                                      print(
-                                          "productSlNo===> ${element[0].displayName}");
-                                      print(
-                                          "productCategoryName===> ${element[0].customerName}");
-                                      customerMobile =
+                                              '${suggestion.customerSlNo}')) // or Testing 123
+                                              .toList(),
+                                        ];
+                                        results.forEach((element) {
+                                          element.add(element.first);
+                                          print("dfhsghdfkhgkh");
+                                          print(
+                                              "productSlNo===> ${element[0].displayName}");
+                                          print(
+                                              "productCategoryName===> ${element[0].customerName}");
+                                          customerMobile =
                                           "${element[0].customerMobile}";
-                                      _mobileNumberController.text =
+                                          _mobileNumberController.text =
                                           "${element[0].customerMobile}";
-                                      print(
-                                          "customerMobile===> ${element[0].customerMobile}");
-                                      customerAddress =
+                                          print(
+                                              "customerMobile===> ${element[0].customerMobile}");
+                                          customerAddress =
                                           "${element[0].customerAddress}";
-                                      _addressController.text =
+                                          _addressController.text =
                                           "${element[0].customerAddress}";
-                                      print(
-                                          "customerAddress===> ${element[0].customerAddress}");
-                                      previousDue = "${element[0].previousDue}";
-                                      _previousDueController.text =
+                                          print(
+                                              "customerAddress===> ${element[0].customerAddress}");
+                                          previousDue =
                                           "${element[0].previousDue}";
-                                      print(
-                                          "previousDue===> ${element[0].previousDue}");
-                                    });
-                                  });
-                                },
-                                items: All_Customer.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.customerName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    value: location.customerSlNo,
+                                          _previousDueController.text =
+                                          "${element[0].previousDue}";
+                                          print("previousDue===> ${element[0].previousDue}");
+                                        });
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Select Customer',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedCustomer,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         print("customerSlNo ======> ${newValue}");
+                            //         _selectedCustomer = newValue.toString();
+                            //         customerSlNo = newValue.toString();
+                            //         if (_selectedCustomer ==
+                            //             "General Customer") {
+                            //           isVisible = true;
+                            //           isEnabled = true;
+                            //         } else {
+                            //           isEnabled = false;
+                            //           isVisible = false;
+                            //         }
+                            //         //  print(_selectedCustomer);
+                            //         print(isVisible);
+                            //
+                            //         final results = [
+                            //           All_Customer.where((m) => m.customerSlNo!
+                            //                   .contains(
+                            //                       '$newValue')) // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //         results.forEach((element) {
+                            //           element.add(element.first);
+                            //           print("dfhsghdfkhgkh");
+                            //           print(
+                            //               "productSlNo===> ${element[0].displayName}");
+                            //           print(
+                            //               "productCategoryName===> ${element[0].customerName}");
+                            //           customerMobile =
+                            //               "${element[0].customerMobile}";
+                            //           _mobileNumberController.text =
+                            //               "${element[0].customerMobile}";
+                            //           print(
+                            //               "customerMobile===> ${element[0].customerMobile}");
+                            //           customerAddress =
+                            //               "${element[0].customerAddress}";
+                            //           _addressController.text =
+                            //               "${element[0].customerAddress}";
+                            //           print(
+                            //               "customerAddress===> ${element[0].customerAddress}");
+                            //           previousDue = "${element[0].previousDue}";
+                            //           _previousDueController.text =
+                            //               "${element[0].previousDue}";
+                            //           print(
+                            //               "previousDue===> ${element[0].previousDue}");
+                            //         });
+                            //       });
+                            //     },
+                            //     items: All_Customer.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.customerSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                         Expanded(
@@ -445,19 +644,21 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           child: InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CustomerEntryPage2()));
+                                  builder: (context) =>
+                                      const CustomerEntryPage2()));
                             },
                             child: Container(
                               height: 28.0,
-                              margin:
-                                  EdgeInsets.only(left: 5, bottom: 5, right: 5),
+                              margin: const EdgeInsets.only(
+                                  left: 5, bottom: 5, right: 5),
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
-                                      color: Color.fromARGB(255, 75, 196, 201),
+                                      color: const Color.fromARGB(
+                                          255, 75, 196, 201),
                                       width: 1)),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.add,
                                 color: Colors.white,
                                 size: 25.0,
@@ -471,7 +672,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                       visible: isVisible,
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 1,
                             child: Text(
                               "Name",
@@ -483,7 +684,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             flex: 3,
                             child: Container(
                               height: 28.0,
-                              margin: EdgeInsets.only(bottom: 5),
+                              margin: const EdgeInsets.only(bottom: 5),
                               child: TextField(
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
@@ -492,13 +693,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                   fillColor: Colors.white,
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -512,7 +713,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Mobile",
@@ -524,7 +725,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
                               enabled: isEnabled,
                               controller: _mobileNumberController,
@@ -536,13 +737,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     : Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -555,7 +756,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ), // mobile
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Address",
@@ -566,7 +767,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
                               maxLines: 3,
                               controller: _addressController,
@@ -577,16 +778,16 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     ? Colors.white
                                     : Colors.grey[200],
                                 contentPadding:
-                                    EdgeInsets.only(left: 10, top: 10),
+                                    const EdgeInsets.only(left: 10, top: 10),
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -602,23 +803,25 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                 ),
               ),
               Container(
-                height: 200.0,
+                height: 220.0,
                 width: double.infinity,
-                margin: EdgeInsets.only(
+                margin: const EdgeInsets.only(
                   top: 10.0,
                 ),
-                padding: EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0),
+                padding:
+                    const EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180),
+                      width: 1.0),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Category",
@@ -629,48 +832,114 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
-                            margin: EdgeInsets.only(bottom: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select Category',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedCategory,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedCategory = newValue.toString();
-                                    categoryId = newValue;
-                                    Provider.of<AllProductProvider>(context,
-                                            listen: false)
-                                        .CategoryWiseProduct("false", newValue);
-                                  });
-                                },
-                                items: All_Category.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.productCategoryName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                            child: FutureBuilder(
+                              future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            categoryId = '';
+                                          }
+                                        },
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: categoryController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Category',
+                                        suffix: categoryId == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              categoryController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      )
                                       ),
-                                    ),
-                                    value: location.productCategorySlNo,
+                                      suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.productCategoryName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Category.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (CategoryWiseStockModel suggestion) {
+                                      categoryController.text = suggestion.productCategoryName!;
+                                      setState(() {
+                                        _selectedCategory = suggestion.productCategorySlNo.toString();
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: const Text(
+                            //       'Select Category',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedCategory,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedCategory = newValue.toString();
+                            //         categoryId = newValue;
+                            //         Provider.of<AllProductProvider>(context,
+                            //                 listen: false)
+                            //             .CategoryWiseProduct("false", newValue);
+                            //       });
+                            //     },
+                            //     items: All_Category.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.productCategoryName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.productCategorySlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
@@ -678,7 +947,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     // category
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Product",
@@ -690,87 +959,196 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
-                            margin: EdgeInsets.only(bottom: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select Product',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedProduct,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedProduct = newValue.toString();
-                                    print(
-                                        "Category Product Si No=========> $newValue");
-
-                                    final results = [
-                                      CategoryWiseProductList.where((m) =>
-                                              m.productSlNo!.contains(
-                                                  '$newValue')) // or Testing 123
-                                          .toList(),
-                                    ];
-                                    results.forEach((element) async {
-                                      element.add(element.first);
-                                      print("dfhsghdfkhgkh");
-                                      cproductId = "${element[0].productSlNo}";
-                                      print(
-                                          "productSlNo===> ${element[0].productSlNo}");
-                                      ccategoryName =
-                                          "${element[0].productCategoryName}";
-                                      print(
-                                          "productCategoryName===> ${element[0].productCategoryName}");
-                                      cname = "${element[0].productName}";
-                                      print(
-                                          "productName===> ${element[0].productName}");
-                                      print(
-                                          "productSellingPrice===> ${element[0].productSellingPrice}");
-                                      cvat = "${element[0].vat}";
-                                      print("vat===> ${element[0].vat}");
-                                      print(
-                                          "_quantityController ===> ${_quantityController.text}");
-                                      print(
-                                          "_quantityController ===> ${_quantityController.text}");
-                                      cpurchaseRate =
-                                          "${element[0].productPurchaseRate}";
-                                      print(
-                                          "productPurchaseRate===> ${element[0].productPurchaseRate}");
-                                      _VatController.text = "${element[0].vat}";
-                                      _salesRateController.text =
-                                          "${element[0].productSellingPrice}";
-                                      Total = (double.parse(
-                                              _quantityController.text) *
-                                          double.parse(
-                                              _salesRateController.text));
-                                      totalStack(cproductId);
-                                    });
-                                  });
-                                },
-                                items: CategoryWiseProductList.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.productName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context).CategoryWiseProduct(categoryId: _selectedCategory),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                print("CategoryID $_selectedCategory");
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedProduct = '';
+                                          }
+                                        },
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: productController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Category',
+                                          suffix: _selectedProduct == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                productController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.productSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.productName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Category.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllProductModelClass suggestion) {
+                                      categoryController.text = suggestion.productName!;
+                                      setState(() {
+                                        _selectedProduct = suggestion.productSlNo.toString();
+
+                                        final results = [
+                                          CategoryWiseProductList.where((m) =>
+                                                  m.productSlNo!.contains(
+                                                      "${suggestion.productSlNo}")) // or Testing 123
+                                              .toList(),
+                                        ];
+                                        results.forEach((element) async {
+                                          element.add(element.first);
+                                          print("dfhsghdfkhgkh");
+                                          cproductId = "${element[0].productSlNo}";
+                                          print(
+                                              "productSlNo===> ${element[0].productSlNo}");
+                                          ccategoryName =
+                                              "${element[0].productCategoryName}";
+                                          print(
+                                              "productCategoryName===> ${element[0].productCategoryName}");
+                                          cname = "${element[0].productName}";
+                                          print(
+                                              "productName===> ${element[0].productName}");
+                                          print(
+                                              "productSellingPrice===> ${element[0].productSellingPrice}");
+                                          cvat = "${element[0].vat}";
+                                          print("vat===> ${element[0].vat}");
+                                          print(
+                                              "_quantityController ===> ${_quantityController.text}");
+                                          print(
+                                              "_quantityController ===> ${_quantityController.text}");
+                                          cpurchaseRate =
+                                              "${element[0].productPurchaseRate}";
+                                          print(
+                                              "productPurchaseRate===> ${element[0].productPurchaseRate}");
+                                          _VatController.text = "${element[0].vat}";
+                                          _salesRateController.text =
+                                              "${element[0].productSellingPrice}";
+                                          Total = (double.parse(
+                                                  _quantityController.text) *
+                                              double.parse(
+                                                  _salesRateController.text));
+                                          totalStack(cproductId);
+                                        });
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Select Product',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedProduct,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedProduct = newValue.toString();
+                            //         print(
+                            //             "Category Product Si No=========> $newValue");
+                            //
+                            //         final results = [
+                            //           CategoryWiseProductList.where((m) =>
+                            //                   m.productSlNo!.contains(
+                            //                       '$newValue')) // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //         results.forEach((element) async {
+                            //           element.add(element.first);
+                            //           print("dfhsghdfkhgkh");
+                            //           cproductId = "${element[0].productSlNo}";
+                            //           print(
+                            //               "productSlNo===> ${element[0].productSlNo}");
+                            //           ccategoryName =
+                            //               "${element[0].productCategoryName}";
+                            //           print(
+                            //               "productCategoryName===> ${element[0].productCategoryName}");
+                            //           cname = "${element[0].productName}";
+                            //           print(
+                            //               "productName===> ${element[0].productName}");
+                            //           print(
+                            //               "productSellingPrice===> ${element[0].productSellingPrice}");
+                            //           cvat = "${element[0].vat}";
+                            //           print("vat===> ${element[0].vat}");
+                            //           print(
+                            //               "_quantityController ===> ${_quantityController.text}");
+                            //           print(
+                            //               "_quantityController ===> ${_quantityController.text}");
+                            //           cpurchaseRate =
+                            //               "${element[0].productPurchaseRate}";
+                            //           print(
+                            //               "productPurchaseRate===> ${element[0].productPurchaseRate}");
+                            //           _VatController.text = "${element[0].vat}";
+                            //           _salesRateController.text =
+                            //               "${element[0].productSellingPrice}";
+                            //           Total = (double.parse(
+                            //                   _quantityController.text) *
+                            //               double.parse(
+                            //                   _salesRateController.text));
+                            //           totalStack(cproductId);
+                            //         });
+                            //       });
+                            //     },
+                            //     items: CategoryWiseProductList.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.productName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.productSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
@@ -778,12 +1156,12 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
 
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           "Sales Rate",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 22,
                         ),
                         Expanded(
@@ -791,26 +1169,26 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           child: Container(
                             height: 28.0,
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                               controller: _salesRateController,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 6),
+                                    const EdgeInsets.symmetric(horizontal: 6),
                                 hintText: "0",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -819,24 +1197,24 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
-                        Text(
+                        const Text(
                           "Qty",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
                           flex: 1,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                               // onTap: () {
@@ -860,19 +1238,19 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 6),
+                                    const EdgeInsets.symmetric(horizontal: 6),
                                 hintText: "0",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -883,13 +1261,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         ),
                       ],
                     ), // quantity
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 2,
                           child: Text(
                             "Amount",
@@ -897,45 +1275,45 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5, right: 5),
                             height: 30,
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 5, right: 5, top: 5, bottom: 5),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Text(
                               "$Total",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
-                        Text(
+                        const Text(
                           "Available Stock,",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(
                           "$availableStock",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
                       ],
@@ -944,7 +1322,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                       alignment: Alignment.bottomRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 6, 118, 170),
+                            backgroundColor:
+                                const Color.fromARGB(255, 6, 118, 170),
                           ),
                           onPressed: () {
                             setState(() {
@@ -966,16 +1345,16 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             });
                             totalStack(cproductId);
                           },
-                          child: Text("Add to cart")),
+                          child: const Text("Add to cart")),
                     ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
-                    Divider(thickness: 2),
+                    const Divider(thickness: 2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -990,7 +1369,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     fontSize: h2TextSize),
                               ),
                             )),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
@@ -1045,7 +1424,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             )),
                       ],
                     ),
-                    Divider(thickness: 2),
+                    const Divider(thickness: 2),
                   ],
                 ),
               ),
@@ -1187,8 +1566,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Container(
                       height: 30,
                       width: double.infinity,
-                      color: Color.fromARGB(255, 7, 125, 180),
-                      child: Center(
+                      color: const Color.fromARGB(255, 7, 125, 180),
+                      child: const Center(
                         child: Text(
                           'Amount Details',
                           style: TextStyle(
@@ -1202,7 +1581,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Sub Total",
@@ -1213,22 +1592,22 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                             flex: 3,
                             child: Container(
-                              margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                              margin: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$CartTotal",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 125, 125)),
                               ),
                             )),
@@ -1237,7 +1616,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Vat",
@@ -1249,9 +1628,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 2,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _VatController,
                               onChanged: (value) {
@@ -1265,20 +1644,20 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 6, vertical: 3),
                                 hintText: "0",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1287,33 +1666,33 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           "%",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
                             flex: 1,
                             child: Container(
-                              margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                              margin: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$TotalVat",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 125, 125)),
                               ),
                             )),
@@ -1322,7 +1701,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Discount",
@@ -1334,9 +1713,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 2,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _DiscountController,
                               onChanged: (value) {
@@ -1377,19 +1756,19 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 6),
+                                contentPadding: const EdgeInsets.only(left: 6),
                                 hintText: "0.00",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1398,19 +1777,19 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           "%",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
                           flex: 1,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
                               enabled: false,
                               controller: _discountPercentController,
@@ -1420,13 +1799,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1439,7 +1818,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Transport",
@@ -1451,9 +1830,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _transportController,
                               // onChanged: (value) {
@@ -1465,20 +1844,20 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 5, left: 5),
+                                    const EdgeInsets.only(top: 5, left: 5),
                                 hintText: "0",
                                 // hintText: "$DiccountTotal",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1492,7 +1871,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Total",
@@ -1503,22 +1882,22 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                             flex: 3,
                             child: Container(
-                              margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                              margin: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$Totaltc",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 125, 125)),
                                 //"$TransportTotal",
                               ),
@@ -1527,7 +1906,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Paid",
@@ -1539,9 +1918,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _paidController,
                               onChanged: (value) {
@@ -1561,20 +1940,20 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               },
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 6),
                                 hintText: "0",
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1588,7 +1967,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Previous Due",
@@ -1600,19 +1979,19 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: Color.fromARGB(255, 236, 6, 6),
                               ),
                               controller: _previousDueController,
                               //keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 hintText: "0",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                   fontSize: 14,
                                   color: Color.fromARGB(255, 236, 6, 6),
                                 ),
@@ -1620,13 +1999,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1639,7 +2018,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Due",
@@ -1650,21 +2029,21 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             height: 30,
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 5, right: 5, top: 5, bottom: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Text(
                               "$totalDueTc",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               // "$DiccountTotal"
                             ),
@@ -1682,7 +2061,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             onPressed: () {
                               if (DiccountTotal == 0) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                         content: Text("Please Add to Cart")));
                               } else {
                                 AddSales();
@@ -1690,23 +2069,25 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: Text("Sales Successfull"),
+                                      title: const Text("Sales Successfull"),
                                       actions: [
                                         ActionChip(
-                                          label: Text("Back"),
+                                          label: const Text("Back"),
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
                                         ),
                                         ActionChip(
-                                          label: Text("Home"),
+                                          label: const Text("Home"),
                                           onPressed: () {
                                             Navigator.pop(context);
                                             Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HomePage(name: "",),
+                                                      HomePage(
+                                                    name: "",
+                                                  ),
                                                 ));
                                           },
                                         ),
@@ -1718,16 +2099,17 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 DiccountTotal = 0;
                               }
                             },
-                            child: Text("Sale")),
-                        SizedBox(
+                            child: const Text("Sale")),
+                        const SizedBox(
                           width: 20,
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 6, 118, 170),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 6, 118, 170),
                             ),
                             onPressed: () {},
-                            child: Text("New Sale")),
+                            child: const Text("New Sale")),
                       ],
                     )
                   ],
@@ -1809,7 +2191,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
       var item = jsonDecode(response.data);
       print("${item["message"]}");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 1), content: Text("${item["message"]}")));
+          duration: const Duration(seconds: 1),
+          content: Text("${item["message"]}")));
       _nameController.text = "";
       _paidController.text = "";
       _discountPercentController.text = "";

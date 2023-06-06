@@ -34,33 +34,35 @@ class AllProductProvider extends ChangeNotifier {
   List<By_all_Customer> by_all_customer_list = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
 
-  Fatch_By_all_Customer(
+  Future<List<By_all_Customer>> Fatch_By_all_Customer(
       BuildContext context,
-      String? dateFrom,
+      {String? dateFrom,
       String? dateTo,
       String? customerId,
       String? employeeId,
       productId,
-      String? userFullName) async {
+      String? userFullName}) async {
     by_all_customer_list = await Api_Uzzal_implement_Class.FetchgetCustomers(
         dateFrom, dateTo, customerId, employeeId, productId, userFullName);
+    return by_all_customer_list;
     notifyListeners();
   }
   ////////////////////////////////By all Employee/////////////////////////
 
   List<By_all_employee_ModelClass> By_all_employee_ModelClass_List = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
-  Fatch_By_all_Employee(
+  Future<List<By_all_employee_ModelClass>> Fatch_By_all_Employee(
       BuildContext context,
-      String? dateFrom,
+      {String? dateFrom,
       String? dateTo,
       String? customerId,
       String? employeeId,
       productId,
-      String? userFullName) async {
+      String? userFullName}) async {
     By_all_employee_ModelClass_List =
         await Api_Uzzal_implement_Class.FetchAllEmployee(
             dateFrom, dateTo, customerId, employeeId, productId, userFullName);
+    return By_all_employee_ModelClass_List;
     notifyListeners();
   }
   ////////////////////////////////By all Salse Recorde Employee/////////////////////////
@@ -219,18 +221,20 @@ class AllProductProvider extends ChangeNotifier {
 
   ///////////Get User Wise Pruchase All////////////////// eita
   List<AllProductModelClass> CategoryWiseProductList = [];
-  CategoryWiseProduct(String? isService, String? categoryId) async {
+  Future<List<AllProductModelClass>>CategoryWiseProduct(
+      {String? isService, String? categoryId}) async {
     CategoryWiseProductList =
         await Api_Uzzal_implement_Class.CategoryWiseProduct(
             isService, categoryId);
+    return CategoryWiseProductList;
     notifyListeners();
 
-    List<Purchases> UserWisePurchasesList = [];
-    GetUserWisePurchase(
-        String? userFullName, String? dateFrom, String? dateTo) async {
-      UserWisePurchasesList =
-          await Api_Uzzal_implement_Class.GetUserWisePurchase(
-              userFullName, dateFrom, dateTo);
-    }
+    // List<Purchases> UserWisePurchasesList = [];
+    // GetUserWisePurchase(
+    //     String? userFullName, String? dateFrom, String? dateTo) async {
+    //   UserWisePurchasesList =
+    //       await Api_Uzzal_implement_Class.GetUserWisePurchase(
+    //           userFullName, dateFrom, dateTo);
+    // }
   }
 }

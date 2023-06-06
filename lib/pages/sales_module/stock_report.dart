@@ -32,7 +32,7 @@ class _StockReportPageState extends State<StockReportPage> {
   void initState() {
     Provider.of<CurrentStockProvider>(context, listen: false).getAllCurrentStockData(context);
     Provider.of<TotalStockProvider>(context, listen: false).getAllTotalStockData(context);
-    Provider.of<CategoryWiseStockProvider>(context, listen: false).getCategoryWiseStockData(context, categoryId);
+    Provider.of<CategoryWiseStockProvider>(context, listen: false).getCategoryWiseStockData(context, categoryId: categoryId);
     Provider.of<ProductWiseStockProvider>(context, listen: false).getProductWiseStockData(context, productId);
     // Provider.of<TotalStockWithCategoryProvider>(context, listen: false)
     //     .getAllTotalStockWithCategoryData(context, categoryId);
@@ -169,7 +169,7 @@ class _StockReportPageState extends State<StockReportPage> {
                                       setState(() {
                                         categoryId = "$newValue";
                                         Provider.of<CategoryWiseStockProvider>(context, listen: false)
-                                            .getCategoryWiseStockData(context, categoryId);
+                                            .getCategoryWiseStockData(context, categoryId: categoryId);
 
                                         print("Category Id============$newValue");
                                         _selectedCategory = newValue.toString();

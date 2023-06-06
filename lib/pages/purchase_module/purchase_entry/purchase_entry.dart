@@ -452,7 +452,7 @@ double TotalVat=0;
                                       productCategoryName="${element[0].productCategoryName}";});
                                     print(productCategoryName);
 
-                                    Provider.of<AllProductProvider>(context,listen: false).CategoryWiseProduct("false", newValue);
+                                    Provider.of<AllProductProvider>(context,listen: false).CategoryWiseProduct(isService: "false",categoryId: newValue);
                                   });
                                 },
                                 items: All_Category.map((location) {

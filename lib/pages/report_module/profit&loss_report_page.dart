@@ -178,14 +178,6 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                       setState(() {
                                         _selectedAccount = suggestion.customerSlNo.toString();
                                       });
-                                      // category = suggestion.slug;
-                                      // directoryBloc.add(
-                                      //     DirectoryEventSearch(
-                                      //         searchController.text
-                                      //             .trim(),
-                                      //         '10',
-                                      //         "az",
-                                      //         category));
                                     },
                                     onSaved: (value) {},
                                   );
@@ -193,42 +185,6 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                 return const SizedBox();
                               },
                             ),
-
-                            // child: DropdownButtonHideUnderline(
-                            //   child: DropdownButton(
-                            //     isExpanded: true,
-                            //     hint: const Text(
-                            //       'Select account',
-                            //       style: TextStyle(
-                            //         fontSize: 14,
-                            //       ),
-                            //     ),
-                            //     dropdownColor: const Color.fromARGB(255, 231, 251,
-                            //         255), // Not necessary for Option 1
-                            //     value: _selectedAccount,
-                            //     onChanged: (newValue) {
-                            //       setState(() {
-                            //         _selectedAccount = newValue.toString();
-                            //         print(
-                            //             "Customer Si no ===========>: $newValue");
-                            //         // Profit & Loss
-                            //
-                            //         //
-                            //       });
-                            //     },
-                            //     items: allCustomersData.map((location) {
-                            //       return DropdownMenuItem(
-                            //         child: Text(
-                            //           "${location.customerName}",
-                            //           style: const TextStyle(
-                            //             fontSize: 14,
-                            //           ),
-                            //         ),
-                            //         value: location.customerSlNo,
-                            //       );
-                            //     }).toList(),
-                            //   ),
-                            // ),
                           ),
                         ),
                       ],

@@ -52,13 +52,13 @@ class _HomePageState extends State<HomePage> {
         .FetchUserByUsergetAllSaleProduct(context);
     /////////All Employee ///////////
     Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Employee(context, "", "", "", "", "", "");
+        .Fatch_By_all_Employee(context, customerId: "", dateFrom: "",employeeId:  "", productId: "",userFullName:  "", dateTo: "");
     /////////All Customer ///////////
     Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Customer(context, "", "", "", "", "", "");
+        .Fatch_By_all_Customer(context, customerId: "", dateFrom: "", dateTo: "", employeeId: "", productId: "", userFullName: "");
     /////////All Category ///////////
     Provider.of<CategoryWiseStockProvider>(context, listen: false)
-        .getCategoryWiseStockData(context, "");
+        .getCategoryWiseStockData(context, categoryId: "");
     /////////All Product ///////////
     Provider.of<AllProductProvider>(context, listen: false)
         .FetchAllProduct(context);

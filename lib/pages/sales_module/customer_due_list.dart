@@ -25,7 +25,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
   @override
   void initState() {
     Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Customer(context, "", "", "", "", "", "");
+        .Fatch_By_all_Customer(context, userFullName: "", productId: "", employeeId: "",dateTo: "", dateFrom: "", customerId: "");
     Provider.of<AllProductProvider>(context, listen: false)
         .FetchOneCustomerDueListCustomerDueList(
       context,

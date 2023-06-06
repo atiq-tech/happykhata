@@ -109,13 +109,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         .getAllSalesRecordData(context, firstPickedDate, secondPickedDate,
             customerId, employeeId, productId, userFullName);
     Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Employee(context, firstPickedDate, secondPickedDate,
-            customerId, employeeId, productId, userFullName);
+        .Fatch_By_all_Employee(context, dateFrom: firstPickedDate,dateTo:  secondPickedDate,
+          customerId:   customerId,employeeId:  employeeId, productId: productId,userFullName:  userFullName);
     Provider.of<AllProductProvider>(context, listen: false)
         .getAllSalesRecordbyemployeeData(context, firstPickedDate,
             secondPickedDate, customerId, employeeId, productId, userFullName);
     Provider.of<CategoryWiseStockProvider>(context, listen: false)
-        .getCategoryWiseStockData(context, categoryId);
+        .getCategoryWiseStockData(context, categoryId: categoryId);
     super.initState();
   }
 

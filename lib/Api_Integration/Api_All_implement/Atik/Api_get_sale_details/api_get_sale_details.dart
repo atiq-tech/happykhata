@@ -11,6 +11,10 @@ class ApiGetSaleDetails {
     String Link = "${BaseUrl}api/v1/getSaleDetails";
     List<GetSaleDetailsMClass> getSaleDetailslist = [];
     GetSaleDetailsMClass getSaleDetailsMClass;
+    double totalQuantity=0.0;
+    String totalQty;
+    double totalTotal=0.0;
+    String totalT;
     try {
       Response response = await Dio().post(Link,
           data: {
@@ -33,6 +37,16 @@ class ApiGetSaleDetails {
       for (var i in data) {
         getSaleDetailsMClass = GetSaleDetailsMClass.fromJson(i);
         getSaleDetailslist.add(getSaleDetailsMClass);
+        //Quantity
+        totalQuantity += double.parse(
+            "${GetSaleDetailsMClass.fromJson(i).saleDetailsTotalQuantity}");
+        totalQty = totalQuantity.toStringAsFixed(2);
+        GetStorage().write("totalQuantity", totalQty);
+        //Total
+        totalTotal += double.parse(
+            "${GetSaleDetailsMClass.fromJson(i).saleDetailsTotalAmount}");
+        totalT = totalTotal.toStringAsFixed(2);
+        GetStorage().write("totalTotal", totalT);
       }
 
       print(

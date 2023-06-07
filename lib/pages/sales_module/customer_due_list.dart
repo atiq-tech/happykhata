@@ -16,21 +16,24 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
   bool isselectByAll = false;
   bool isselectByCustomer = false;
   double thFontSize = 10.0;
-  String data = 'By all';
+  //String data = 'By all';
 
-  List<String> _types = ['By all', 'By Customer'];
+  List<String> _types = [
+    'By all',
+    'By Customer',
+  ];
   bool isLoading = false; //loading circularprogress indicator
   String? _selectedTypes;
-  String? _selecteddTypes;
+  String? _selectedCustomer;
   @override
   void initState() {
-    Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Customer(context, userFullName: "", productId: "", employeeId: "",dateTo: "", dateFrom: "", customerId: "");
-    Provider.of<AllProductProvider>(context, listen: false)
-        .FetchOneCustomerDueListCustomerDueList(
-      context,
-      "",
-    );
+    // Provider.of<AllProductProvider>(context, listen: false)
+    //     .Fatch_By_all_Customer(context, userFullName: "", productId: "", employeeId: "",dateTo: "", dateFrom: "", customerId: "");
+    // Provider.of<AllProductProvider>(context, listen: false)
+    //     .FetchOneCustomerDueListCustomerDueList(
+    //   context,
+    //   "",
+    // );
 
     // TODO: implement initState
     super.initState();
@@ -65,7 +68,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          "By all",
+                          "Search Type",
                           style: TextStyle(
                             fontSize: 14,
                           ),
@@ -96,23 +99,31 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                               ), // Not necessary for Option 1
                               value: _selectedTypes,
                               onChanged: (newValue) {
-                                setState(() {
-                                  isLoading = true;
-                                });
+                                // setState(() {
+                                //   isLoading = true;
+                                // });
                                 setState(() {
                                   _selectedTypes = newValue!;
-                                  if (newValue.toString() == "By all") {
+                                  if (_selectedTypes== "By Customer") {
                                     isselectByAll = false;
                                     isselectByCustomer = false;
                                   } else {
                                     isselectByAll = true;
                                   }
+                                  // Provider.of<AllProductProvider>(context, listen: false)
+                                  //      .Fatch_By_all_Customer(context,
+                                  //     userFullName: "",
+                                  //     productId: "",
+                                  //     employeeId: "",
+                                  //     dateTo: "",
+                                  //     dateFrom: "",
+                                  //     customerId: "");
                                 });
-                                Future.delayed(Duration(seconds: 3), () {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                });
+                                // Future.delayed(Duration(seconds: 3), () {
+                                //   setState(() {
+                                //     isLoading = false;
+                                //   });
+                                // });
                               },
                               items: _types.map((location) {
                                 return DropdownMenuItem(
@@ -135,7 +146,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
               ],
             ),
           ),
-          isselectByAll == true
+          isselectByCustomer == true
               ? Container(
                   padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
                   child: Column(
@@ -171,34 +182,24 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                                     child: DropdownButton(
                                       isExpanded: true,
                                       hint: Text(
-                                        'Please select a type',
+                                        'Please select Customer',
                                         style: TextStyle(
                                           fontSize: 14,
                                         ),
                                       ), // Not necessary for Option 1
-                                      value: _selecteddTypes,
+                                      value: _selectedCustomer,
                                       onChanged: (newValue) {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        setState(() {
-                                          _selecteddTypes = newValue.toString();
+                                        // setState(() {
+                                        //   isLoading = true;
+                                        // });
+                                        _selectedCustomer = newValue.toString();
 
-                                          Provider.of<AllProductProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .FetchAllCustomerDueList(
-                                            context,
-                                            "$newValue",
-                                          );
-                                          isselectByCustomer = true;
-                                        });
-                                        Future.delayed(Duration(seconds: 3),
-                                            () {
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                        });
+                                        // Future.delayed(Duration(seconds: 3),
+                                        //     () {
+                                        //   setState(() {
+                                        //     isLoading = false;
+                                        //   });
+                                        // });
                                       },
                                       items: get_all_customer.map((location) {
                                         return DropdownMenuItem(
@@ -221,6 +222,46 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                   ),
                 )
               : Container(),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              margin:EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+              color: const Color.fromARGB(255, 3, 91, 150),
+              padding: const EdgeInsets.all(1.0),
+              child: InkWell(
+                onTap: () {
+
+                 setState(() {
+                   Provider.of<AllProductProvider>(
+                       context,
+                       listen: false)
+                       .FetchAllCustomerDueList(
+                     context,
+                     "$_selectedCustomer",
+                   );
+                   print(
+                       "Customer due report======================::${_selectedCustomer}");
+                 });
+                },
+                child: Container(
+                  height: 30.0,
+                  width: 120.0,
+
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 4, 113, 185),
+                    borderRadius: BorderRadius.circular(3.0),
+                  ),
+                  child: const Center(
+                      child: Text(
+                        "Show Report",
+                        style: TextStyle(color: Colors.white),
+                      )),
+                ),
+
+              )
+            ),
+          ),
+
           Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),

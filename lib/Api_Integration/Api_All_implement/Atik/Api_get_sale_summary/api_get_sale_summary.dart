@@ -15,6 +15,10 @@ class ApiGetSaleSummary {
     String Link = "${BaseUrl}api/v1/getSaleSummary";
     List<GetSaleSummaryMClass> getSaleSummarylist = [];
     GetSaleSummaryMClass getSaleSummaryMClass;
+    double totalQuantity=0.0;
+    String totalQty;
+    double totalTotal=0.0;
+    String totalT;
     try {
       Response response = await Dio().post(Link,
           data: {
@@ -27,14 +31,21 @@ class ApiGetSaleSummary {
             "Authorization": "Bearer ${GetStorage().read("token")}",
           }));
       print("getSaleSummarylist===::===getSaleSummarylist:${response.data}");
-      print("===========++++++=============");
-      print("getSaleSummarylist getSaleSummarylist getSaleSummarylist");
-      print("============++++++=========");
       var data = jsonDecode(response.data);
       print("getSaleSummarylist===========getSaleSummarylist=======: ${data}");
       for (var i in data) {
         getSaleSummaryMClass = GetSaleSummaryMClass.fromJson(i);
         getSaleSummarylist.add(getSaleSummaryMClass);
+        //Quantity
+        totalQuantity += double.parse(
+            "${GetSaleSummaryMClass.fromJson(i).totalSaleQty}");
+        totalQty = totalQuantity.toStringAsFixed(2);
+        GetStorage().write("totalQuantity", totalQty);
+        //Total
+        totalTotal += double.parse(
+            "${GetSaleSummaryMClass.fromJson(i).totalSaleAmount}");
+        totalT = totalTotal.toStringAsFixed(2);
+        GetStorage().write("totalTotal", totalT);
       }
       print(
           "getSaleSummarylist getSaleSummarylist length is ${getSaleSummarylist.length}");

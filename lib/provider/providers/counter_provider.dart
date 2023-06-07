@@ -30,6 +30,7 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_get_purchase_det
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_get_sale_details/api_get_sale_details.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_get_sale_summary/api_get_sale_summary.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_get_sales_record/api_get_sales_record.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Atik/api_get_purchases/api_get_purchases.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/All_Shift_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Get_purchase_record_all.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_accounts_model_class.dart';
@@ -56,6 +57,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/get_customer_cateMClass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/get_customer_product_Mclass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/get_purchase_details.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/get_purchases_mclass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/get_sale_summaryMClass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/production_record_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/productions_ModelClass.dart';
@@ -66,16 +68,18 @@ import '../../Api_Integration/Api_Modelclass/get_sale_details_MClass.dart';
 class CounterProvider extends ChangeNotifier {
   //production record
   List<ProductionRecordModelClass> allProductionRecordlist = [];
-  getProductionRecord(
-      BuildContext context, String? dateFrom, String? dateTo) async {
+
+  getProductionRecord(BuildContext context, String? dateFrom,
+      String? dateTo) async {
     allProductionRecordlist =
-        await ApiallProductionRecord.GetApiProductionRecord(
-            context, dateFrom, dateTo);
+    await ApiallProductionRecord.GetApiProductionRecord(
+        context, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Get Suppliers
   List<AllSuppliersClass> allSupplierslist = [];
+
   getSupplier(BuildContext context) async {
     allSupplierslist = await ApiAllSuppliers.GetApiAllSuppliers(context);
     notifyListeners();
@@ -83,17 +87,19 @@ class CounterProvider extends ChangeNotifier {
 
   //Meterial purchase record
   List<Purchases> allPurchaseslist = [];
-  getMeterialPurchaseRecord(
-      context, String? supplier_id, String? dateFrom, String? dateTo) async {
+
+  getMeterialPurchaseRecord(context, String? supplier_id, String? dateFrom,
+      String? dateTo) async {
     allPurchaseslist =
-        await ApiAllMeterialPurchaseRecord.GetApiAllMeterialPurchaseRecord(
-            context, supplier_id, dateFrom, dateTo);
+    await ApiAllMeterialPurchaseRecord.GetApiAllMeterialPurchaseRecord(
+        context, supplier_id, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Customers/////////////
   List<AllCustomersClass> allCustomerslist = [];
-  Future<List<AllCustomersClass>>getCustomers(BuildContext context) async {
+
+  Future<List<AllCustomersClass>> getCustomers(BuildContext context) async {
     allCustomerslist = await ApiAllCustomers.GetApiAllCustomers(context);
     return allCustomerslist;
     notifyListeners();
@@ -101,8 +107,9 @@ class CounterProvider extends ChangeNotifier {
 
   //Profit & Loss
   List<AllProfitLossClass> allProfitLosslist = [];
-  getProfitLoss(
-      context, String? customer, String? dateFrom, String? dateTo) async {
+
+  getProfitLoss(context, String? customer, String? dateFrom,
+      String? dateTo) async {
     allProfitLosslist = await ApiAllProfitLoss.GetApiAllProfitLoss(
         context, customer, dateFrom, dateTo);
     notifyListeners();
@@ -110,6 +117,7 @@ class CounterProvider extends ChangeNotifier {
 
   //Products
   List<AllProductsClass> allProductslist = [];
+
   getProducts(BuildContext context) async {
     allProductslist = await ApiAllProducts.GetApiAllProducts(context);
     notifyListeners();
@@ -117,8 +125,9 @@ class CounterProvider extends ChangeNotifier {
 
   //Product Ledger
   List<Ledger> allProductLedgerlist = [];
-  getProductLedger(
-      context, String? productId, String? dateFrom, String? dateTo) async {
+
+  getProductLedger(context, String? productId, String? dateFrom,
+      String? dateTo) async {
     allProductLedgerlist = await ApiAllProductLedger.GetApiAllProductLedger(
         context, productId, dateFrom, dateTo);
     notifyListeners();
@@ -126,24 +135,25 @@ class CounterProvider extends ChangeNotifier {
 
   //Supplier Due
   List<AllSupplierDueClass> allSupplierDuelist = [];
+
   getSupplierDue(context, String? supplierId) async {
     allSupplierDuelist =
-        await ApiAllSupplierDue.GetApiAllSupplierDue(context, supplierId);
+    await ApiAllSupplierDue.GetApiAllSupplierDue(context, supplierId);
     notifyListeners();
   }
 
   //Supplier Due
   List<AllSupplierDueClass> alllSupplierDuelist = [];
-  getSupplierDuee(
-    context,
-  ) async {
+
+  getSupplierDuee(context,) async {
     allSupplierDuelist =
-        await ApiAllSupplierDue.GetApiAllSupplierDue(context, "");
+    await ApiAllSupplierDue.GetApiAllSupplierDue(context, "");
     notifyListeners();
   }
 
   //ACCOUNTS
   List<AllAccountsModelClass> allAccountslist = [];
+
   getAccounts(BuildContext context) async {
     allAccountslist = await ApiAllAccounts.GetApiAllAccounts(context);
     notifyListeners();
@@ -151,70 +161,78 @@ class CounterProvider extends ChangeNotifier {
 
   //CashTransactions
   List<AllCashTransactionsClass> allCashTransactionslist = [];
+
   getCashTransactions(context, String? transactionType, String? accountId,
       String? dateFrom, String? dateTo) async {
     allCashTransactionslist =
-        await ApiAllCashTransactions.GetApiAllCashTransactions(
-            context, transactionType, accountId, dateFrom, dateTo);
+    await ApiAllCashTransactions.GetApiAllCashTransactions(
+        context, transactionType, accountId, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Get CashTransactions
   List<AllGetCashTransactionsClass> allGetCashTransactionslist = [];
+
   getGetCashTransactions(context, String? dateFrom, String? dateTo) async {
     allGetCashTransactionslist =
-        await ApiAllGetCashTransactions.GetApiAllGetCashTransactions(
-            context, dateFrom, dateTo);
+    await ApiAllGetCashTransactions.GetApiAllGetCashTransactions(
+        context, dateFrom, dateTo);
     notifyListeners();
   }
 
   // Bank ACCOUNTS
   List<AllBankAccountModelClass> allBankAccountlist = [];
+
   getBankAccounts(BuildContext context) async {
     allBankAccountlist =
-        await ApiAllBankAccounts.GetApiAllBankAccounts(context);
+    await ApiAllBankAccounts.GetApiAllBankAccounts(context);
     notifyListeners();
   }
 
   //Get bankTransactions
   List<AllGetBankTransactionClass> allGetBankTransactionslist = [];
+
   getGetBankTransactions(context, String? dateFrom, String? dateTo) async {
     allGetBankTransactionslist =
-        await ApiAllGetBankTransactions.GetApiAllGetBankTransactions(
-            context, dateFrom, dateTo);
+    await ApiAllGetBankTransactions.GetApiAllGetBankTransactions(
+        context, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Bank Transactions
   List<AllBankTransactionModelClass> allBankTransactionslist = [];
+
   getBankTransactions(context, String? accountId, String? dateFrom,
       String? dateTo, String? transactionType) async {
     allBankTransactionslist =
-        await ApiAllBankTransactions.GetApiAllBankTransactions(
-            context, accountId, dateFrom, dateTo, transactionType);
+    await ApiAllBankTransactions.GetApiAllBankTransactions(
+        context, accountId, dateFrom, dateTo, transactionType);
     notifyListeners();
   }
 
   //  //  // Get CustomerPayment
   List<AllGetCustomerPaymentClass> allGetCustomerPaymentlist = [];
+
   getGetCustomerPayment(context, String? dateFrom, String? dateTo) async {
     allGetCustomerPaymentlist =
-        await ApiAllGetCustomerPayments.GetApiAllGetCustomerPayments(
-            context, dateFrom, dateTo);
+    await ApiAllGetCustomerPayments.GetApiAllGetCustomerPayments(
+        context, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Get Supplier Payment
   List<AllGetSupplierPaymentClass> allGetSupplierPaymentlist = [];
+
   getGetSupplierPayment(context, String? dateFrom, String? dateTo) async {
     allGetSupplierPaymentlist =
-        await ApiAllGetSupplierPayments.GetApiAllGetSupplierPayments(
-            context, dateFrom, dateTo);
+    await ApiAllGetSupplierPayments.GetApiAllGetSupplierPayments(
+        context, dateFrom, dateTo);
     notifyListeners();
   }
 
   //Category
   List<AllCategoryClass> allCategorylist = [];
+
   getCategory(BuildContext context) async {
     allCategorylist = await ApiAllCategory.GetApiAllCategory(context);
     notifyListeners();
@@ -222,6 +240,7 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Units
   List<AllGetUnitsClass> allUnitslist = [];
+
   getUnits(BuildContext context) async {
     allUnitslist = await ApiAllGetUnits.GetApiAllUnits(context);
     notifyListeners();
@@ -229,6 +248,7 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Districts area
   List<AllGetDistricesClass> allDistrictslist = [];
+
   getDistricts(BuildContext context) async {
     allDistrictslist = await ApiAllGetDistricts.GetApiAllDistricts(context);
     notifyListeners();
@@ -236,6 +256,7 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Material
   List<AllGetMaterialClass> allGetMateriallist = [];
+
   getMaterials(BuildContext context) async {
     allGetMateriallist = await ApiAllGetMaterial.GetApiAllGetMaterial(context);
     notifyListeners();
@@ -243,6 +264,7 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Shift
   List<AllShiftModelClass> allGetShiftlist = [];
+
   getShift(BuildContext context) async {
     allGetShiftlist = await ApiAllGetShift.GetApiAllGetShift(context);
     notifyListeners();
@@ -250,17 +272,19 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Employee//Incharge
   List<AllGetEmployeeClass> allGetEmployeelist = [];
+
   getEmployees(BuildContext context) async {
     allGetEmployeelist =
-        await ApiAllGetEmployees.GetApiAllGetEmployees(context);
+    await ApiAllGetEmployees.GetApiAllGetEmployees(context);
     notifyListeners();
   }
 
   //Get productions
   List<ProductionsModelClass> allProductionslist = [];
+
   getProductions(BuildContext context) async {
     allProductionslist =
-        await ApiallGetProductions.GetApiGetProductions(context);
+    await ApiallGetProductions.GetApiGetProductions(context);
     notifyListeners();
   }
 
@@ -275,25 +299,25 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Purchase Details
   List<GetPurchaseDetailsModelClass> getPurchaseDetailslist = [];
+
   getPurchaseDetails(context, String? categoryId, String? dateFrom,
       String? dateTo, String? productId, String? supplierId) async {
     getPurchaseDetailslist =
-        await ApiGetPurchaseDetails.GetApiGetPurchaseDetails(
-            context, categoryId, dateFrom, dateTo, productId, supplierId);
+    await ApiGetPurchaseDetails.GetApiGetPurchaseDetails(
+        context, categoryId, dateFrom, dateTo, productId, supplierId);
     notifyListeners();
   }
 
   //Get Sales
   List<Sales> getSaleslist = [];
-  getSales(
-    context,
-    String? customerId,
-    String? dateFrom,
-    String? dateTo,
-    String? employeeId,
-    String? productId,
-    String? userFullName,
-  ) async {
+
+  getSales(context,
+      String? customerId,
+      String? dateFrom,
+      String? dateTo,
+      String? employeeId,
+      String? productId,
+      String? userFullName,) async {
     getSaleslist = await ApiGetSales.GetApiGetSales(
       context,
       customerId,
@@ -308,15 +332,14 @@ class CounterProvider extends ChangeNotifier {
 
   //Get Sales record
   List<SalseRecordModelClass> getSalesRecordlist = [];
-  getSalesRecord(
-    context,
-    String? customerId,
-    String? dateFrom,
-    String? dateTo,
-    String? employeeId,
-    String? productId,
-    String? userFullName,
-  ) async {
+
+  getSalesRecord(context,
+      String? customerId,
+      String? dateFrom,
+      String? dateTo,
+      String? employeeId,
+      String? productId,
+      String? userFullName,) async {
     getSalesRecordlist = await ApiGetSalesRecord.GetApiGetSalesRecord(
       context,
       customerId,
@@ -328,34 +351,61 @@ class CounterProvider extends ChangeNotifier {
     );
     notifyListeners();
   }
-   //Get_Customer_products
+
+  //Get_Customer_products
   List<GetCustomerProductsMclass> getCustomerProductslist = [];
-  getCustomer_products(BuildContext context,String? customerId) async {
+
+  getCustomer_products(BuildContext context, String? customerId) async {
     getCustomerProductslist =
-        await ApiGetCustomerProducts.GetApiGetCustomerProducts(context,customerId);
+    await ApiGetCustomerProducts.GetApiGetCustomerProducts(context, customerId);
     notifyListeners();
   }
-   //Get_Customer_Categoris
+
+  //Get_Customer_Categoris
   List<GetCustomerCateMClass> getCustomerCategorieslist = [];
-  getCustomer_Categoris(BuildContext context,String? customerId) async {
+
+  getCustomer_Categoris(BuildContext context, String? customerId) async {
     getCustomerCategorieslist =
-        await ApiGetCustomerCategories.GetApiGetCustomerCategories(context,customerId);
+    await ApiGetCustomerCategories.GetApiGetCustomerCategories(
+        context, customerId);
     notifyListeners();
   }
+
 //get sale summary
- List<GetSaleSummaryMClass> getSaleSummarylist = [];
+  List<GetSaleSummaryMClass> getSaleSummarylist = [];
+
   getSaleSummary(BuildContext context, String? dateFrom, String? dateTo,
       String? productId) async {
     getSaleSummarylist = await ApiGetSaleSummary.GetApiGetSaleSummary(
         context, dateFrom, dateTo, productId);
     notifyListeners();
   }
-    //Get Sale_Details
+
+  //Get Sale_Details
   List<GetSaleDetailsMClass> getSaleDetailslist = [];
-  getSaleDetails(context, String? categoryId, String? customerId, String? dateFrom,
+
+  getSaleDetails(context, String? categoryId, String? customerId,
+      String? dateFrom,
       String? dateTo, String? productId) async {
     getSaleDetailslist =
-        await ApiGetSaleDetails.GetApiGetSaleDetails(context,categoryId,customerId,dateFrom,dateTo,productId);
+    await ApiGetSaleDetails.GetApiGetSaleDetails(
+        context, categoryId, customerId, dateFrom, dateTo, productId);
+    notifyListeners();
+  }
+
+  //Get Sales
+  List<Purchasess> getPurchasesslist = [];
+
+  getPurchasess(context,
+      String? dateFrom,
+      String? dateTo,
+      String? userFullName,) async {
+    getPurchasesslist = await ApiGetPurchases.GetApiGetPurchases(
+      context,
+      dateFrom,
+      dateTo,
+      userFullName,
+    );
     notifyListeners();
   }
 }

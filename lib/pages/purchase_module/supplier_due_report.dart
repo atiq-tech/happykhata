@@ -78,6 +78,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
+                          //
                           Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,

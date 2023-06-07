@@ -20,7 +20,7 @@ class PurchaseRecord extends StatefulWidget {
 
 class _PurchaseRecordState extends State<PurchaseRecord> {
   //main dropdowns logic
-  bool isAllTypeClicked = false;
+  bool isAllTypeClicked = true;
   bool isCategoryWiseClicked = false;
   bool isQuantityWiseClicked = false;
   bool isUserWiseClicked = false;
@@ -31,7 +31,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
 
   // dropdown value
   String? userFullName;
-  String? _selectedSearchTypes;
+  String? _selectedSearchTypes = "All";
   String? _selectedRecordTypes;
   String? _selectedCustomerTypes;
   String? _selectedQuantityProductTypes;
@@ -99,6 +99,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
 
   @override
   Widget build(BuildContext context) {
+    //get Purchases
+    final allGetPurchasesData = Provider.of<CounterProvider>(context).getPurchasesslist;
+    print("Get Sales length=====> ${allGetPurchasesData.length} ");
     final All_Purchase_list =
         Provider.of<AllProductProvider>(context).PurchasesList;
     final All_Actegory_List = Provider.of<CategoryWiseStockProvider>(context)
@@ -177,10 +180,12 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     _selectedSearchTypes = newValue!;
-
+                                    // _selectedSearchTypes == "All"
+                                    //     ? data = "showAllWithoutDetails"
+                                    //     : "";
                                     _selectedSearchTypes == "All"
-                                        ? data = "showAllWithoutDetails"
-                                        : "";
+                                        ?isAllTypeClicked = true
+                                        :isAllTypeClicked = false;
 
                                     _selectedSearchTypes == "By Category"
                                         ? isCategoryWiseClicked = true
@@ -212,6 +217,72 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                     ],
                   ),
                 ),
+                isAllTypeClicked == true
+                    ? Row(
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "Record Type:",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
+                          height: 30,
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 7, 125, 180),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              isExpanded: true,
+                              hint: const Text(
+                                'Please select a record type',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ), // Not necessary for Option 1
+                              value: _selectedRecordTypes,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _selectedRecordTypes = newValue!;
+                                  _selectedRecordTypes ==
+                                      "Without Details"
+                                      ? isWithoutDetailsClicked = true
+                                      : isWithoutDetailsClicked = false;
+                                  _selectedRecordTypes == "With Details"
+                                      ? isWithDetailsClicked = true
+                                      : isWithDetailsClicked = false;
+                                });
+                              },
+                              items: _recordType.map((location) {
+                                return DropdownMenuItem(
+                                  value: location,
+                                  child: Text(
+                                    location,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          )),
+                    ),
+                  ],
+                )
+                    : Container(),
+
                 isCategoryWiseClicked == true
                     ? Column(
                         children: [
@@ -678,8 +749,21 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           // AllType
                           if (isAllTypeClicked && isWithoutDetailsClicked) {
                             data = 'showAllWithoutDetails';
+                            Provider.of<CounterProvider>(context,listen: false)
+                                .getPurchasess(
+                                context,
+                               "$firstPickedDate",
+                                "${secondPickedDate}",
+                                "");
                           } else if (isAllTypeClicked && isWithDetailsClicked) {
-                            data = 'showAllWithoutDetails';
+                            data = 'showAllWithDetails';
+                            Provider.of<CounterProvider>(context, listen: false)
+                                .getPurchaseRecord(
+                              context,
+                              "$firstPickedDate",
+                              "${secondPickedDate}",
+                              "",
+                            );
                           }
 
                           // By Category
@@ -766,108 +850,514 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             scrollDirection: Axis.vertical,
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: Container(
-                                // color: Colors.red,
-                                // padding:EdgeInsets.only(bottom: 16.0),
-                                child: DataTable(
-                                  showCheckboxColumn: true,
-                                  border: TableBorder.all(
-                                      color: Colors.black54, width: 1),
-                                  columns: [
-                                    DataColumn(
-                                      label: Center(child: Text('Invoice No')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Date')),
-                                    ),
-                                    DataColumn(
-                                      label:
-                                          Center(child: Text('Supplier Name')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Sub Total')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Discount')),
-                                    ),
-                                    DataColumn(
-                                      label:
-                                          Center(child: Text('Transport Cost')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Total')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Paid')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Due')),
-                                    ),
-                                    // DataColumn(
-                                    //   label: Center(child: Text('Action')),
-                                    // ),
-                                  ],
-                                  rows: List.generate(
-                                    All_Purchase_list.length,
-                                    (int index) => DataRow(
-                                      cells: <DataCell>[
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterInvoiceNo}')),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    // color: Colors.red,
+                                    // padding:EdgeInsets.only(bottom: 16.0),
+                                    child: DataTable(
+                                      showCheckboxColumn: true,
+                                      border: TableBorder.all(
+                                          color: Colors.black54, width: 1),
+                                      columns: [
+                                        DataColumn(
+                                          label: Center(child: Text('Invoice No')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterOrderDate}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Date')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].supplierName}')),
+                                        DataColumn(
+                                          label:
+                                              Center(child: Text('Supplier Name')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterSubTotalAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Sub Total')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterTax}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Discount')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterDiscountAmount}')),
+                                        DataColumn(
+                                          label:
+                                              Center(child: Text('Transport Cost')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterFreight}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Total')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterTotalAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Paid')),
                                         ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${All_Purchase_list[index].purchaseMasterPaidAmount}')),
+                                        DataColumn(
+                                          label: Center(child: Text('Due')),
                                         ),
-                                        // DataCell(
-                                        //   Center(child: Text('Action')),
-                                        // ),
+
+                                      ],
+                                      rows: List.generate(
+                                        allGetPurchasesData.length,
+                                        (int index) => DataRow(
+                                          cells: <DataCell>[
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterInvoiceNo}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterOrderDate}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].supplierName}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterSubTotalAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterTax}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterDiscountAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterFreight}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterTotalAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterPaidAmount}')),
+                                            ),
+                                            // DataCell(
+                                            //   Center(child: Text('Action')),
+                                            // ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text(//111111
+                                              "Sub Total              :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalSalesSubtotal")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(//2222
+                                              "Total Vat               :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalVat")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(//3333333333
+                                              "Total Discount     :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalDiscount")}",
+                                              style: const TextStyle(
+                                                  fontSize:14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(//4444444
+                                              "Total Trans.Cost  :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalTransCost")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(//5555555
+                                              "Total                      :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalTotal")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(//6666666
+                                              "Total Paid             :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalPaid")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+
+                                          children: [
+                                            const Text(//77777777
+                                              "Total Due              :  ",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            allGetPurchasesData
+                                                .length ==
+                                                0
+                                                ? const Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  fontSize: 14),
+                                            )
+                                                : Text(
+                                              "${GetStorage().read("totalDue")}",
+                                              style: const TextStyle(
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+
                                       ],
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                 )
+          :data == 'showAllWithDetails' ? Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn: true,
+                      border: TableBorder.all(
+                          color: Colors.black54, width: 1),
+                      columns: [
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Supplier Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Price')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Total')),
+                        ),
+                        // DataColumn(
+                        //   label: Center(child: Text('Action')),
+                        // ),
+                      ],
+                      rows: List.generate(
+                        allPurchaseRecordData.length,
+                            (int index) => DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allPurchaseRecordData[index].purchaseMasterInvoiceNo}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allPurchaseRecordData[index].purchaseMasterOrderDate}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allPurchaseRecordData[index].supplierName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(
+                                        context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allPurchaseRecordData[
+                                      index]
+                                          .purchaseDetails!
+                                          .length,
+                                      itemBuilder:
+                                          (context, j) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                  0.1,
+                                                  color: Colors
+                                                      .black)),
+                                          child: Center(
+                                            child: Text(
+                                                "${allPurchaseRecordData[index].purchaseDetails![j].productName}"),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(
+                                        context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allPurchaseRecordData[
+                                      index]
+                                          .purchaseDetails!
+                                          .length,
+                                      itemBuilder:
+                                          (context, j) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                  0.1,
+                                                  color: Colors
+                                                      .black)),
+                                          child: Center(
+                                            child: Text(
+                                                "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsRate}"),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(
+                                        context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allPurchaseRecordData[
+                                      index]
+                                          .purchaseDetails!
+                                          .length,
+                                      itemBuilder:
+                                          (context, j) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                  0.1,
+                                                  color: Colors
+                                                      .black)),
+                                          child: Center(
+                                            child: Text(
+                                                "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsTotalQuantity}"),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(
+                                        context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allPurchaseRecordData[
+                                      index]
+                                          .purchaseDetails!
+                                          .length,
+                                      itemBuilder:
+                                          (context, j) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                  0.1,
+                                                  color: Colors
+                                                      .black)),
+                                          child: Center(
+                                            child: Text(
+                                                "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsTotalAmount}"),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )),
+                            ),
+                            // DataCell(
+                            //   Center(child: Text('Action')),
+                            // ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
               : data == 'showByCategoryDetails'
                   ? Expanded(
                       child: isLoading
@@ -879,103 +1369,20 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 scrollDirection: Axis.vertical,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    child: DataTable(
-                                      showCheckboxColumn: true,
-                                      border: TableBorder.all(
-                                          color: Colors.black54, width: 1),
-                                      columns: [
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Invoice No')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Date')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Supplier Name')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Product Name')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Purchases  Rate')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Quantity')),
-                                        ),
-                                      ],
-                                      rows: List.generate(
-                                        allPurchaseDetailsData.length,
-                                        (int index) => DataRow(
-                                          cells: <DataCell>[
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].purchaseMasterInvoiceNo}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].purchaseMasterOrderDate}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].supplierName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].productName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].purchaseDetailsRate}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allPurchaseDetailsData[index].purchaseDetailsTotalQuantity}')),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                    )
-                  : data == 'showByQuantityDetails'
-                      ? Expanded(
-                          child: isLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : Container(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Container(
+                                  child: Column(
+                                    children: [
+                                      Container(
                                         child: DataTable(
                                           showCheckboxColumn: true,
                                           border: TableBorder.all(
                                               color: Colors.black54, width: 1),
                                           columns: [
                                             DataColumn(
-                                              label: Center(
-                                                  child: Text('Invoice No')),
+                                              label:
+                                                  Center(child: Text('Invoice No')),
                                             ),
                                             DataColumn(
-                                              label:
-                                                  Center(child: Text('Date')),
+                                              label: Center(child: Text('Date')),
                                             ),
                                             DataColumn(
                                               label: Center(
@@ -987,12 +1394,11 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                             ),
                                             DataColumn(
                                               label: Center(
-                                                  child:
-                                                      Text('Purchases Rate')),
+                                                  child: Text('Purchases  Rate')),
                                             ),
                                             DataColumn(
-                                              label: Center(
-                                                  child: Text('Quantity')),
+                                              label:
+                                                  Center(child: Text('Quantity')),
                                             ),
                                           ],
                                           rows: List.generate(
@@ -1034,6 +1440,155 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           ),
                                         ),
                                       ),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 700.0),
+                                          child: Row(
+                                            children: [
+                                              const Text(
+                                                "Total Quantity :  ",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 14),
+                                              ),
+                                              allPurchaseDetailsData
+                                                  .length ==
+                                                  0
+                                                  ? const Text(
+                                                "0",
+                                                style: TextStyle(
+                                                    fontSize: 14),
+                                              )
+                                                  : Text(
+                                                "${GetStorage().read("totalQuantity")}",
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                    )
+                  : data == 'showByQuantityDetails'
+                      ? Expanded(
+                          child: isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            child: DataTable(
+                                              showCheckboxColumn: true,
+                                              border: TableBorder.all(
+                                                  color: Colors.black54, width: 1),
+                                              columns: [
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Invoice No')),
+                                                ),
+                                                DataColumn(
+                                                  label:
+                                                      Center(child: Text('Date')),
+                                                ),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Supplier Name')),
+                                                ),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Product Name')),
+                                                ),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child:
+                                                          Text('Purchases Rate')),
+                                                ),
+                                                DataColumn(
+                                                  label: Center(
+                                                      child: Text('Quantity')),
+                                                ),
+                                              ],
+                                              rows: List.generate(
+                                                allPurchaseDetailsData.length,
+                                                (int index) => DataRow(
+                                                  cells: <DataCell>[
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].purchaseMasterInvoiceNo}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].purchaseMasterOrderDate}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].supplierName}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].productName}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].purchaseDetailsRate}')),
+                                                    ),
+                                                    DataCell(
+                                                      Center(
+                                                          child: Text(
+                                                              '${allPurchaseDetailsData[index].purchaseDetailsTotalQuantity}')),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 600.0),
+                                            child: Row(
+                                              children: [
+                                                const Text(
+                                                  "Total Quantity :  ",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14),
+                                                ),
+                                                allPurchaseDetailsData
+                                                    .length ==
+                                                    0
+                                                    ? const Text(
+                                                  "0",
+                                                  style: TextStyle(
+                                                      fontSize: 14),
+                                                )
+                                                    : Text(
+                                                  "${GetStorage().read("totalQuantity")}",
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1051,6 +1606,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           scrollDirection: Axis.horizontal,
                                           child: Container(
                                             child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 DataTable(
                                                   showCheckboxColumn: true,
@@ -1154,29 +1710,184 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                     ),
                                                   ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "Total:",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    ),
-                                                    UserWisePurchaseslist
-                                                                .length ==
-                                                            0
-                                                        ? Text(
+                                                const SizedBox(height: 10.0),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          const Text(//111111
+                                                            "Sub Total              :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
                                                             "0",
                                                             style: TextStyle(
-                                                                fontSize: 20),
+                                                                fontSize: 14),
                                                           )
-                                                        : Text(
-                                                            "${GetStorage().read("totalSales")}",
-                                                            style: TextStyle(
-                                                                fontSize: 20),
+                                                              : Text(
+                                                            "${GetStorage().read("totalSalesSubtotal")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
                                                           ),
-                                                  ],
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Text(//2222
+                                                            "Total Vat               :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalVat")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Text(//3333333333
+                                                            "Total Discount     :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalDiscount")}",
+                                                            style: const TextStyle(
+                                                                fontSize:14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Text(//4444444
+                                                            "Total Trans.Cost  :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalTransCost")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Text(//5555555
+                                                            "Total                      :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalTotal")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Text(//6666666
+                                                            "Total Paid             :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalPaid")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+
+                                                        children: [
+                                                          const Text(//77777777
+                                                            "Total Due              :  ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontSize: 14),
+                                                          ),
+                                                          UserWisePurchaseslist
+                                                              .length ==
+                                                              0
+                                                              ? const Text(
+                                                            "0",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          )
+                                                              : Text(
+                                                            "${GetStorage().read("totalDue")}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -1259,23 +1970,143 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                         ),
                                                         DataCell(
                                                           Center(
-                                                              child: Text(
-                                                                  '${allPurchaseRecordData[index].purchaseDetails![index].productName}')),
+                                                              child: SizedBox(
+                                                                // color: Colors.green,
+                                                                width: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .width *
+                                                                    0.5,
+                                                                child: ListView.builder(
+                                                                  scrollDirection:
+                                                                  Axis.vertical,
+                                                                  itemCount:
+                                                                  allPurchaseRecordData[
+                                                                  index]
+                                                                      .purchaseDetails!
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (context, j) {
+                                                                    return Container(
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                              0.1,
+                                                                              color: Colors
+                                                                                  .black)),
+                                                                      child: Center(
+                                                                        child: Text(
+                                                                            "${allPurchaseRecordData[index].purchaseDetails![j].productName}"),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              )),
                                                         ),
                                                         DataCell(
                                                           Center(
-                                                              child: Text(
-                                                                  '${allPurchaseRecordData[index].purchaseDetails![index].purchaseDetailsRate}')),
+                                                              child: SizedBox(
+                                                                // color: Colors.green,
+                                                                width: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .width *
+                                                                    0.5,
+                                                                child: ListView.builder(
+                                                                  scrollDirection:
+                                                                  Axis.vertical,
+                                                                  itemCount:
+                                                                  allPurchaseRecordData[
+                                                                  index]
+                                                                      .purchaseDetails!
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (context, j) {
+                                                                    return Container(
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                              0.1,
+                                                                              color: Colors
+                                                                                  .black)),
+                                                                      child: Center(
+                                                                        child: Text(
+                                                                            "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsRate}"),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              )),
                                                         ),
                                                         DataCell(
                                                           Center(
-                                                              child: Text(
-                                                                  '${allPurchaseRecordData[index].purchaseDetails![index].purchaseDetailsTotalQuantity}')),
+                                                              child: SizedBox(
+                                                                // color: Colors.green,
+                                                                width: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .width *
+                                                                    0.5,
+                                                                child: ListView.builder(
+                                                                  scrollDirection:
+                                                                  Axis.vertical,
+                                                                  itemCount:
+                                                                  allPurchaseRecordData[
+                                                                  index]
+                                                                      .purchaseDetails!
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (context, j) {
+                                                                    return Container(
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                              0.1,
+                                                                              color: Colors
+                                                                                  .black)),
+                                                                      child: Center(
+                                                                        child: Text(
+                                                                            "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsTotalQuantity}"),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              )),
                                                         ),
                                                         DataCell(
                                                           Center(
-                                                              child: Text(
-                                                                  '${allPurchaseRecordData[index].purchaseDetails![index].purchaseDetailsTotalAmount}')),
+                                                              child: SizedBox(
+                                                                // color: Colors.green,
+                                                                width: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .width *
+                                                                    0.5,
+                                                                child: ListView.builder(
+                                                                  scrollDirection:
+                                                                  Axis.vertical,
+                                                                  itemCount:
+                                                                  allPurchaseRecordData[
+                                                                  index]
+                                                                      .purchaseDetails!
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (context, j) {
+                                                                    return Container(
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                              0.1,
+                                                                              color: Colors
+                                                                                  .black)),
+                                                                      child: Center(
+                                                                        child: Text(
+                                                                            "${allPurchaseRecordData[index].purchaseDetails![j].purchaseDetailsTotalAmount}"),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              )),
                                                         ),
                                                       ],
                                                     ),

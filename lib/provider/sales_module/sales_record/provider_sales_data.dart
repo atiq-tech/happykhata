@@ -155,7 +155,7 @@ class AllProductProvider extends ChangeNotifier {
 
   List<CustomerCategories> CustomerCategoriesList = [];
   FetchCustomerCategoriesSaleProduct(
-      context, String? customerId, String? dateFrom, String? dateTo) async {
+      context, String? customerId, {String? dateFrom, String? dateTo}) async {
     CustomerCategoriesList =
         await Api_Uzzal_implement_Class.FetchCustomerwiseCategorySalseData(
             context, customerId, dateFrom, dateTo);

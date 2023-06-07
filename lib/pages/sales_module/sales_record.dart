@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_customer_wisee_category_modelclass.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/get_customer_product_Mclass.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by_employee_modelclass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/salse_record_model_class.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
@@ -46,7 +53,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   }
 
   //main dropdowns logic
-  bool isAllTypeClicked = false;
+  bool isAllTypeClicked = true;
   bool isCustomerWiseClicked = false;
   bool isEmployeeWiseClicked = false;
   bool isCategoryWiseClicked = false;
@@ -57,8 +64,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   //sub dropdowns logic
   bool isWithoutDetailsClicked = false;
   bool isWithDetailsClicked = false;
-  bool iscategoryslect = false;
-  bool isQuantitylect = false;
+  bool isCategorySelect = false;
+  bool isQuantitySelect = false;
 
   // dropdown value
   String? _selectedRecordTypes;
@@ -75,8 +82,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   String data = '';
   bool selectArea = false;
 //
-  String? _selectedSearchTypes;
-  List<String> _searchTypes = [
+  String? _selectedSearchTypes = 'All';
+  final List<String> _searchTypes = [
     'All',
     'By Customer',
     'By Employee',
@@ -85,7 +92,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
     'By Summary',
     'By User',
   ];
-  List<String> _recordType = [
+  final List<String> _recordType = [
     'Without Details',
     'With Details',
   ];
@@ -118,6 +125,12 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         .getCategoryWiseStockData(context, categoryId: categoryId);
     super.initState();
   }
+
+  var customerController = TextEditingController();
+  var productController = TextEditingController();
+  var productAllController = TextEditingController();
+  var employeeController = TextEditingController();
+  var categoryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +359,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 flex: 3,
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -356,74 +369,162 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Please select a customer',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedCustomerTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          print(
-                                              "Customerttttttttttttttttttttttttttt $newValue");
-                                          _selectedCustomerTypes =
-                                              newValue.toString();
-                                          customerId = "$newValue";
-                                          Provider.of<CounterProvider>(context,
-                                                  listen: false)
-                                              .getCustomer_products(
-                                            context,
-                                            customerId,
-                                          );
-                                          // Provider.of<AllProductProvider>(
-                                          //         context,
-                                          //         listen: false)
-                                          //     .getAllSalesRecordData(
-                                          //         context,
-                                          //         firstPickedDate,
-                                          //         secondPickedDate,
-                                          //         customerId,
-                                          //         employeeId,
-                                          //         productId,
-                                          //         userFullName);
-                                          print(
-                                              "Customerttttttttttttttttttttttttttt $newValue");
-                                          // for (int i = 0;
-                                          //     i <=
-                                          //         provideSalesRecordList.length;
-                                          //     i++) {
-                                          //   print(
-                                          //       "provideSaccccccccclesRecordList  ${provideSalesRecordList[i].customerName}");
-                                          //   for (int j = 0;
-                                          //       j <=
-                                          //           provideSalesRecordList[i]
-                                          //               .saleDetails!
-                                          //               .length;
-                                          //       j++) {
-                                          //     provideSalesdetailsRecordListt
-                                          //         .add(provideSalesRecordList[i]
-                                          //             .saleDetails![j]);
-                                          //   }
-                                          // }
-                                        });
-                                      },
-                                      items: get_all_customer.map((location) {
-                                        return DropdownMenuItem(
-                                          value: location.customerSlNo,
-                                          child: Text(
-                                            "${location.customerName}",
+                                  child: FutureBuilder(
+                                    future: Provider.of<AllProductProvider>(context)
+                                        .Fatch_By_all_Customer(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<By_all_Customer>>
+                                        snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                            onChanged: (newValue) {
+                                              print("On change Value is $newValue");
+                                              // if (newValue == '') {
+                                              //   customerSlNo = '';
+                                              // }
+                                            },
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
+                                            ),
+                                            controller: customerController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Customer',
+                                              suffix: customerId == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    customerController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element
+                                                .displayName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(get_all_customer.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(
+                                                  child: Text(
+                                                    "${suggestion.displayName}",
+                                                    style: const TextStyle(fontSize: 12),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  )),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (By_all_Customer suggestion) {
+                                            setState(() {
+                                              customerController.text = suggestion.displayName!;
+
+                                              print(
+                                                  "Customerttttttttttttttttttttttttttt ${suggestion.customerSlNo}");
+                                              _selectedCustomerTypes =
+                                                  suggestion.customerSlNo.toString();
+                                              customerId = "${suggestion.customerSlNo}";
+                                              Provider.of<CounterProvider>(context,
+                                                  listen: false)
+                                                  .getCustomer_products(
+                                                context,
+                                                customerId,
+                                              );
+                                            });
+
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: const Text(
+                                  //       'Please select a customer',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedCustomerTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         print(
+                                  //             "Customerttttttttttttttttttttttttttt $newValue");
+                                  //         _selectedCustomerTypes =
+                                  //             newValue.toString();
+                                  //         customerId = "$newValue";
+                                  //         Provider.of<CounterProvider>(context,
+                                  //                 listen: false)
+                                  //             .getCustomer_products(
+                                  //           context,
+                                  //           customerId,
+                                  //         );
+                                  //         // Provider.of<AllProductProvider>(
+                                  //         //         context,
+                                  //         //         listen: false)
+                                  //         //     .getAllSalesRecordData(
+                                  //         //         context,
+                                  //         //         firstPickedDate,
+                                  //         //         secondPickedDate,
+                                  //         //         customerId,
+                                  //         //         employeeId,
+                                  //         //         productId,
+                                  //         //         userFullName);
+                                  //         print(
+                                  //             "Customerttttttttttttttttttttttttttt $newValue");
+                                  //         // for (int i = 0;
+                                  //         //     i <=
+                                  //         //         provideSalesRecordList.length;
+                                  //         //     i++) {
+                                  //         //   print(
+                                  //         //       "provideSaccccccccclesRecordList  ${provideSalesRecordList[i].customerName}");
+                                  //         //   for (int j = 0;
+                                  //         //       j <=
+                                  //         //           provideSalesRecordList[i]
+                                  //         //               .saleDetails!
+                                  //         //               .length;
+                                  //         //       j++) {
+                                  //         //     provideSalesdetailsRecordListt
+                                  //         //         .add(provideSalesRecordList[i]
+                                  //         //             .saleDetails![j]);
+                                  //         //   }
+                                  //         // }
+                                  //       });
+                                  //     },
+                                  //     items: get_all_customer.map((location) {
+                                  //       return DropdownMenuItem(
+                                  //         value: location.customerSlNo,
+                                  //         child: Text(
+                                  //           "${location.customerName}",
+                                  //           style: const TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -444,7 +545,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 flex: 3,
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -454,57 +555,117 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        "Please select a product",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      value: _selectedProductType,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedProductType =
-                                              newValue.toString();
-                                          //productId = "$newValue";
-                                          print(
-                                              "Produccccccccccccccccccccccc $newValue");
-                                          // Provider.of<CounterProvider>(context,
-                                          //         listen: false)
-                                          //     .getCustomer_products(
-                                          //   context,
-                                          //   productId,
-                                          // );
-                                          // Provider.of<AllProductProvider>(
-                                          //         context,
-                                          //         listen: false)
-                                          //     .getAllSalesRecordData(
-                                          //         context,
-                                          //         firstPickedDate,
-                                          //         secondPickedDate,
-                                          //         customerId,
-                                          //         employeeId,
-                                          //         productId,
-                                          //         userFullName);
-                                        });
-                                      },
-                                      items: Allcustomer_productsbyProduct.map(
-                                          (location) {
-                                        return DropdownMenuItem(
-                                          value: location.productSlNo,
-                                          child: Text(
-                                            "${location.productName}",
+                                  child: FutureBuilder(
+                                    future: Provider.of<CounterProvider>(context)
+                                        .getCustomer_products(context, customerId),
+                                    builder: (context,
+                                        AsyncSnapshot<List<GetCustomerProductsMclass>>
+                                        snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                            onChanged: (newValue) {
+                                              print("On change Value is $newValue");
+                                              // if (newValue == '') {
+                                              //   customerSlNo = '';
+                                              // }
+                                            },
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
                                             ),
-                                            overflow: TextOverflow.visible,
+                                            controller: productController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Product',
+                                              suffix: _selectedProductType == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    productController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
+                                            ),
                                           ),
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element
+                                                .displayText!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(get_all_customer.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(
+                                                  child: Text(
+                                                    "${suggestion.displayText}",
+                                                    style: const TextStyle(fontSize: 12),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  )),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (GetCustomerProductsMclass suggestion) {
+                                            setState(() {
+                                              productController.text = suggestion.displayText!;
+
+                                              print(
+                                                  "Customerttttttttttttttttttttttttttt ${suggestion.productSlNo}");
+                                              _selectedProductType = suggestion.productSlNo.toString();
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: const Text(
+                                  //       "Please select a product",
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ),
+                                  //     value: _selectedProductType,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedProductType = newValue.toString();
+                                  //         print("Produccccccccccccccccccccccc $newValue");
+                                  //
+                                  //       });
+                                  //     },
+                                  //     items: Allcustomer_productsbyProduct.map(
+                                  //         (location) {
+                                  //       return DropdownMenuItem(
+                                  //         value: location.productSlNo,
+                                  //         child: Text(
+                                  //           "${location.productName}",
+                                  //           style: const TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //           overflow: TextOverflow.visible,
+                                  //         ),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -608,7 +769,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 flex: 3,
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -618,39 +779,85 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Please select an Employee',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedEmployeeTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedEmployeeTypes =
-                                              newValue.toString();
-                                          employeeId = "$newValue";
-                                          print(
-                                              "Employeeeeeeeeeeeeeeeeeeee  id :${newValue}");
-                                          print(
-                                              "Employeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee  id :${_selectedEmployeeTypes}");
-                                        });
-                                      },
-                                      items: get_all_Employee.map((location) {
-                                        return DropdownMenuItem(
-                                          value: location.employeeSlNo,
-                                          child: Text(
-                                            "${location.employeeName}",
+                                  child: FutureBuilder(
+                                    future: Provider.of<AllProductProvider>(context)
+                                        .Fatch_By_all_Employee(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<By_all_employee_ModelClass>>
+                                        snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                            onChanged: (newValue) {
+                                              print("On change Value is $newValue");
+                                              // if (newValue == '') {
+                                              //   customerSlNo = '';
+                                              // }
+                                            },
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
+                                            ),
+                                            controller: employeeController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Employee',
+                                              suffix: customerId == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    employeeController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element
+                                                .displayName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(get_all_customer.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(
+                                                  child: Text(
+                                                    "${suggestion.employeeName}",
+                                                    style: const TextStyle(fontSize: 12),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  )),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (By_all_employee_ModelClass suggestion) {
+                                            setState(() {
+                                              employeeController.text = suggestion.employeeName!;
+
+                                              print(
+                                                  "Customerttttttttttttttttttttttttttt ${suggestion.employeeSlNo}");
+                                              _selectedEmployeeTypes =
+                                                  suggestion.employeeSlNo.toString();
+                                              employeeId = "${suggestion.employeeSlNo}";
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
                                 ),
                               )
@@ -745,7 +952,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 flex: 3,
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 40,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -755,46 +962,134 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Please select a Customer',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedCustomerTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedCustomerTypes =
-                                              newValue.toString();
-                                          print(
-                                              "Customer wise Id : =  $newValue");
-                                          customerId = "${newValue}";
-                                          Provider.of<AllProductProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .FetchCustomerCategoriesSaleProduct(
-                                                  context,
-                                                  customerId,
-                                                  firstPickedDate,
-                                                  secondPickedDate);
-                                        });
-                                      },
-                                      items: get_all_customer.map((location) {
-                                        return DropdownMenuItem(
-                                          value: location.customerSlNo,
-                                          child: Text(
-                                            "${location.customerName}",
+                                  child: FutureBuilder(
+                                    future: Provider.of<AllProductProvider>(context)
+                                        .Fatch_By_all_Customer(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<By_all_Customer>>
+                                        snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                            onChanged: (newValue) {
+                                              print("On change Value is $newValue");
+                                              // if (newValue == '') {
+                                              //   customerSlNo = '';
+                                              // }
+                                            },
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
+                                            ),
+                                            controller: customerController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Customer',
+                                              suffix: customerId == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    customerController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element
+                                                .displayName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(get_all_customer.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(
+                                                  child: Text(
+                                                    "${suggestion.displayName}",
+                                                    style: const TextStyle(fontSize: 12),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  )),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (By_all_Customer suggestion) {
+                                            setState(() {
+                                              customerController.text = suggestion.displayName!;
+
+                                              _selectedCustomerTypes = suggestion.customerSlNo.toString();
+                                                      print(
+                                                          "Customer wise Id : =  ${suggestion.customerSlNo}");
+                                                      customerId = "${suggestion.customerSlNo}";
+                                                      Provider.of<AllProductProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .FetchCustomerCategoriesSaleProduct(
+                                                              context,
+                                                              customerId,
+                                                              dateFrom: firstPickedDate,
+                                                              dateTo: secondPickedDate);
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: const Text(
+                                  //       'Please select a Customer',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedCustomerTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedCustomerTypes =
+                                  //             newValue.toString();
+                                  //         print(
+                                  //             "Customer wise Id : =  $newValue");
+                                  //         customerId = "${newValue}";
+                                  //         Provider.of<AllProductProvider>(
+                                  //                 context,
+                                  //                 listen: false)
+                                  //             .FetchCustomerCategoriesSaleProduct(
+                                  //                 context,
+                                  //                 customerId,
+                                  //                 firstPickedDate,
+                                  //                 secondPickedDate);
+                                  //       });
+                                  //     },
+                                  //     items: get_all_customer.map((location) {
+                                  //       return DropdownMenuItem(
+                                  //         value: location.customerSlNo,
+                                  //         child: Text(
+                                  //           "${location.customerName}",
+                                  //           style: const TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -815,7 +1110,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 flex: 3,
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 40,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -825,40 +1120,110 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Please select a Category',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedCategoryTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedCategoryTypes =
-                                              newValue.toString();
-                                          print(
-                                              "Customer Wise Category ID========== > $newValue ");
-                                          categoryId =
-                                              "$_selectedCategoryTypes";
-                                        });
-                                      },
-                                      items: FetchCustomerwiseCategory.map(
-                                          (location) {
-                                        return DropdownMenuItem(
-                                          value: location.productCategorySlNo,
-                                          child: Text(
-                                            "${location.productCategoryName}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
+                                  child: FutureBuilder(
+                                    future: Provider.of<AllProductProvider>(context).FetchCustomerCategoriesSaleProduct(context, customerId),
+                                    builder: (context,
+                                        AsyncSnapshot<List<CustomerCategories>> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                              onChanged: (value){
+                                                if (value == '') {
+                                                  categoryId = '';
+                                                }
+                                              },
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                              controller: categoryController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Select Category',
+                                                suffix: categoryId == '' ? null : GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      categoryController.text = '';
+                                                    });
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 3),
+                                                    child: Icon(Icons.close,size: 14,),
+                                                  ),
+                                                ),
+                                              )
                                           ),
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element.productCategoryName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(FetchCustomerwiseCategory.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (CustomerCategories suggestion) {
+                                            categoryController.text = suggestion.productCategoryName!;
+                                            setState(() {
+                                              _selectedCategoryTypes =
+                                                  suggestion.productCategorySlNo.toString();
+                                                      print(
+                                                          "Customer Wise Category ID ========== > ${suggestion.productCategorySlNo} ");
+                                                      categoryId = "$_selectedCategoryTypes";
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: const Text(
+                                  //       'Please select a Category',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedCategoryTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedCategoryTypes =
+                                  //             newValue.toString();
+                                  //         print(
+                                  //             "Customer Wise Category ID ========== > $newValue ");
+                                  //         categoryId =
+                                  //             "$_selectedCategoryTypes";
+                                  //       });
+                                  //     },
+                                  //     items: FetchCustomerwiseCategory.map(
+                                  //         (location) {
+                                  //       return DropdownMenuItem(
+                                  //         value: location.productCategorySlNo,
+                                  //         child: Text(
+                                  //           "${location.productCategoryName}",
+                                  //           style: const TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -884,7 +1249,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             flex: 3,
                             child: Container(
                               margin: const EdgeInsets.only(top: 5, bottom: 5),
-                              height: 30,
+                              height: 40,
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -894,43 +1259,111 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  hint: const Text(
-                                    'Please select a Product',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ), // Not necessary for Option 1
-                                  value: _selectedQuantityTypes,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedQuantityTypes =
-                                          newValue.toString();
-                                      print(
-                                          "ProductID============>by quantity?  ${_selectedQuantityTypes}");
-                                      print(
-                                          "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                                      print(
-                                          "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                                      print(
-                                          "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                                    });
-                                  },
-                                  items: FetchAllProductList.map((location) {
-                                    return DropdownMenuItem(
-                                      value: location.productSlNo,
-                                      child: Text(
-                                        "${location.productName}",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
+                              child: FutureBuilder(
+                                future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                                builder: (context,
+                                    AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                          onChanged: (value){
+                                            if (value == '') {
+                                              _selectedQuantityTypes = '';
+                                            }
+                                          },
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                          controller: productAllController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Select Product',
+                                            suffix: _selectedQuantityTypes == '' ? null : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  productAllController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                child: Icon(Icons.close,size: 14,),
+                                              ),
+                                            ),
+                                          )
                                       ),
+                                      suggestionsCallback: (pattern) {
+                                        return snapshot.data!
+                                            .where((element) => element.productName!
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(FetchAllProductList.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (AllProductModelClass suggestion) {
+                                            productAllController.text = suggestion.productName!;
+                                        setState(() {
+                                          _selectedQuantityTypes =
+                                              suggestion.productSlNo.toString();
+
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     );
-                                  }).toList(),
-                                ),
+                                  }
+                                  return const SizedBox();
+                                },
                               ),
+
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton(
+                              //     isExpanded: true,
+                              //     hint: const Text(
+                              //       'Please select a Product',
+                              //       style: TextStyle(
+                              //         fontSize: 14,
+                              //       ),
+                              //     ), // Not necessary for Option 1
+                              //     value: _selectedQuantityTypes,
+                              //     onChanged: (newValue) {
+                              //       setState(() {
+                              //         _selectedQuantityTypes =
+                              //             newValue.toString();
+                              //         print(
+                              //             "ProductID============>by quantity?  ${_selectedQuantityTypes}");
+                              //         print(
+                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                              //         print(
+                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                              //         print(
+                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                              //       });
+                              //     },
+                              //     items: FetchAllProductList.map((location) {
+                              //       return DropdownMenuItem(
+                              //         value: location.productSlNo,
+                              //         child: Text(
+                              //           "${location.productName}",
+                              //           style: const TextStyle(
+                              //             fontSize: 14,
+                              //           ),
+                              //         ),
+                              //       );
+                              //     }).toList(),
+                              //   ),
+                              // ),
                             ),
                           )
                         ],
@@ -954,7 +1387,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             flex: 3,
                             child: Container(
                               margin: const EdgeInsets.only(top: 5, bottom: 5),
-                              height: 30,
+                              height: 40,
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -964,37 +1397,105 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  hint: const Text(
-                                    'Please select a Product',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ), // Not necessary for Option 1
-                                  value: _selectedSummaryTypes,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedSummaryTypes =
-                                          newValue.toString();
-                                      productId = "${_selectedSummaryTypes}";
-                                    });
-                                  },
-
-                                  items: FetchAllProductList.map((location) {
-                                    return DropdownMenuItem(
-                                      value: location.productSlNo,
-                                      child: Text(
-                                        "${location.productName}",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
+                              child: FutureBuilder(
+                                future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                                builder: (context,
+                                    AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                          onChanged: (value){
+                                            if (value == '') {
+                                              _selectedSummaryTypes = '';
+                                            }
+                                          },
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                          controller: productAllController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Select Product',
+                                            suffix: _selectedSummaryTypes == '' ? null : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  productAllController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                child: Icon(Icons.close,size: 14,),
+                                              ),
+                                            ),
+                                          )
                                       ),
+                                      suggestionsCallback: (pattern) {
+                                        return snapshot.data!
+                                            .where((element) => element.productName!
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(FetchAllProductList.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (AllProductModelClass suggestion) {
+                                        productAllController.text = suggestion.productName!;
+                                        setState(() {
+                                          _selectedSummaryTypes = suggestion.productSlNo.toString();
+                                          productId = "$_selectedSummaryTypes";
+
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     );
-                                  }).toList(),
-                                ),
+                                  }
+                                  return const SizedBox();
+                                },
                               ),
+
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton(
+                              //     isExpanded: true,
+                              //     hint: const Text(
+                              //       'Please select a Product',
+                              //       style: TextStyle(
+                              //         fontSize: 14,
+                              //       ),
+                              //     ), // Not necessary for Option 1
+                              //     value: _selectedSummaryTypes,
+                              //     onChanged: (newValue) {
+                              //       setState(() {
+                              //         _selectedSummaryTypes =
+                              //             newValue.toString();
+                              //         productId = "${_selectedSummaryTypes}";
+                              //       });
+                              //     },
+                              //
+                              //     items: FetchAllProductList.map((location) {
+                              //       return DropdownMenuItem(
+                              //         value: location.productSlNo,
+                              //         child: Text(
+                              //           "${location.productName}",
+                              //           style: const TextStyle(
+                              //             fontSize: 14,
+                              //           ),
+                              //         ),
+                              //       );
+                              //     }).toList(),
+                              //   ),
+                              // ),
                             ),
                           )
                         ],
@@ -1033,7 +1534,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     child: DropdownButton(
                                       isExpanded: true,
                                       hint: const Text(
-                                        'Please select a Product',
+                                        'Please select a User',
                                         style: TextStyle(
                                           fontSize: 14,
                                         ),
@@ -1044,12 +1545,12 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                           _selectedUserTypes =
                                               newValue.toString();
                                           userFullName =
-                                              "${_selectedUserTypes}";
+                                              "$_selectedUserTypes";
 
                                           print(
-                                              "Usser sNo==============> ${newValue}");
+                                              "Usser sNo==============> $newValue");
                                           print(
-                                              "Usser sNo=====_selectedUserTypes=========> ${userFullName}");
+                                              "Usser sNo=====_selectedUserTypes=========> $userFullName");
                                           final results = [
                                             FetchUserBySummaryProductlist.where(
                                                     (m) => m.userSlNo!.contains(
@@ -1542,6 +2043,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                     padding: const EdgeInsets.all(1.0),
                     child: InkWell(
                       onTap: () {
+                        print('_selectedRecordTypes ${_selectedRecordTypes}');
+                        if(_selectedRecordTypes==null){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select record type',style: TextStyle(color: Colors.red),)));
+                        }
                         setState(() {
                           isLoading = true;
                         });
@@ -1554,21 +2059,22 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "",
                               "",
                             );
-                          } else if (isAllTypeClicked && isWithDetailsClicked) {
+                          }
+                          else if (isAllTypeClicked && isWithDetailsClicked) {
                             data = 'showAllWithDetails';
                             //get sales Record api AllType
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSalesRecord(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "",
                               "",
@@ -1583,13 +2089,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "$customerId",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "$_selectedProductType",
                               "",
                             );
-                          } else if (isCustomerWiseClicked &&
+                          }
+                          else if (isCustomerWiseClicked &&
                               isWithDetailsClicked) {
                             data = 'showByCustomerWithDetails';
                             //get sales Record api CustomerType
@@ -1597,8 +2104,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "$customerId",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "$_selectedProductType",
                               "",
@@ -1613,13 +2120,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "$_selectedEmployeeTypes",
                               "",
                               "",
                             );
-                          } else if (isEmployeeWiseClicked &&
+                          }
+                          else if (isEmployeeWiseClicked &&
                               isWithDetailsClicked) {
                             data = 'showByEmployeeWithDetails';
                             //get sales Record api  EmployeeType
@@ -1627,8 +2135,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "$_selectedEmployeeTypes",
                               "",
                               "",
@@ -1641,10 +2149,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSaleDetails(
                               context,
-                              "${categoryId}",
-                              "${customerId}",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$categoryId",
+                              "$customerId",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                             );
                           }
@@ -1655,11 +2163,11 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSaleDetails(
                               context,
-                              "${categoryId}",
+                              "$categoryId",
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
-                              "${_selectedQuantityTypes}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
+                              "$_selectedQuantityTypes",
                             );
                           }
                           // By Summary
@@ -1669,8 +2177,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSaleSummary(
                               context,
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "$productId",
                             );
                           }
@@ -1684,13 +2192,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "",
                               "$byUserFullname",
                             );
-                          } else if (isUserWiseClicked &&
+                          }
+                          else if (isUserWiseClicked &&
                               isWithDetailsClicked) {
                             data = 'showByUserWithDetails';
                             //get sales Record api UserType
@@ -1698,8 +2207,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "",
-                              "${firstPickedDate}",
-                              "${secondPickedDate}",
+                              "$firstPickedDate",
+                              "$secondPickedDate",
                               "",
                               "",
                               "$byUserFullname",
@@ -1853,12 +2362,12 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                             DataCell(
                                               Center(
                                                   child: Text(
-                                                      '${allGetSalesData[index].saleMasterDueAmount}')),
+                                                      '${allGetSalesData[index].saleMasterPaidAmount}')),
                                             ),
                                             DataCell(
                                               Center(
                                                   child: Text(
-                                                      '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                                      '${allGetSalesData[index].saleMasterDueAmount}')),
                                             ),
                                           ],
                                         ),

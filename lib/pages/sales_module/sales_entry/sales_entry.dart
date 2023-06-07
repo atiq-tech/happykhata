@@ -61,6 +61,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   String? _selectedCategory;
   String? _selectedProduct;
   String? customerSlNo;
+  String? productSlNo;
   String? employeeSlNo;
   String? previousDue;
   String level = "retail";
@@ -223,7 +224,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                             employeeSlNo = '';
                                           }
                                         },
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                         ),
                                         controller: empluyeeNameController,
@@ -255,7 +256,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     },
                                     itemBuilder: (context, suggestion) {
                                       return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.employeeName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        title: SizedBox(child: Text("${suggestion.employeeName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                       );
                                     },
                                     transitionBuilder:
@@ -512,8 +513,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                             "customerSlNo ======> ${suggestion.customerSlNo}");
                                         _selectedCustomer =
                                             suggestion.customerSlNo.toString();
-                                        customerSlNo =
-                                            suggestion.customerSlNo.toString();
+
                                         if (_selectedCustomer ==
                                             "General Customer") {
                                           isVisible = true;
@@ -856,7 +856,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                             categoryId = '';
                                           }
                                         },
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                         ),
                                         controller: categoryController,
@@ -888,7 +888,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     },
                                     itemBuilder: (context, suggestion) {
                                       return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                       );
                                     },
                                     transitionBuilder:
@@ -900,6 +900,10 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                       categoryController.text = suggestion.productCategoryName!;
                                       setState(() {
                                         _selectedCategory = suggestion.productCategorySlNo.toString();
+                                        categoryId = suggestion.productCategorySlNo;
+                                         Provider.of<AllProductProvider>(context,
+                                                        listen: false)
+                                                    .CategoryWiseProduct(isService: "false",categoryId:  categoryId);
                                       });
                                     },
                                     onSaved: (value) {},
@@ -958,7 +962,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            height: 30,
+                            height: 40,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             margin: const EdgeInsets.only(bottom: 5),
                             decoration: BoxDecoration(
@@ -970,26 +974,25 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context).CategoryWiseProduct(categoryId: _selectedCategory),
+                              future: Provider.of<AllProductProvider>(context).CategoryWiseProduct(isService: 'false', categoryId: categoryId),
                               builder: (context,
                                   AsyncSnapshot<List<AllProductModelClass>> snapshot) {
-                                print("CategoryID $_selectedCategory");
                                 if (snapshot.hasData) {
                                   return TypeAheadFormField(
                                     textFieldConfiguration:
                                     TextFieldConfiguration(
                                         onChanged: (value){
                                           if (value == '') {
-                                            _selectedProduct = '';
+                                            productSlNo = '';
                                           }
                                         },
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                         ),
                                         controller: productController,
                                         decoration: InputDecoration(
-                                          hintText: 'Select Category',
-                                          suffix: _selectedProduct == '' ? null : GestureDetector(
+                                          hintText: 'Select Product',
+                                          suffix: productSlNo == '' ? null : GestureDetector(
                                             onTap: () {
                                               setState(() {
                                                 productController.text = '';
@@ -1004,7 +1007,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     ),
                                     suggestionsCallback: (pattern) {
                                       return snapshot.data!
-                                          .where((element) => element.productName!
+                                          .where((element) => element.displayText!
                                           .toLowerCase()
                                           .contains(pattern
                                           .toString()
@@ -1015,7 +1018,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     },
                                     itemBuilder: (context, suggestion) {
                                       return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.productName}",style: TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                       );
                                     },
                                     transitionBuilder:
@@ -1024,19 +1027,22 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     },
                                     onSuggestionSelected:
                                         (AllProductModelClass suggestion) {
-                                      categoryController.text = suggestion.productName!;
+                                      productController.text = suggestion.displayText!;
                                       setState(() {
+                                        productSlNo =
+                                            suggestion.productSlNo.toString();
+
                                         _selectedProduct = suggestion.productSlNo.toString();
 
+                                        print("dfhsghdfkhgkh $_selectedProduct");
                                         final results = [
                                           CategoryWiseProductList.where((m) =>
                                                   m.productSlNo!.contains(
-                                                      "${suggestion.productSlNo}")) // or Testing 123
+                                                      suggestion.productSlNo.toString())) // or Testing 123
                                               .toList(),
                                         ];
                                         results.forEach((element) async {
                                           element.add(element.first);
-                                          print("dfhsghdfkhgkh");
                                           cproductId = "${element[0].productSlNo}";
                                           print(
                                               "productSlNo===> ${element[0].productSlNo}");
@@ -1076,7 +1082,6 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 return const SizedBox();
                               },
                             ),
-
 
                             // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(
@@ -1326,24 +1331,28 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 const Color.fromARGB(255, 6, 118, 170),
                           ),
                           onPressed: () {
-                            setState(() {
-                              SalesCartList.add(SalesApiModelClass(
-                                  productId: "$cproductId",
-                                  categoryName: "$ccategoryName",
-                                  name: "$cname",
-                                  salesRate: "${_salesRateController.text}",
-                                  vat: "${_VatController.text}",
-                                  quantity: "${_quantityController.text}",
-                                  total: "$Total",
-                                  purchaseRate: "$cpurchaseRate"));
-//
-                              CartTotal += Total;
-                              AfteraddVatTotal = CartTotal;
-                              DiccountTotal = AfteraddVatTotal;
-                              TransportTotal = DiccountTotal;
-                              print("CartTotal ----------------- ${CartTotal}");
-                            });
-                            totalStack(cproductId);
+                            if(availableStock != '0'){
+                              setState(() {
+                                SalesCartList.add(SalesApiModelClass(
+                                    productId: "$cproductId",
+                                    categoryName: "$ccategoryName",
+                                    name: "$cname",
+                                    salesRate: "${_salesRateController.text}",
+                                    vat: "${_VatController.text}",
+                                    quantity: "${_quantityController.text}",
+                                    total: "$Total",
+                                    purchaseRate: "$cpurchaseRate"));
+
+                                CartTotal += Total;
+                                AfteraddVatTotal = CartTotal;
+                                DiccountTotal = AfteraddVatTotal;
+                                TransportTotal = DiccountTotal;
+                                print("CartTotal ----------------- ${CartTotal}");
+                              });
+                              totalStack(cproductId);
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Stock Unavailable",style: TextStyle(color: Colors.red),)));
+                            }
                           },
                           child: const Text("Add to cart")),
                     ),
@@ -1640,6 +1649,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                   AfteraddVatTotal = CartTotal - TotalVat;
                                   DiccountTotal = AfteraddVatTotal;
                                   TransportTotal = DiccountTotal;
+
+                                  Totaltc = CartTotal + TotalVat;
                                 });
                               },
                               keyboardType: TextInputType.phone,
@@ -1720,16 +1731,16 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               controller: _DiscountController,
                               onChanged: (value) {
                                 setState(() {
-                                  Diccountper = AfteraddVatTotal *
-                                      (double.parse(_DiscountController.text) /
-                                          100);
+                                  Diccountper =  (double.parse(_DiscountController.text)/
+                                      100) * CartTotal;
+                                  print("Dis $Diccountper");
                                   _discountPercentController.text =
                                       "${Diccountper}";
                                   DiccountTotal =
                                       AfteraddVatTotal - Diccountper;
                                   TransportTotal = DiccountTotal;
-                                  Totaltc = TransportTotal +
-                                      double.parse(_transportController.text);
+
+                                  Totaltc = CartTotal + TotalVat - Diccountper;
                                 });
                                 // setState(() {
                                 //   Diccountper = AfteraddVatTotal *
@@ -1835,13 +1846,14 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _transportController,
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     TransportTotal = DiccountTotal +
-                              //         double.parse(_transportController.text);
-                              //   });
-                              // },
-                              keyboardType: TextInputType.text,
+                              onChanged: (value) {
+                                setState(() {
+                                  Totaltc = CartTotal + TotalVat +
+                                      double.parse(_transportController.text);
+                                  Totaltc = Totaltc - Diccountper;
+                                });
+                              },
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding:
                                     const EdgeInsets.only(top: 5, left: 5),
@@ -1925,10 +1937,10 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               controller: _paidController,
                               onChanged: (value) {
                                 setState(() {
-                                  totalDue = DiccountTotal -
+                                  totalDue = Totaltc -
                                       double.parse(_paidController.text);
-                                  totalDueTc = totalDue +
-                                      double.parse(_transportController.text);
+                                  // totalDueTc = Totaltc -
+                                  //     double.parse(_transportController.text);
 
                                   // DiccountTotal -=
                                   //     double.parse(_paidController.text);
@@ -1938,7 +1950,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 //       double.parse(_paidController.text);
                                 // });
                               },
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 6),
@@ -2017,6 +2029,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Expanded(
                           flex: 1,
@@ -2027,30 +2040,31 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           ),
                         ),
                         Expanded(
-                          flex: 3,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 5, bottom: 5),
-                            height: 30,
-                            padding: const EdgeInsets.only(
-                                left: 5, right: 5, top: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 7, 125, 180),
-                                width: 1.0,
+                            flex: 3,
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 5),
+                              height: 30,
+                              padding: const EdgeInsets.only(
+                                  left: 5, right: 5, top: 5, bottom: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                border: Border.all(
+                                  color: const Color.fromARGB(255, 7, 125, 180),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Text(
-                              "$totalDueTc",
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 126, 125, 125)),
-                              // "$DiccountTotal"
-                            ),
-                          ),
-                        ),
+                              child: Text(
+                                "$totalDue",
+                                style: const TextStyle(
+                                    color: Color.fromARGB(255, 126, 125, 125)),
+                                //"$TransportTotal",
+                              ),
+                            )),
                       ],
                     ),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -2173,9 +2187,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             "transportCost": _transportController.text,
             "total": "$Totaltc",
             //"total": "$DiccountTotal",
-            "paid": _paidController.text,
+            "paid": _paidController.text.trim(),
             "previousDue": "$previousDue",
-            "due": "$totalDueTc",
+            "due": "${totalDue.toString()}".trim(),
             //"due": "$DiccountTotal",
             "isService": "false",
             "note": "Note Here"

@@ -32,12 +32,6 @@ class ApiGetPurchaseRecordAll {
         getPurchaseRecordList.add(getPurchaseRecord_ALL);
 
       }
-      // print(getPurchaseRecordList[0].purchaseDetails![0].productName);
-      // for (int i = 0; i < getPurchaseRecordList.length; i++) {
-      //   print(
-      //       "GetPurchaseRecord ++++++++++++++++++++++++++++++++++++> ${getPurchaseRecordList.length}");
-      //   print(getPurchaseRecordList[i].purchaseDetails![0].productName);
-      // }
       print(
           "GetPurchaseRecordList= ++++++++++++++++++++++++++++++++++++> ${getPurchaseRecordList.length}  ");
     } catch (e) {

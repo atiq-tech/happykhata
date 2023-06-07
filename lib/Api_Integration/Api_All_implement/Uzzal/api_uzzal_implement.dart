@@ -464,8 +464,20 @@ class Api_Uzzal_implement_Class {
     String link = "${BaseUrl}api/v1/getPurchases";
     // String basicAuth = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI0IiwibmFtZSI6IkxpbmsgVXAgQXBpIiwidXNlcnR5cGUiOiJtIiwiaW1hZ2VfbmFtZSI6IjEuanBnIiwiYnJhbmNoIjoiMSJ9.v-zzAx2iYpfsyB-fna8_QHUkQGZpndgpAaYLRSSQ-8k';
     List<Purchases> sales_recordlist = [];
-    double totalSales = 0.0;
-    String totalSaless;
+    double totalSalesSubtotal = 0.0;
+    String totalSalesSt;
+    double totalVat = 0.0;
+    String totalVt;
+    double totalDiscount = 0.0;
+    String totalDiscnt;
+    double totalTransCost = 0.0;
+    String totalTC;
+    double totalTotal = 0.0;
+    String totalT;
+    double totalPaid = 0.0;
+    String totalPd;
+    double totalDue = 0.0;
+    String totalD;
     try {
       Purchases salseRecordModelClass;
       Response response = await Dio().post(link,
@@ -482,12 +494,40 @@ class Api_Uzzal_implement_Class {
       for (var i in item["purchases"]) {
         salseRecordModelClass = Purchases.fromJson(i);
         sales_recordlist.add(salseRecordModelClass);
-
-        totalSales += double.parse(
-            "${salseRecordModelClass.purchaseMasterSubTotalAmount}");
-        totalSaless = totalSales.toStringAsFixed(2);
-        GetStorage().write("totalSales", totalSaless);
-
+        totalSalesSubtotal += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterSubTotalAmount}");
+        totalSalesSt = totalSalesSubtotal.toStringAsFixed(2);
+        GetStorage().write("totalSalesSubtotal", totalSalesSt);
+        //vat
+        totalVat += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterTax}");
+        totalVt = totalVat.toStringAsFixed(2);
+        GetStorage().write("totalVat", totalVt);
+        //discount
+        totalDiscount += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterDiscountAmount}");
+        totalDiscnt = totalDiscount.toStringAsFixed(2);
+        GetStorage().write("totalDiscount", totalDiscnt);
+        //TransCost
+        totalTransCost += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterFreight}");
+        totalTC = totalTransCost.toStringAsFixed(2);
+        GetStorage().write("totalTransCost", totalTC);
+        //Total
+        totalTotal += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterTotalAmount}");
+        totalT = totalTotal.toStringAsFixed(2);
+        GetStorage().write("totalTotal", totalT);
+        //Paid
+        totalPaid += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterPaidAmount}");
+        totalPd = totalPaid.toStringAsFixed(2);
+        GetStorage().write("totalPaid", totalPd);
+        //Due
+        totalDue += double.parse(
+            "${Purchases.fromJson(i).purchaseMasterDueAmount}");
+        totalD = totalDue.toStringAsFixed(2);
+        GetStorage().write("totalDue", totalD);
       }
       print(
           "sales_recordlist===========================> ${sales_recordlist.length}  ");

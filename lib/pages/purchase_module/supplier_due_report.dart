@@ -30,8 +30,8 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
   void initState() {
     ApiAllSuppliers apiAllSuppliers;
     Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
-    Provider.of<CounterProvider>(context, listen: false)
-        .getSupplierDuee(context);
+    // Provider.of<CounterProvider>(context, listen: false)
+    //     .getSupplierDuee(context);
     // TODO: implement initState
     super.initState();
   }
@@ -106,7 +106,9 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       _searchType = newValue!;
+                                      _selectedSupplier=null;
                                       if (_searchType == "By Supplier") {
+
                                         isSupplierListClicked = true;
                                       } else {
                                         isSupplierListClicked = false;
@@ -212,7 +214,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                           });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
-                                .getSupplierDue(context, _selectedSupplier);
+                                .getSupplierDue(context, _selectedSupplier??"");
 
                             print(
                                 "Supplier due repot======================::${_selectedSupplier}");

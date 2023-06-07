@@ -12,6 +12,8 @@ class ApiAllSupplierDue{
     String Link = "${BaseUrl}api/v1/getSupplierDue";
     List<AllSupplierDueClass> allSupplierDuelist = [];
     AllSupplierDueClass allSupplierDueClass;
+    double totalDue = 0.0;
+    String totalD;
     try {
       Response response = await Dio().post(Link,
           data: {
@@ -27,6 +29,11 @@ print(response.data);
       for (var i in data) {
         allSupplierDueClass = AllSupplierDueClass.fromJson(i);
         allSupplierDuelist.add(allSupplierDueClass);
+        //Due
+        totalDue += double.parse(
+            "${AllSupplierDueClass.fromJson(i).due}");
+        totalD = totalDue.toStringAsFixed(2);
+        GetStorage().write("totalDue", totalD);
       }
 
     } catch (e) {

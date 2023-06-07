@@ -351,6 +351,8 @@ class Api_Uzzal_implement_Class {
     String link = "${BaseUrl}api/v1/getCustomerDue";
     // String basicAuth = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI0IiwibmFtZSI6IkxpbmsgVXAgQXBpIiwidXNlcnR5cGUiOiJtIiwiaW1hZ2VfbmFtZSI6IjEuanBnIiwiYnJhbmNoIjoiMSJ9.v-zzAx2iYpfsyB-fna8_QHUkQGZpndgpAaYLRSSQ-8k';
     List<AllCustomerDueList> AllCustomerDueListList = [];
+    double totalDue = 0.0;
+    String totalD;
     try {
       AllCustomerDueList dataa;
       Response response = await Dio().post(link,
@@ -363,7 +365,13 @@ class Api_Uzzal_implement_Class {
       for (var i in item) {
         dataa = AllCustomerDueList.fromJson(i);
         AllCustomerDueListList.add(dataa);
+        //Due
+        totalDue += double.parse(
+            "${AllCustomerDueList.fromJson(i).dueAmount}");
+        totalD = totalDue.toStringAsFixed(2);
+        GetStorage().write("totalDue", totalD);
         print(AllCustomerDueListList[0].customerName);
+
       }
     } catch (e) {
       print(e);

@@ -65,6 +65,9 @@ class _Customer_ListState extends State<Customer_List> {
                       border: TableBorder.all(color: Colors.black54, width: 1),
                       columns: [
                         DataColumn(
+                          label: Center(child: Text('SI.')),
+                        ),
+                        DataColumn(
                           label: Center(child: Text('Customer Id')),
                         ),
                         DataColumn(
@@ -81,6 +84,9 @@ class _Customer_ListState extends State<Customer_List> {
                         provideCustomerList.length,
                         (int index) => DataRow(
                           cells: <DataCell>[
+                            DataCell(
+                              Center(child: Text("${index + 1}")),
+                            ),
                             DataCell(
                               Center(child: Text(provideCustomerList[index].customerCode!)),
                             ),

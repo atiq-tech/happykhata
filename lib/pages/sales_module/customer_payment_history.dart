@@ -78,73 +78,6 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
               children: [
                 Container(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          "Payment Type:",
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 5),
-                          height: 30,
-                          padding: EdgeInsets.only(left: 5, right: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
-                              hint: Text(
-                                'Please select a payment type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ), // Not necessary for Option 1
-                              value: _selectedPaymentType,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedPaymentType = newValue.toString();
-                                  _selectedPaymentType == 'Paid'
-                                      ? paymentType = 'paid'
-                                      : _selectedPaymentType == 'Received'
-                                          ? paymentType = "received"
-                                          : _selectedPaymentType == 'All'
-                                              ? paymentType = ""
-                                              : paymentType = "";
-                                  print("Payment Type: ${paymentType}");
-                                });
-                              },
-                              items: _category.map((location) {
-                                return DropdownMenuItem(
-                                  child: Text(
-                                    location,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  value: location,
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
                     children: [
                       Expanded(
                         flex: 1,
@@ -205,6 +138,74 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                     ],
                   ),
                 ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Payment Type:",
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          height: 30,
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Color.fromARGB(255, 7, 125, 180),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              hint: Text(
+                                'Please select a payment type',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ), // Not necessary for Option 1
+                              value: _selectedPaymentType,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _selectedPaymentType = newValue.toString();
+                                  _selectedPaymentType == 'Paid'
+                                      ? paymentType = 'paid'
+                                      : _selectedPaymentType == 'Received'
+                                      ? paymentType = "received"
+                                      : _selectedPaymentType == 'All'
+                                      ? paymentType = ""
+                                      : paymentType = "";
+                                  print("Payment Type: ${paymentType}");
+                                });
+                              },
+                              items: _category.map((location) {
+                                return DropdownMenuItem(
+                                  child: Text(
+                                    location,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  value: location,
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
                 Container(
                   height: 40,
                   width: double.infinity,

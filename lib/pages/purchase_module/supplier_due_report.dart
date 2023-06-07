@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_supplier_due/api_all_supplier_due.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -35,6 +37,8 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
     // TODO: implement initState
     super.initState();
   }
+
+  var supplyerController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +156,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                 Expanded(
                                   flex: 11,
                                   child: Container(
-                                    height: 30.0,
+                                    height: 38.0,
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     padding: EdgeInsets.only(left: 5.0),
@@ -162,42 +166,110 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        hint: Text(
-                                          'Select Supplier',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        dropdownColor: Color.fromARGB(
-                                            255,
-                                            231,
-                                            251,
-                                            255), // Not necessary for Option 1
-                                        value: _selectedSupplier,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            _selectedSupplier =
-                                                newValue.toString();
-                                          });
-                                        },
-                                        items: allSuppliersData.map((location) {
-                                          return DropdownMenuItem(
-                                            child: Text(
-                                              overflow: TextOverflow.visible,
-                                              maxLines: 1,
-                                              "${location.supplierName}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
+                                    child: FutureBuilder(
+                                      future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                                      builder: (context,
+                                          AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return TypeAheadFormField(
+                                            textFieldConfiguration:
+                                            TextFieldConfiguration(
+                                                onChanged: (value){
+                                                  if (value == '') {
+                                                    _selectedSupplier = '';
+                                                  }
+                                                },
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                ),
+                                                controller: supplyerController,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Select Supplier',
+                                                  suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        supplyerController.text = '';
+                                                      });
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                                      child: Icon(Icons.close,size: 14,),
+                                                    ),
+                                                  ),
+                                                )
                                             ),
-                                            value: location.supplierSlNo,
+                                            suggestionsCallback: (pattern) {
+                                              return snapshot.data!
+                                                  .where((element) => element.supplierName!
+                                                  .toLowerCase()
+                                                  .contains(pattern
+                                                  .toString()
+                                                  .toLowerCase()))
+                                                  .take(allSuppliersData.length)
+                                                  .toList();
+                                              // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                            },
+                                            itemBuilder: (context, suggestion) {
+                                              return ListTile(
+                                                title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                              );
+                                            },
+                                            transitionBuilder:
+                                                (context, suggestionsBox, controller) {
+                                              return suggestionsBox;
+                                            },
+                                            onSuggestionSelected:
+                                                (AllSuppliersClass suggestion) {
+                                                  supplyerController.text = suggestion.supplierName!;
+                                              setState(() {
+                                                _selectedSupplier =
+                                                    suggestion.supplierSlNo;
+                                                print(
+                                                    "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                              });
+                                            },
+                                            onSaved: (value) {},
                                           );
-                                        }).toList(),
-                                      ),
+                                        }
+                                        return const SizedBox();
+                                      },
                                     ),
+                                    // child: DropdownButtonHideUnderline(
+                                    //   child: DropdownButton(
+                                    //     isExpanded: true,
+                                    //     hint: Text(
+                                    //       'Select Supplier',
+                                    //       style: TextStyle(
+                                    //         fontSize: 14,
+                                    //       ),
+                                    //     ),
+                                    //     dropdownColor: Color.fromARGB(
+                                    //         255,
+                                    //         231,
+                                    //         251,
+                                    //         255), // Not necessary for Option 1
+                                    //     value: _selectedSupplier,
+                                    //     onChanged: (newValue) {
+                                    //       setState(() {
+                                    //         _selectedSupplier =
+                                    //             newValue.toString();
+                                    //       });
+                                    //     },
+                                    //     items: allSuppliersData.map((location) {
+                                    //       return DropdownMenuItem(
+                                    //         child: Text(
+                                    //           overflow: TextOverflow.visible,
+                                    //           maxLines: 1,
+                                    //           "${location.supplierName}",
+                                    //           style: TextStyle(
+                                    //             fontSize: 14,
+                                    //           ),
+                                    //         ),
+                                    //         value: location.supplierSlNo,
+                                    //       );
+                                    //     }).toList(),
+                                    //   ),
+                                    // ),
                                   ),
                                 ),
                               ],
@@ -215,9 +287,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSupplierDue(context, _selectedSupplier??"");
-
-                            print(
-                                "Supplier due repot======================::${_selectedSupplier}");
+                            print("Supplier due repot======================::${_selectedSupplier}");
                           });
                            Future.delayed(Duration(seconds: 3), () {
                     setState(() {

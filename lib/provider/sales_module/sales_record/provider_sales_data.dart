@@ -102,9 +102,10 @@ class AllProductProvider extends ChangeNotifier {
 
   List<AllProductModelClass> AllProductModelClassList = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
-  FetchAllProduct(BuildContext context) async {
+  Future<List<AllProductModelClass>>FetchAllProduct(BuildContext context) async {
     AllProductModelClassList =
         await Api_Uzzal_implement_Class.FetchAllProduct();
+    return AllProductModelClassList;
     notifyListeners();
   }
 
@@ -154,11 +155,12 @@ class AllProductProvider extends ChangeNotifier {
   ////////////////////////////////Customer wise Category sales list/////////////////////////
 
   List<CustomerCategories> CustomerCategoriesList = [];
-  FetchCustomerCategoriesSaleProduct(
+  Future<List<CustomerCategories>>FetchCustomerCategoriesSaleProduct(
       context, String? customerId, {String? dateFrom, String? dateTo}) async {
     CustomerCategoriesList =
         await Api_Uzzal_implement_Class.FetchCustomerwiseCategorySalseData(
             context, customerId, dateFrom, dateTo);
+    return CustomerCategoriesList;
     notifyListeners();
   }
   ////////////////////////////////Customer wise Category sales list/////////////////////////

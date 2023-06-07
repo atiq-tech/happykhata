@@ -80,9 +80,11 @@ class CounterProvider extends ChangeNotifier {
   //Get Suppliers
   List<AllSuppliersClass> allSupplierslist = [];
 
-  getSupplier(BuildContext context) async {
+  Future<List<AllSuppliersClass>>getSupplier(BuildContext context) async {
     allSupplierslist = await ApiAllSuppliers.GetApiAllSuppliers(context);
+    return allSupplierslist;
     notifyListeners();
+
   }
 
   //Meterial purchase record
@@ -355,9 +357,10 @@ class CounterProvider extends ChangeNotifier {
   //Get_Customer_products
   List<GetCustomerProductsMclass> getCustomerProductslist = [];
 
-  getCustomer_products(BuildContext context, String? customerId) async {
+  Future<List<GetCustomerProductsMclass>>getCustomer_products(BuildContext context, String? customerId) async {
     getCustomerProductslist =
     await ApiGetCustomerProducts.GetApiGetCustomerProducts(context, customerId);
+    return getCustomerProductslist;
     notifyListeners();
   }
 

@@ -1189,7 +1189,6 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                       return const SizedBox();
                                     },
                                   ),
-
                                   // child: DropdownButtonHideUnderline(
                                   //   child: DropdownButton(
                                   //     isExpanded: true,

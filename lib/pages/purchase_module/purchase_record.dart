@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
@@ -68,6 +72,10 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
       });
     }
   }
+
+  var categoryController = TextEditingController();
+  var supplyerController = TextEditingController();
+  var productAllController = TextEditingController();
 
   String? secondPickedDate;
   void _secondSelectedDate() async {
@@ -302,7 +310,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 flex: 3,
                                 child: Container(
                                   margin: EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -312,38 +320,105 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: Text(
-                                        'Please select a Category',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedCustomerTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedCustomerTypes =
-                                              newValue.toString();
-
-                                          print(
-                                              "Category Si No ==== > ${newValue}");
-                                        });
-                                      },
-                                      items: All_Actegory_List.map((location) {
-                                        return DropdownMenuItem(
-                                          child: Text(
-                                            "${location.productCategoryName}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
+                                  child: FutureBuilder(
+                                    future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                              onChanged: (value){
+                                                if (value == '') {
+                                                  categoryId = '';
+                                                }
+                                              },
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                              controller: categoryController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Select Category',
+                                                suffix: categoryId == '' ? null : GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      categoryController.text = '';
+                                                    });
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 3),
+                                                    child: Icon(Icons.close,size: 14,),
+                                                  ),
+                                                ),
+                                              )
                                           ),
-                                          value: location.productCategorySlNo,
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element.productCategoryName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(All_Actegory_List.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (CategoryWiseStockModel suggestion) {
+                                            categoryController.text = suggestion.productCategoryName!;
+                                            setState(() {
+                                              _selectedCustomerTypes = suggestion.productCategorySlNo.toString();
+                                              print('Category id is $_selectedCustomerTypes');
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: Text(
+                                  //       'Please select a Category',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedCustomerTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedCustomerTypes =
+                                  //             newValue.toString();
+                                  //
+                                  //         print(
+                                  //             "Category Si No ==== > ${newValue}");
+                                  //       });
+                                  //     },
+                                  //     items: All_Actegory_List.map((location) {
+                                  //       return DropdownMenuItem(
+                                  //         child: Text(
+                                  //           "${location.productCategoryName}",
+                                  //           style: TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //         value: location.productCategorySlNo,
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -370,7 +445,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 flex: 3,
                                 child: Container(
                                   margin: EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -380,35 +455,104 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: Text(
-                                        'Please select a Supplier',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedQuantitySupplierTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedQuantitySupplierTypes =
-                                              newValue.toString();
-                                        });
-                                      },
-                                      items: allSupplierslist.map((location) {
-                                        return DropdownMenuItem(
-                                          child: Text(
-                                            "${location.supplierName}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
+                                  child: FutureBuilder(
+                                    future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                              onChanged: (value){
+                                                if (value == '') {
+                                                  _selectedQuantitySupplierTypes = '';
+                                                }
+                                              },
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                              controller: supplyerController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Select Supplier',
+                                                suffix: _selectedQuantitySupplierTypes == '' ? null : GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      supplyerController.text = '';
+                                                    });
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 3),
+                                                    child: Icon(Icons.close,size: 14,),
+                                                  ),
+                                                ),
+                                              )
                                           ),
-                                          value: location.supplierSlNo,
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element.displayName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(allSupplierslist.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (AllSuppliersClass suggestion) {
+                                            supplyerController.text = suggestion.displayName!;
+                                            setState(() {
+                                              _selectedQuantitySupplierTypes =
+                                                  suggestion.supplierSlNo;
+                                              print(
+                                                  "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     isExpanded: true,
+                                  //     hint: Text(
+                                  //       'Please select a Supplier',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedQuantitySupplierTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedQuantitySupplierTypes =
+                                  //             newValue.toString();
+                                  //       });
+                                  //     },
+                                  //     items: allSupplierslist.map((location) {
+                                  //       return DropdownMenuItem(
+                                  //         child: Text(
+                                  //           "${location.supplierName}",
+                                  //           style: TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //         value: location.supplierSlNo,
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -429,7 +573,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 flex: 3,
                                 child: Container(
                                   margin: EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
+                                  height: 38,
                                   padding: EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -439,35 +583,103 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: Text(
-                                        'Please select a Product',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedQuantityProductTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedQuantityProductTypes =
-                                              newValue!.toString();
-                                        });
-                                      },
-                                      items: AllGetProducts.map((location) {
-                                        return DropdownMenuItem(
-                                          child: Text(
-                                            "${location.productName}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
+                                  child: FutureBuilder(
+                                    future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                                    builder: (context,
+                                        AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return TypeAheadFormField(
+                                          textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                              onChanged: (value){
+                                                if (value == '') {
+                                                  _selectedQuantityProductTypes = '';
+                                                }
+                                              },
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                              controller: productAllController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Select Product',
+                                                suffix: _selectedQuantityProductTypes == '' ? null : GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      productAllController.text = '';
+                                                    });
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 3),
+                                                    child: Icon(Icons.close,size: 14,),
+                                                  ),
+                                                ),
+                                              )
                                           ),
-                                          value: location.productSlNo,
+                                          suggestionsCallback: (pattern) {
+                                            return snapshot.data!
+                                                .where((element) => element.productName!
+                                                .toLowerCase()
+                                                .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
+                                                .take(AllGetProducts.length)
+                                                .toList();
+                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                          },
+                                          itemBuilder: (context, suggestion) {
+                                            return ListTile(
+                                              title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (context, suggestionsBox, controller) {
+                                            return suggestionsBox;
+                                          },
+                                          onSuggestionSelected:
+                                              (AllProductModelClass suggestion) {
+                                            productAllController.text = suggestion.productName!;
+                                            setState(() {
+                                              _selectedQuantityProductTypes =
+                                                  suggestion.productSlNo.toString();
+
+                                            });
+                                          },
+                                          onSaved: (value) {},
                                         );
-                                      }).toList(),
-                                      isExpanded: true,
-                                    ),
+                                      }
+                                      return const SizedBox();
+                                    },
                                   ),
+
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton(
+                                  //     hint: Text(
+                                  //       'Please select a Product',
+                                  //       style: TextStyle(
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //     ), // Not necessary for Option 1
+                                  //     value: _selectedQuantityProductTypes,
+                                  //     onChanged: (newValue) {
+                                  //       setState(() {
+                                  //         _selectedQuantityProductTypes =
+                                  //             newValue!.toString();
+                                  //       });
+                                  //     },
+                                  //     items: AllGetProducts.map((location) {
+                                  //       return DropdownMenuItem(
+                                  //         child: Text(
+                                  //           "${location.productName}",
+                                  //           style: TextStyle(
+                                  //             fontSize: 14,
+                                  //           ),
+                                  //         ),
+                                  //         value: location.productSlNo,
+                                  //       );
+                                  //     }).toList(),
+                                  //     isExpanded: true,
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],

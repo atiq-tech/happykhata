@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/sales_module/provider_customer_payment_history.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +64,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   }
 
   bool isLoading = false;
+  var supplyerController = TextEditingController();
 
   @override
   void initState() {
@@ -90,17 +93,17 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
-                          "Customer:",
+                          "Supplier:",
                           style: TextStyle(
                             fontSize: 14,
                           ),
@@ -109,49 +112,119 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
-                            height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 38,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Please select a supplier',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                value: _selectedCustomer,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    supplierId = "$newValue";
-                                    print("Customer Id============$newValue");
-                                    _selectedCustomer = newValue.toString();
-                                    print(
-                                        "dropdown value================$newValue");
-                                  });
-                                },
-                                items: allSupplierslist.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.supplierName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                          child: FutureBuilder(
+                            future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                            builder: (context,
+                                AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                              if (snapshot.hasData) {
+                                return TypeAheadFormField(
+                                  textFieldConfiguration:
+                                  TextFieldConfiguration(
+                                      onChanged: (value){
+                                        if (value == '') {
+                                          _selectedCustomer = '';
+                                        }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
                                       ),
-                                    ),
-                                    value: location.supplierSlNo,
-                                  );
-                                }).toList(),
-                              ),
-                            )),
+                                      controller: supplyerController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Supplier',
+                                        suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              supplyerController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      )
+                                  ),
+                                  suggestionsCallback: (pattern) {
+                                    return snapshot.data!
+                                        .where((element) => element.supplierName!
+                                        .toLowerCase()
+                                        .contains(pattern
+                                        .toString()
+                                        .toLowerCase()))
+                                        .take(allSupplierslist.length)
+                                        .toList();
+                                    // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                  },
+                                  itemBuilder: (context, suggestion) {
+                                    return ListTile(
+                                      title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                    );
+                                  },
+                                  transitionBuilder:
+                                      (context, suggestionsBox, controller) {
+                                    return suggestionsBox;
+                                  },
+                                  onSuggestionSelected:
+                                      (AllSuppliersClass suggestion) {
+                                    supplyerController.text = suggestion.supplierName!;
+                                    setState(() {
+                                      _selectedCustomer =
+                                          suggestion.supplierSlNo;
+                                      print(
+                                          "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                    });
+                                  },
+                                  onSaved: (value) {},
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+
+                          // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: Text(
+                            //       'Please select a supplier',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     value: _selectedCustomer,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         supplierId = "$newValue";
+                            //         print("Customer Id============$newValue");
+                            //         _selectedCustomer = newValue.toString();
+                            //         print(
+                            //             "dropdown value================$newValue");
+                            //       });
+                            //     },
+                            //     items: allSupplierslist.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.supplierName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.supplierSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                        ),
                       ),
                     ],
                   ),
@@ -165,13 +238,13 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -184,24 +257,24 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 // fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
                                 hintText: firstPickedDate == null
                                     ? DateFormat('yyyy-MM-dd')
                                         .format(DateTime.now())
                                     : firstPickedDate,
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -215,18 +288,18 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                         ),
                       ),
                       Container(
-                        child: Text("To"),
+                        child: const Text("To"),
                       ),
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -239,24 +312,24 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 //fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
                                 hintText: secondPickedDate == null
                                     ? DateFormat('yyyy-MM-dd')
                                         .format(DateTime.now())
                                     : secondPickedDate,
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -288,7 +361,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                           firstPickedDate,
                           secondPickedDate,
                         );
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -298,10 +371,10 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                         height: 32.0,
                         width: 105.0,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 4, 113, 185),
+                          color: const Color.fromARGB(255, 4, 113, 185),
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        child: Center(
+                        child: const Center(
                             child: Text(
                           "Show Report",
                           style: TextStyle(color: Colors.white),
@@ -313,11 +386,11 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Expanded(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height / 1.31,
@@ -330,35 +403,35 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Container(
-                            padding: EdgeInsets.only(bottom: 16.0),
+                            padding: const EdgeInsets.only(bottom: 16.0),
                             child: DataTable(
                               showCheckboxColumn: true,
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Date')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Description')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Bill')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Paid')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Inv.Due')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Retruned')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label:
                                       Center(child: Text('Paid to customer')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Balance')),
                                 ),
                               ],

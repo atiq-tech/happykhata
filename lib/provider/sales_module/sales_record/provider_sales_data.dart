@@ -177,10 +177,10 @@ class AllProductProvider extends ChangeNotifier {
 
   List<AllCustomerDueList> AllCustomerDueListList = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
-  FetchAllCustomerDueList(context, String? categoryId) async {
+  FetchAllCustomerDueList(context, String? customerId) async {
     AllCustomerDueListList =
         await Api_Uzzal_implement_Class.FetchAllCustomerDueList(
-            context, categoryId);
+            context, customerId);
     notifyListeners();
   }
   ////////////////////////////////One Customer Due List /////////////////////////

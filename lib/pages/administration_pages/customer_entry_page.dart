@@ -280,7 +280,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     _selectedArea = newValue!.toString();
-                                    getCustomerCode();
+                                    //getCustomerCode();
                                   });
                                 },
                                 items: allDistrictsData.map((location) {
@@ -575,6 +575,9 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
+                          setState(() {
+                            getCustomerCode();
+                          });
                           _AddCustomer(context);
                         },
                         child: Container(
@@ -858,13 +861,30 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
             "Content-Type": "application/json",
             "Authorization": "Bearer ${GetStorage().read("token")}",
           }));
-      print("Customer DDDDDDDDDDDATA ${response.data}");
-      print("success============> ${response.data["success"]}");
-      print("message =================> ${response.data["message"]}");
-      print("Customer code================>  ${response.data["customerCode"]}");
+      var item = jsonDecode(response.data);
+      print("customer DDDDDDDDDDDATA ${item}");
+      print("success============> ${item["success"]}");
+      print("message =================> ${item["message"]}");
+      print("supplierCode================>  ${item["customerCode"]}");
+      if (item["message"] == "Customer added successfully") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color.fromARGB(255, 4, 108, 156),
+            duration: Duration(seconds: 2),
+            content: Center(child: Text("Customer added successfull"))));
+      } else {
+        Center(child: Text("Customer data added not successfull"));
+      }
       emtyMethod();
       Provider.of<CounterProvider>(context, listen: false)
           .getCustomers(context);
+
+      // print("Customer DDDDDDDDDDDATA ${response.data}");
+      // print("success============> ${response.data["success"]}");
+      // print("message =================> ${response.data["message"]}");
+      // print("Customer code================>  ${response.data["customerCode"]}");
+      // emtyMethod();
+      // Provider.of<CounterProvider>(context, listen: false)
+      //     .getCustomers(context);
     } catch (e) {
       return e;
     }

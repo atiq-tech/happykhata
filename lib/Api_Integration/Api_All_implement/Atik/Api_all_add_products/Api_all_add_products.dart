@@ -53,7 +53,6 @@ class ApiAllAddProduct {
       var data = jsonDecode(response.data);
       Provider.of<CounterProvider>(context, listen: false).getProducts(context);
       print("AddProduct AddProduct length is ${data}");
-      print("AddProduction AddProduction length is ${data}");
       print("success============> ${data["success"]}");
       print("message =================> ${data["message"]}");
       print("productionId ================>  ${data["productionId"]}");

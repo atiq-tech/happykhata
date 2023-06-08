@@ -34,7 +34,8 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
   void initState() {
     //get Suppliers
     ApiAllSuppliers apiAllSuppliers;
-    Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
+
+    getSupplier();
     // TODO: implement initState
     super.initState();
   }
@@ -572,6 +573,8 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
       print("message =================> ${item["message"]}");
       print("supplierCode================>  ${item["supplierCode"]}");
       if (item["message"] == "Supplier added successfully") {
+        FocusScope.of(context).requestFocus(FocusNode());
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color.fromARGB(255, 4, 108, 156),
             duration: Duration(seconds: 2),
@@ -580,10 +583,17 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
         Center(child: Text("Supplier data added not successfull"));
       }
       emtyMethod();
-      Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
+      getSupplier();
+      setState(() {
+
+      });
     } catch (e) {
       return e;
     }
+  }
+
+  getSupplier(){
+    Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
   }
 
   //Get Supplier_Id

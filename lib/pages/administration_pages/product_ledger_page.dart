@@ -328,6 +328,9 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                             label: Center(child: Text('Date')),
                           ),
                           DataColumn(
+                            label: Center(child: Text('Description')),
+                          ),
+                          DataColumn(
                             label: Center(child: Text('Rate')),
                           ),
                           DataColumn(
@@ -348,6 +351,11 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                 Center(
                                     child: Text(
                                         '${allProductLedgerData[index].date}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allProductLedgerData[index].description}')),
                               ),
                               DataCell(
                                 Center(

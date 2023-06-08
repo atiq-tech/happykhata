@@ -102,7 +102,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -110,7 +110,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Customer Type:",
@@ -122,20 +122,20 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(left: 5, right: 5),
+                          padding: const EdgeInsets.only(left: 5, right: 5),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
-                              hint: Text(
+                              hint: const Text(
                                 'Please select a payment type',
                                 style: TextStyle(
                                   fontSize: 14,
@@ -160,13 +160,13 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               },
                               items: _types.map((location) {
                                 return DropdownMenuItem(
+                                  value: location,
                                   child: Text(
                                     location,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  value: location,
                                 );
                               }).toList(),
                             ),
@@ -179,7 +179,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Customer:",
@@ -191,13 +191,13 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
@@ -205,7 +205,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'Please select a customer',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -223,13 +223,13 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                                 },
                                 items: provideCustomerList.map((location) {
                                   return DropdownMenuItem(
+                                    value: location.customerSlNo,
                                     child: Text(
                                       "${location.customerName}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location.customerSlNo,
                                   );
                                 }).toList(),
                               ),
@@ -238,7 +238,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: Row(
@@ -247,13 +247,13 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -266,24 +266,24 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 // fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
                                 hintText: firstPickedDate == null
                                     ? DateFormat('yyyy-MM-dd')
                                         .format(DateTime.now())
                                     : firstPickedDate,
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -297,18 +297,18 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                         ),
                       ),
                       Container(
-                        child: Text("To"),
+                        child: const Text("To"),
                       ),
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -321,24 +321,24 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 //fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
                                 hintText: secondPickedDate == null
                                     ? DateFormat('yyyy-MM-dd')
                                         .format(DateTime.now())
                                     : secondPickedDate,
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -370,7 +370,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                           firstPickedDate,
                           secondPickedDate,
                         );
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -380,10 +380,10 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                         height: 32.0,
                         width: 105.0,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 4, 113, 185),
+                          color: const Color.fromARGB(255, 4, 113, 185),
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        child: Center(
+                        child: const Center(
                             child: Text(
                           "Show Report",
                           style: TextStyle(
@@ -396,16 +396,16 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Expanded(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height / 1.31,
                     width: double.infinity,
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
                       child: SingleChildScrollView(
@@ -413,35 +413,35 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Container(
-                            padding: EdgeInsets.only(bottom: 16.0),
+                            padding: const EdgeInsets.only(bottom: 16.0),
                             child: DataTable(
                               showCheckboxColumn: true,
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Date')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Description')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Bill')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Paid')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Inv.Due')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Retruned')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label:
                                       Center(child: Text('Paid to customer')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Balance')),
                                 ),
                               ],

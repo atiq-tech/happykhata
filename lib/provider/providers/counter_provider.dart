@@ -259,8 +259,9 @@ class CounterProvider extends ChangeNotifier {
   //Get Material
   List<AllGetMaterialClass> allGetMateriallist = [];
 
-  getMaterials(BuildContext context) async {
+  Future<List<AllGetMaterialClass>>getMaterials(BuildContext context) async {
     allGetMateriallist = await ApiAllGetMaterial.GetApiAllGetMaterial(context);
+    return allGetMateriallist;
     notifyListeners();
   }
 
@@ -275,9 +276,10 @@ class CounterProvider extends ChangeNotifier {
   //Get Employee//Incharge
   List<AllGetEmployeeClass> allGetEmployeelist = [];
 
-  getEmployees(BuildContext context) async {
+  Future<List<AllGetEmployeeClass>>getEmployees(BuildContext context) async {
     allGetEmployeelist =
     await ApiAllGetEmployees.GetApiAllGetEmployees(context);
+    return allGetEmployeelist;
     notifyListeners();
   }
 

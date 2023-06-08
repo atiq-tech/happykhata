@@ -3,12 +3,16 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_shift/Api_all_get_shift.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/custom_finish_product_add_cart.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/custom_material_add_cart.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_get_employee_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_get_material_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -68,6 +72,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
 
   String? _selectedShift;
   String? _selectedMeterial;
+  String? _selectedProduct;
   String? _selectedIncharge;
 
   ApiAllGetMaterial? apiAllGetMaterial;
@@ -97,6 +102,10 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
 
     super.initState();
   }
+
+  var materialController = TextEditingController();
+  var productController = TextEditingController();
+  var inchargeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -138,14 +147,14 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               child: Container(
-                height: 150.0,
+                height: 160.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -154,8 +163,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                     Container(
                         height: 28.0,
                         width: double.infinity,
-                        color: Color.fromARGB(255, 107, 134, 146),
-                        child: Center(
+                        color: const Color.fromARGB(255, 107, 134, 146),
+                        child: const Center(
                             child: Text(
                           "Materials",
                           style: TextStyle(
@@ -163,13 +172,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               fontSize: 18,
                               color: Colors.white),
                         ))),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
-                            "Meterial :",
+                            "Material :",
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Color.fromARGB(255, 126, 125, 125)),
@@ -178,73 +187,159 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select Meterial',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedMeterial,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedMeterial = newValue!.toString();
-
-                                    final results = [
-                                      allGetMaterialsData
-                                          .where((m) => m.materialId!.contains(
-                                              '$newValue')) // or Testing 123
-                                          .toList(),
-                                    ];
-                                    results.forEach((element) async {
-                                      element.add(element.first);
-                                      print(
-                                          "supplierSlNo  ${element[0].materialId}");
-                                      print(
-                                          "supplierMobile  ${element[0].name}");
-                                      print(
-                                          "supplierName  ${element[0].categoryId}");
-                                      print(
-                                          "supplierAddress  ${element[0].categoryName}");
-                                      materialname = "${element[0].name}";
-                                      catname = "${element[0].categoryName}";
-                                    });
-                                  });
-                                },
-                                items: allGetMaterialsData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.name}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getMaterials(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllGetMaterialClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          // if (value == '') {
+                                          //   categoryId = '';
+                                          // }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: materialController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Material',
+                                          suffix: _selectedMeterial == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                materialController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.materialId,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.displayText!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allGetMaterialsData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllGetMaterialClass suggestion) {
+                                          materialController.text = suggestion.displayText!;
+                                          setState(() {
+                                            _selectedMeterial = suggestion.materialId!.toString();
+
+                                            final results = [
+                                              allGetMaterialsData
+                                                  .where((m) => m.materialId!.contains(
+                                                      '${suggestion.materialId}')) // or Testing 123
+                                                  .toList(),
+                                            ];
+                                            results.forEach((element) async {
+                                              element.add(element.first);
+                                              print(
+                                                  "supplierSlNo  ${element[0].materialId}");
+                                              print(
+                                                  "supplierMobile  ${element[0].name}");
+                                              print(
+                                                  "supplierName  ${element[0].categoryId}");
+                                              print(
+                                                  "supplierAddress  ${element[0].categoryName}");
+                                              materialname = "${element[0].name}";
+                                              catname = "${element[0].categoryName}";
+                                            });
+                                          });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: const Text(
+                            //       'Select Material',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //
+                            //     dropdownColor: const Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedMeterial,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedMeterial = newValue!.toString();
+                            //
+                            //         final results = [
+                            //           allGetMaterialsData
+                            //               .where((m) => m.materialId!.contains(
+                            //                   '$newValue')) // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //         results.forEach((element) async {
+                            //           element.add(element.first);
+                            //           print(
+                            //               "supplierSlNo  ${element[0].materialId}");
+                            //           print(
+                            //               "supplierMobile  ${element[0].name}");
+                            //           print(
+                            //               "supplierName  ${element[0].categoryId}");
+                            //           print(
+                            //               "supplierAddress  ${element[0].categoryName}");
+                            //           materialname = "${element[0].name}";
+                            //           catname = "${element[0].categoryName}";
+                            //         });
+                            //       });
+                            //     },
+                            //     items: allGetMaterialsData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.name}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.materialId,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Quantity :",
@@ -261,19 +356,19 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                             child: TextField(
                               controller: _QuantityMaterialController,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 hintText: "Quantity",
-                                hintStyle: TextStyle(fontSize: 14),
+                                hintStyle: const TextStyle(fontSize: 14),
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -284,7 +379,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -301,12 +396,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                           width: 100.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 151, 177, 189),
+                                color: const Color.fromARGB(255, 151, 177, 189),
                                 width: 1.0),
-                            color: Color.fromARGB(255, 107, 134, 146),
+                            color: const Color.fromARGB(255, 107, 134, 146),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Add to Cart",
                             style: TextStyle(
@@ -321,11 +416,11 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                 ),
               ),
             ),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
             Container(
               height: MediaQuery.of(context).size.height / 4,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -339,16 +434,16 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         border:
                             TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('SL No.')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Material Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Category')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Quantity')),
                           ),
                         ],
@@ -386,12 +481,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
             Padding(
               padding: const EdgeInsets.all(6.0),
               child: Container(
-                height: 150.0,
+                height: 160.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -400,8 +495,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                     Container(
                         height: 28.0,
                         width: double.infinity,
-                        color: Color.fromARGB(255, 107, 134, 146),
-                        child: Center(
+                        color: const Color.fromARGB(255, 107, 134, 146),
+                        child: const Center(
                             child: Text(
                           "Finish Products",
                           style: TextStyle(
@@ -409,10 +504,10 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               fontSize: 18,
                               color: Colors.white),
                         ))),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Product :",
@@ -424,75 +519,163 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select Product',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedMeterial,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedMeterial = newValue.toString();
-                                    print(
-                                        "Product Si No= uzzal=====> ${newValue}");
-                                    final results = [
-                                      All_Product.where((m) =>
-                                              m.productSlNo ==
-                                              '$newValue') // or Testing 123
-                                          .toList(),
-                                    ];
-
-                                    results.forEach((element) async {
-                                      element.add(element.first);
-                                      print(
-                                          "supplierSlNo uzzal=======  ${element[0].productSlNo}");
-                                      print(
-                                          "supplierMobile uzzal ======  ${element[0].productName}");
-
-                                      finishproductname =
-                                          "${element[0].productName}";
-                                      // productname = "${element[0].productCategoryName}";
-                                    });
-                                    print(
-                                        "supplierSlNo uzzal=======  ${results}");
-                                  });
-                                },
-                                items: All_Product.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.productName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          // if (value == '') {
+                                          //   categoryId = '';
+                                          // }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: productController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Product',
+                                          suffix: _selectedProduct == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                productController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.productSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.displayText!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Product.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllProductModelClass suggestion) {
+                                          productController.text = suggestion.displayText!;
+                                          setState(() {
+                                            _selectedProduct = suggestion.productSlNo.toString();
+                                            print(
+                                                "Product Si No= uzzal=====> ${suggestion.productSlNo}");
+                                            final results = [
+                                              All_Product.where((m) =>
+                                                      m.productSlNo ==
+                                                      '${suggestion.productSlNo}') // or Testing 123
+                                                  .toList(),
+                                            ];
+
+                                            results.forEach((element) async {
+                                              element.add(element.first);
+                                              print(
+                                                  "supplierSlNo uzzal=======  ${element[0].productSlNo}");
+                                              print(
+                                                  "supplierMobile uzzal ======  ${element[0].productName}");
+
+                                              finishproductname =
+                                                  "${element[0].productName}";
+                                              // productname = "${element[0].productCategoryName}";
+                                            });
+                                            print(
+                                                "supplierSlNo uzzal=======  ${results}");
+                                          });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Select Product',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: const Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedProduct,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedProduct = newValue.toString();
+                            //         print(
+                            //             "Product Si No= uzzal=====> ${newValue}");
+                            //         final results = [
+                            //           All_Product.where((m) =>
+                            //                   m.productSlNo ==
+                            //                   '$newValue') // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //
+                            //         results.forEach((element) async {
+                            //           element.add(element.first);
+                            //           print(
+                            //               "supplierSlNo uzzal=======  ${element[0].productSlNo}");
+                            //           print(
+                            //               "supplierMobile uzzal ======  ${element[0].productName}");
+                            //
+                            //           finishproductname =
+                            //               "${element[0].productName}";
+                            //           // productname = "${element[0].productCategoryName}";
+                            //         });
+                            //         print(
+                            //             "supplierSlNo uzzal=======  ${results}");
+                            //       });
+                            //     },
+                            //     items: All_Product.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.productName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.productSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Quantity :",
@@ -509,19 +692,19 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                             child: TextField(
                               controller: _QuantityProductController,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 hintText: "Quantity",
-                                hintStyle: TextStyle(fontSize: 14),
+                                hintStyle: const TextStyle(fontSize: 14),
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -532,7 +715,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -550,12 +733,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                           width: 100.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 151, 177, 189),
+                                color: const Color.fromARGB(255, 151, 177, 189),
                                 width: 1.0),
-                            color: Color.fromARGB(255, 107, 134, 146),
+                            color: const Color.fromARGB(255, 107, 134, 146),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Add to Cart",
                             style: TextStyle(
@@ -570,11 +753,11 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                 ),
               ),
             ),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
             Container(
               height: MediaQuery.of(context).size.height / 4,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -590,13 +773,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         border:
                             TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('SL No.')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Product Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Quantity')),
                           ),
                         ],
@@ -627,14 +810,14 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: Container(
                 height: 400.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -643,8 +826,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                     Container(
                         height: 28.0,
                         width: double.infinity,
-                        color: Color.fromARGB(255, 107, 134, 146),
-                        child: Center(
+                        color: const Color.fromARGB(255, 107, 134, 146),
+                        child: const Center(
                             child: Text(
                           "Production",
                           style: TextStyle(
@@ -652,57 +835,57 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               fontSize: 18,
                               color: Colors.white),
                         ))),
-                    SizedBox(height: 5.0),
-                    Row(
-                      children: [
-                        const Expanded(
-                          flex: 5,
-                          child: Text(
-                            "Production Id",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(flex: 1, child: Text(":")),
-                        Expanded(
-                          flex: 11,
-                          child: Container(
-                            height: 28.0,
-                            width: MediaQuery.of(context).size.width / 2,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
-                                )),
-                            child: TextField(
-                              controller: _productionIdController,
-                              // keyboardType: TextInputType,
-                              decoration: InputDecoration(
-                                enabled: false,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 5.0),
+                    // Row(
+                    //   children: [
+                    //     const Expanded(
+                    //       flex: 5,
+                    //       child: Text(
+                    //         "Production Id",
+                    //         style: TextStyle(
+                    //             color: Color.fromARGB(255, 126, 125, 125)),
+                    //       ),
+                    //     ),
+                    //     const Expanded(flex: 1, child: Text(":")),
+                    //     Expanded(
+                    //       flex: 11,
+                    //       child: Container(
+                    //         height: 28.0,
+                    //         width: MediaQuery.of(context).size.width / 2,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(10.0),
+                    //             border: Border.all(
+                    //               color: const Color.fromARGB(255, 7, 125, 180),
+                    //             )),
+                    //         child: TextField(
+                    //           controller: _productionIdController,
+                    //           // keyboardType: TextInputType,
+                    //           decoration: InputDecoration(
+                    //             enabled: false,
+                    //             border: InputBorder.none,
+                    //             focusedBorder: OutlineInputBorder(
+                    //               borderSide: const BorderSide(
+                    //                 color: Color.fromARGB(255, 7, 125, 180),
+                    //               ),
+                    //               borderRadius: BorderRadius.circular(10.0),
+                    //             ),
+                    //             enabledBorder: OutlineInputBorder(
+                    //               borderSide: const BorderSide(
+                    //                 color: Color.fromARGB(255, 7, 125, 180),
+                    //               ),
+                    //               borderRadius: BorderRadius.circular(10.0),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Date",
@@ -710,11 +893,11 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                               right: 5,
                               top: 5,
                               bottom: 5,
@@ -728,20 +911,20 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 10),
+                                      const EdgeInsets.only(top: 10, left: 10),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: firstPickedDate == null
                                       ? DateFormat('yyyy-MM-dd')
                                           .format(DateTime.now())
                                       : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -756,68 +939,134 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
-                            "Incharge",
+                            "In-charge",
                             style: TextStyle(
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select Incharge',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedIncharge,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedIncharge = newValue!.toString();
-                                  });
-                                },
-                                items: allGetEmployeesData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.displayName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getEmployees(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllGetEmployeeClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedIncharge = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: inchargeController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Incharge',
+                                          suffix: _selectedIncharge == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                inchargeController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.employeeSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allGetEmployeesData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllGetEmployeeClass suggestion) {
+                                          inchargeController.text = suggestion.displayName!;
+                                      setState(() {
+                                        _selectedIncharge = suggestion.employeeSlNo.toString();
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Select Incharge',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: const Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedIncharge,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedIncharge = newValue!.toString();
+                            //       });
+                            //     },
+                            //     items: allGetEmployeesData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.displayName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.employeeSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Shift",
@@ -825,29 +1074,29 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'Select Shift',
                                   style: TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
+                                dropdownColor: const Color.fromARGB(255, 231, 251,
                                     255), // Not necessary for Option 1
                                 value: _selectedShift,
                                 onChanged: (newValue) {
@@ -857,13 +1106,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 },
                                 items: allGetShiftsData.map((location) {
                                   return DropdownMenuItem(
+                                    value: location.name,
                                     child: Text(
                                       "${location.name}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location.name,
                                   );
                                 }).toList(),
                               ),
@@ -872,7 +1121,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -883,17 +1132,15 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
                               onChanged: (value) {
-                                sum = int.parse(value) +
-                                    int.parse(_transportCostController.text) +
-                                    int.parse(_otherCostController.text);
+                                sum = int.parse(value);
                                 _totalCostController.text = "${sum}";
                               },
                               controller: _LaborCostController,
@@ -901,13 +1148,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -918,7 +1165,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -929,7 +1176,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -938,8 +1185,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                             child: TextField(
                               onChanged: (value) {
                                 sum = int.parse(_LaborCostController.text) +
-                                    int.parse(value) +
-                                    int.parse(_otherCostController.text);
+                                    int.parse(value);
                                 _totalCostController.text = "${sum}";
                               },
                               controller: _transportCostController,
@@ -947,13 +1193,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -964,7 +1210,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -975,7 +1221,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -993,13 +1239,13 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1010,7 +1256,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -1021,7 +1267,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -1031,17 +1277,17 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               //Total Cost text 1
                               controller: _totalCostController,
                               keyboardType: TextInputType.text,
-                              enabled: true,
+                              enabled: false,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1052,7 +1298,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -1063,7 +1309,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -1073,20 +1319,20 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                               controller: _noteController,
                               decoration: InputDecoration(
                                 hintText: "Note",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                   fontSize: 14,
                                 ),
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1097,7 +1343,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -1116,6 +1362,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                           //         // _totalCostController.text,
                           //         // _transportCostController.text
                           //         );
+                          print("Button click");
                           _AddProduction(context);
                         },
                         child: Container(
@@ -1123,12 +1370,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                           width: 70.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 173, 241, 179),
+                                color: const Color.fromARGB(255, 173, 241, 179),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 67, 134, 106),
+                            color: const Color.fromARGB(255, 67, 134, 106),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "SAVE",
                             style: TextStyle(
@@ -1143,7 +1390,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             // Container(
             //   height: MediaQuery.of(context).size.height / 1.43,
             //   width: double.infinity,
@@ -1247,10 +1494,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
             "production": {
               "production_id": "0",
               "production_sl": "PR-3496",
-              "date": "$firstPickedDate",
+              "date": firstPickedDate == null
+            ? DateFormat('yyyy-MM-dd')
+                .format(DateTime.now()) : "$firstPickedDate",
               "incharge_id": "$_selectedIncharge",
               "shift": _selectedShift,
-              "note": "${_noteController.text}",
+              "note": _noteController.text,
               "labour_cost": _LaborCostController.text,
               "transport_cost": _transportCostController.text,
               "other_cost": _otherCostController.text,
@@ -1265,7 +1514,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                 "material_id": "1",
                 "name": "$materialname",
                 "purchase_rate": "1100",
-                "quantity": "${_QuantityMaterialController.text}",
+                "quantity": _QuantityMaterialController.text,
                 "reorder_level": "100",
                 "status": "1",
                 "status_text": "Active",
@@ -1279,7 +1528,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                 "name": "$finishproductname",
                 "price": "20.00",
                 "product_id": "540",
-                "quantity": "${_QuantityProductController.text}"
+                "quantity": _QuantityProductController.text
               }
             ]
           },
@@ -1299,8 +1548,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
       print("message =================> ${data["message"]}");
       print("productionId ================>  ${data["productionId"]}");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-         backgroundColor: Color.fromARGB(255, 4, 108, 156),
-          duration: Duration(seconds: 1), content: Center(child: Text("${data["message"]}"))));
+         backgroundColor: const Color.fromARGB(255, 4, 108, 156),
+          duration: const Duration(seconds: 1), content: Center(child: Text("${data["message"]}"))));
       _noteController.text = "";
       _LaborCostController.text = "";
       _transportCostController.text = "";

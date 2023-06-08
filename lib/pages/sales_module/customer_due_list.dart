@@ -59,14 +59,14 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Search Type",
@@ -78,13 +78,13 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(left: 5, right: 5),
+                          padding: const EdgeInsets.only(left: 5, right: 5),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -92,7 +92,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
                               isExpanded: true,
-                              hint: Text(
+                              hint: const Text(
                                 'By all',
                                 style: TextStyle(
                                   fontSize: 14,
@@ -114,7 +114,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                                 return DropdownMenuItem(
                                   child: Text(
                                     location,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
@@ -133,14 +133,14 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
           ),
           isCustomerListClicked == true
               ? Container(
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         child: Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 1,
                               child: Text(
                                 "Customer : ",
@@ -152,13 +152,13 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                             Expanded(
                               flex: 3,
                               child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
+                                  height: 38,
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -277,7 +277,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
           Align(
             alignment: Alignment.bottomRight,
             child: Container(
-              margin:EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+              margin:const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
               color: const Color.fromARGB(255, 3, 91, 150),
               padding: const EdgeInsets.all(1.0),
               child: InkWell(
@@ -296,7 +296,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                    print(
                        "Customer due report======================::${_selectedCustomer}");
                  });
-                  Future.delayed(Duration(seconds: 3), () {
+                  Future.delayed(const Duration(seconds: 3), () {
                     setState(() {
                       isLoading = false;
                     });
@@ -321,13 +321,13 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
             ),
           ),
 
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
             isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
                       child: SingleChildScrollView(
@@ -336,86 +336,82 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                           scrollDirection: Axis.horizontal,
                           child: Column(
                             children: [
-                              Container(
-                                // color: Colors.red,
-                                // padding:EdgeInsets.only(bottom: 16.0),
-                                child: DataTable(
-                                  showCheckboxColumn: true,
-                                  border: TableBorder.all(
-                                      color: Colors.black54, width: 1),
-                                  columns: [
-                                    DataColumn(
-                                      label: Center(child: Text('Product Id')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Customer Name')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Customer Mobile')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Total Bill')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Total Paid')),
-                                    ),
-                                    DataColumn(
-                                      label:
-                                          Center(child: Text('Paid to Customer')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Sales Returned')),
-                                    ),
-                                    DataColumn(
-                                      label: Center(child: Text('Due Amount')),
-                                    ),
-                                  ],
-                                  rows: List.generate(
-                                    aLLCustomerDueList.length,
-                                    (int index) => DataRow(
-                                      cells: <DataCell>[
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].customerCode}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].customerName}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].customerMobile}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].billAmount}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  "${aLLCustomerDueList[index].paidAmount}")),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].cashReceived}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].returnedAmount}')),
-                                        ),
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                  '${aLLCustomerDueList[index].dueAmount}')),
-                                        ),
-                                      ],
-                                    ),
+                              DataTable(
+                                showCheckboxColumn: true,
+                                border: TableBorder.all(
+                                    color: Colors.black54, width: 1),
+                                columns: const [
+                                  DataColumn(
+                                    label: Center(child: Text('Product Id')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Customer Name')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Customer Mobile')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Total Bill')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Total Paid')),
+                                  ),
+                                  DataColumn(
+                                    label:
+                                        Center(child: Text('Paid to Customer')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Sales Returned')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Due Amount')),
+                                  ),
+                                ],
+                                rows: List.generate(
+                                  aLLCustomerDueList.length,
+                                  (int index) => DataRow(
+                                    cells: <DataCell>[
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].customerCode}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].customerName}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].customerMobile}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].billAmount}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                "${aLLCustomerDueList[index].paidAmount}")),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].cashReceived}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].returnedAmount}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${aLLCustomerDueList[index].dueAmount}')),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -424,7 +420,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                                 padding: const EdgeInsets.only(left: 1000,bottom: 50.0,top: 10.0),
                                 child: Row(
                                   children: [
-                                    Text(//77777777
+                                    const Text(//77777777
                                       "Total Due        :  ",
                                       style: TextStyle(
                                           fontWeight:
@@ -434,14 +430,14 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                                     aLLCustomerDueList
                                         .length ==
                                         0
-                                        ? Text(
+                                        ? const Text(
                                       "0",
                                       style: TextStyle(
                                           fontSize: 14),
                                     )
                                         : Text(
                                       "${GetStorage().read("totalDue")}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14),
                                     ),
                                   ],

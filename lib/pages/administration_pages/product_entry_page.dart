@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_products/Api_all_add_products.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_getUnits/Api_all_getUnits.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_products/api_all_products.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -64,6 +66,8 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
     super.dispose();
   }
 
+  var categoryController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final allCategoryListData = Provider.of<CategoryWiseStockProvider>(context)
@@ -114,7 +118,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
                             padding: EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
@@ -123,36 +127,103 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select category',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedCategory,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedCategory = newValue!.toString();
-                                    getProductCode();
-                                  });
-                                },
-                                items: allCategoryListData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.productCategoryName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedCategory = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: categoryController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Category',
+                                          suffix: _selectedCategory == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                categoryController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.productCategorySlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.productCategoryName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allCategoryListData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (CategoryWiseStockModel suggestion) {
+                                      categoryController.text = suggestion.productCategoryName!;
+                                      setState(() {
+                                        _selectedCategory = suggestion.productCategorySlNo.toString();
+                                        getProductCode();
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: Text(
+                            //       'Select category',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedCategory,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedCategory = newValue!.toString();
+                            //         getProductCode();
+                            //       });
+                            //     },
+                            //     items: allCategoryListData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.productCategoryName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.productCategorySlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],

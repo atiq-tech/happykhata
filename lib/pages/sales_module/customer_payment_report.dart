@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/sales_module/provider_customer_list_with_customer_type.dart';
 import 'package:poss/provider/sales_module/provider_customer_payment_history.dart';
+import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:provider/provider.dart';
 import '../../provider/sales_module/provider_customer_payment_report.dart';
 
@@ -37,6 +40,8 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
   //   'Received',
   //   'Paid',
   // ];
+
+  var customerController = TextEditingController();
 
   String? _selectedCustomer;
   String? _selectedCustomerType;
@@ -192,7 +197,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                         flex: 3,
                         child: Container(
                             margin: EdgeInsets.only(top: 5, bottom: 5),
-                            height: 30,
+                            height: 40,
                             padding: EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -202,38 +207,115 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Please select a customer',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                value: _selectedCustomer,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    customerId = "$newValue";
-                                    print("Customer Id============$newValue");
-                                    _selectedCustomer = newValue.toString();
-                                    print(
-                                        "dropdown value================$newValue");
-                                  });
-                                },
-                                items: provideCustomerList.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.customerName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                          child: FutureBuilder(
+                            future: Provider.of<AllProductProvider>(context)
+                                .Fatch_By_all_Customer(context),
+                            builder: (context,
+                                AsyncSnapshot<List<By_all_Customer>>
+                                snapshot) {
+                              if (snapshot.hasData) {
+                                return TypeAheadFormField(
+                                  textFieldConfiguration:
+                                  TextFieldConfiguration(
+                                    onChanged: (newValue) {
+                                      print("On change Value is $newValue");
+                                      if (newValue == '') {
+                                        _selectedCustomer = '';
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    controller: customerController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Select Customer',
+                                      suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            customerController.text = '';
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 3),
+                                          child: Icon(Icons.close,size: 14,),
+                                        ),
                                       ),
                                     ),
-                                    value: location.customerSlNo,
-                                  );
-                                }).toList(),
-                              ),
-                            )),
+                                  ),
+                                  suggestionsCallback: (pattern) {
+                                    return snapshot.data!
+                                        .where((element) => element
+                                        .displayName!
+                                        .toLowerCase()
+                                        .contains(pattern
+                                        .toString()
+                                        .toLowerCase()))
+                                        .take(provideCustomerList.length)
+                                        .toList();
+                                    // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                  },
+                                  itemBuilder: (context, suggestion) {
+                                    return ListTile(
+                                      title: SizedBox(
+                                          child: Text(
+                                            "${suggestion.displayName}",
+                                            style: const TextStyle(fontSize: 12),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    );
+                                  },
+                                  transitionBuilder:
+                                      (context, suggestionsBox, controller) {
+                                    return suggestionsBox;
+                                  },
+                                  onSuggestionSelected:
+                                      (By_all_Customer suggestion) {
+                                    setState(() {
+                                      customerController.text = suggestion.displayName!;
+                                      _selectedCustomer = suggestion.countrySlNo;
+                                    });
+                                  },
+                                  onSaved: (value) {},
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+
+                          // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: Text(
+                            //       'Please select a customer',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     value: _selectedCustomer,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         customerId = "$newValue";
+                            //         print("Customer Id============$newValue");
+                            //         _selectedCustomer = newValue.toString();
+                            //         print(
+                            //             "dropdown value================$newValue");
+                            //       });
+                            //     },
+                            //     items: provideCustomerList.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.customerSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                        ),
                       ),
                     ],
                   ),

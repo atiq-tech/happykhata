@@ -404,12 +404,6 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                         )
                                     ),
                                     suggestionsCallback: (pattern) {
-
-                                      // print('General customer ${All_Supplier.length}');
-                                      //
-                                      // All_Supplier.insert(0, AllSuppliersClass(displayName: "General Customer"));
-                                      // print('General customer ${All_Supplier.length}');
-                                      //
                                       return snapshot.data!
                                           .where((element) => element.displayName!
                                           .toLowerCase()

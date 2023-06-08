@@ -207,38 +207,115 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Please select a customer',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                value: _selectedCustomer,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    customerId = "$newValue";
-                                    print("Customer Id============$newValue");
-                                    _selectedCustomer = newValue.toString();
-                                    print(
-                                        "dropdown value================$newValue");
-                                  });
-                                },
-                                items: provideCustomerList.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.customerName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
+                          child: FutureBuilder(
+                            future: Provider.of<AllProductProvider>(context)
+                                .Fatch_By_all_Customer(context),
+                            builder: (context,
+                                AsyncSnapshot<List<By_all_Customer>>
+                                snapshot) {
+                              if (snapshot.hasData) {
+                                return TypeAheadFormField(
+                                  textFieldConfiguration:
+                                  TextFieldConfiguration(
+                                    onChanged: (newValue) {
+                                      print("On change Value is $newValue");
+                                      if (newValue == '') {
+                                        _selectedCustomer = '';
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    controller: customerController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Select Customer',
+                                      suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            customerController.text = '';
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 3),
+                                          child: Icon(Icons.close,size: 14,),
+                                        ),
                                       ),
                                     ),
-                                    value: location.customerSlNo,
-                                  );
-                                }).toList(),
-                              ),
-                            )),
+                                  ),
+                                  suggestionsCallback: (pattern) {
+                                    return snapshot.data!
+                                        .where((element) => element
+                                        .displayName!
+                                        .toLowerCase()
+                                        .contains(pattern
+                                        .toString()
+                                        .toLowerCase()))
+                                        .take(provideCustomerList.length)
+                                        .toList();
+                                    // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                  },
+                                  itemBuilder: (context, suggestion) {
+                                    return ListTile(
+                                      title: SizedBox(
+                                          child: Text(
+                                            "${suggestion.displayName}",
+                                            style: const TextStyle(fontSize: 12),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    );
+                                  },
+                                  transitionBuilder:
+                                      (context, suggestionsBox, controller) {
+                                    return suggestionsBox;
+                                  },
+                                  onSuggestionSelected:
+                                      (By_all_Customer suggestion) {
+                                    setState(() {
+                                      customerController.text = suggestion.displayName!;
+                                      _selectedCustomer = suggestion.countrySlNo;
+                                    });
+                                  },
+                                  onSaved: (value) {},
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+
+                          // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: Text(
+                            //       'Please select a customer',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     value: _selectedCustomer,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         customerId = "$newValue";
+                            //         print("Customer Id============$newValue");
+                            //         _selectedCustomer = newValue.toString();
+                            //         print(
+                            //             "dropdown value================$newValue");
+                            //       });
+                            //     },
+                            //     items: provideCustomerList.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.customerSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                        ),
                       ),
                     ],
                   ),

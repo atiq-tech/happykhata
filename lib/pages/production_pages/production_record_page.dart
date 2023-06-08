@@ -45,7 +45,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
       });
     }
   }
-  
+
   bool isLoading = false; //for loading circulerprogressindicator
 
   ApiallProductionRecord? apiallProductionRecord;
@@ -191,9 +191,9 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
-                           setState(() {
-                    isLoading = true;
-                  });
+                          setState(() {
+                            isLoading = true;
+                          });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getProductionRecord(
@@ -206,11 +206,11 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                             print(
                                 "secondDate ++++ProductionRecord=====::${secondPickedDate}");
                           });
-                            Future.delayed(Duration(seconds: 3), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
+                          Future.delayed(Duration(seconds: 3), () {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
                         },
                         child: Container(
                           height: 35.0,
@@ -238,105 +238,105 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
               ),
             ),
             SizedBox(height: 10.0),
-              isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    :Container(
-              height: MediaQuery.of(context).size.height / 1.43,
-              width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Container(
+                    height: MediaQuery.of(context).size.height / 1.43,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
-                      // color: Colors.red,
-                      // padding:EdgeInsets.only(bottom: 16.0),
-                      child: DataTable(
-                        showCheckboxColumn: true,
-                        border:
-                            TableBorder.all(color: Colors.black54, width: 1),
-                        columns: [
-                          DataColumn(
-                            label: Center(child: Text('Production Id.')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Date')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Incharge')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Shift')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Total Cost')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Note')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Product Name')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Quantity')),
-                          ),
-                        ],
-                        rows: List.generate(
-                          allProductionRecordData.length,
-                          (int index) => DataRow(
-                            cells: <DataCell>[
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].productionId}')),
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            // color: Colors.red,
+                            // padding:EdgeInsets.only(bottom: 16.0),
+                            child: DataTable(
+                              showCheckboxColumn: true,
+                              border: TableBorder.all(
+                                  color: Colors.black54, width: 1),
+                              columns: [
+                                DataColumn(
+                                  label: Center(child: Text('Production Id.')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Date')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Incharge')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Shift')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Total Cost')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Note')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Product Name')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Quantity')),
+                                ),
+                              ],
+                              rows: List.generate(
+                                allProductionRecordData.length,
+                                (int index) => DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].productionId}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].date}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].inchargeName}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].shift}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].totalCost}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].note}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].products![0].name}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allProductionRecordData[index].products![0].quantity}')),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].date}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].inchargeName}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].shift}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].totalCost}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].note}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].products![0].name}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allProductionRecordData[index].products![0].quantity}')),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

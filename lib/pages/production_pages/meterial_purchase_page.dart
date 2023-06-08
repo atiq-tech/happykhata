@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_material/Api_all_get_material.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_get_material_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:poss/const_page.dart';
@@ -25,10 +28,13 @@ class MeterialPurchasePage extends StatefulWidget {
   State<MeterialPurchasePage> createState() => _MeterialPurchasePageState();
 }
 
+var supplyerController = TextEditingController();
+var materialController = TextEditingController();
+
 class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _VatController = TextEditingController();
-  final TextEditingController _InvoiceNoController = TextEditingController();
+  final TextEditingController invoiceNoController = TextEditingController();
   final TextEditingController _matenameController = TextEditingController();
   final TextEditingController _mobileNumberController = TextEditingController();
   final TextEditingController _DiscountController = TextEditingController();
@@ -121,6 +127,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
     ApiAllGetMaterial apiAllGetMaterial;
     Provider.of<CounterProvider>(context, listen: false).getMaterials(context);
     // TODO: implement initState
+     getMaterialInvoice();
     super.initState();
   }
 
@@ -140,7 +147,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
         title: "Meterial Purchase",
       ),
       body: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -149,18 +156,18 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
               Container(
                 height: 120.0,
                 width: double.infinity,
-                margin: EdgeInsets.only(bottom: 10),
-                padding: EdgeInsets.only(left: 6.0, right: 6.0, top: 6.0),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180), width: 1.0),
                 ),
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 4,
                           child: Text(
                             "Invoice no",
@@ -175,21 +182,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 7, 125, 180))),
+                                    color: const Color.fromARGB(255, 7, 125, 180))),
                             child: TextField(
-                              controller: _InvoiceNoController,
+                              controller: invoiceNoController,
                               decoration: InputDecoration(
                                 enabled: false,
                                 filled: true,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -200,10 +207,10 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 4,
                           child: Text(
                             "Purchase For",
@@ -216,22 +223,22 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           child: Container(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint: Text(
+                                hint: const Text(
                                   'Selected Product',
                                   style: TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
+                                dropdownColor: const Color.fromARGB(255, 231, 251,
                                     255), // Not necessary for Option 1
                                 value: _selectedPurchase,
                                 onChanged: (newValue) {
@@ -244,7 +251,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                   return DropdownMenuItem(
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
@@ -257,11 +264,11 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 4,
                           child: Text(
                             "Date",
@@ -281,20 +288,20 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: firstPickedDate == null
                                       ? DateFormat('yyyy-MM-dd')
                                           .format(DateTime.now())
                                       : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -315,11 +322,11 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
               Container(
                 height: 220.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180), width: 1.0),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -327,9 +334,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Container(
                       height: 30,
                       width: double.infinity,
-                      margin: EdgeInsets.only(bottom: 8),
-                      color: Color.fromARGB(255, 107, 134, 146),
-                      child: Center(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      color: const Color.fromARGB(255, 107, 134, 146),
+                      child: const Center(
                         child: Text(
                           'Supplier & Material Information',
                           style: TextStyle(
@@ -342,7 +349,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 2,
                           child: Text(
                             "Supplier ID",
@@ -353,88 +360,202 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         Expanded(
                           flex: 5,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5, right: 5),
-                            height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5, right: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select Supplier',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedSupplier,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    print("Supplier Si No ======> $newValue");
-                                    _selectedSupplier = newValue.toString();
-                                    SupplierSlNo = newValue.toString();
-                                    _selectedSupplier == "General Supplier"
-                                        ? isVisible = true
-                                        : isVisible = false;
-                                    _selectedSupplier == "General Supplier"
-                                        ? isEnabled = true
-                                        : isEnabled = false;
-
-                                    print(_selectedSupplier);
-                                    print(isVisible);
-                                    final results = [
-                                      All_Supplier.where((m) => m.supplierSlNo!
-                                              .contains(
-                                                  '$newValue')) // or Testing 123
-                                          .toList(),
-                                    ];
-                                    results.forEach((element) {
-                                      element.add(element.first);
-                                      print("dfhsghdfkhgkh");
-                                      print(
-                                          "supplierSlNo===> ${element[0].displayName}");
-                                      print(
-                                          "supplierName===> ${element[0].supplierName}");
-                                      supplierMobile =
-                                          "${element[0].supplierMobile}";
-                                      _mobileNumberController.text =
-                                          "${element[0].supplierMobile}";
-                                      print(
-                                          "supplierMobile===> ${element[0].supplierMobile}");
-                                      supplierAddress =
-                                          "${element[0].supplierAddress}";
-                                      _addressController.text =
-                                          "${element[0].supplierAddress}";
-                                      print(
-                                          "supplierAddress===> ${element[0].supplierAddress}");
-                                      previousDue = "${element[0].previousDue}";
-                                      _previousDueController.text =
-                                          "${element[0].previousDue}";
-                                      print(
-                                          "previousDue===> ${element[0].previousDue}");
-                                    });
-                                  });
-                                },
-                                items: All_Supplier.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.displayName}",
-                                      style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedSupplier = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: supplyerController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Supplier',
+                                          suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                supplyerController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.supplierSlNo,
+                                    suggestionsCallback: (pattern) {
+
+                                      // print('General customer ${All_Supplier.length}');
+                                      //
+                                      // All_Supplier.insert(0, AllSuppliersClass(displayName: "General Customer"));
+                                      // print('General customer ${All_Supplier.length}');
+                                      //
+                                      return snapshot.data!
+                                          .where((element) => element.displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Supplier.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllSuppliersClass suggestion) {
+                                      supplyerController.text = suggestion.displayName!;
+                                      setState(() {
+                                        print("Supplier Si No ======> ${suggestion.supplierSlNo}");
+                                        _selectedSupplier = suggestion.supplierSlNo.toString();
+                                        SupplierSlNo = suggestion.supplierSlNo.toString();
+                                        _selectedSupplier == "General Supplier"
+                                            ? isVisible = true
+                                            : isVisible = false;
+                                        _selectedSupplier == "General Supplier"
+                                            ? isEnabled = true
+                                            : isEnabled = false;
+
+                                        print(_selectedSupplier);
+                                        print(isVisible);
+                                        final results = [
+                                          All_Supplier.where((m) => m.supplierSlNo!
+                                                  .contains(
+                                                      '${suggestion.supplierSlNo}')) // or Testing 123
+                                              .toList(),
+                                        ];
+                                        results.forEach((element) {
+                                          element.add(element.first);
+                                          print("dfhsghdfkhgkh");
+                                          print(
+                                              "supplierSlNo===> ${element[0].displayName}");
+                                          print(
+                                              "supplierName===> ${element[0].supplierName}");
+                                          supplierMobile =
+                                              "${element[0].supplierMobile}";
+                                          _mobileNumberController.text =
+                                              "${element[0].supplierMobile}";
+                                          print(
+                                              "supplierMobile===> ${element[0].supplierMobile}");
+                                          supplierAddress =
+                                              "${element[0].supplierAddress}";
+                                          _addressController.text =
+                                              "${element[0].supplierAddress}";
+                                          print(
+                                              "supplierAddress===> ${element[0].supplierAddress}");
+                                          previousDue = "${element[0].previousDue}";
+                                          _previousDueController.text =
+                                              "${element[0].previousDue}";
+                                          print(
+                                              "previousDue===> ${element[0].previousDue}");
+                                        });
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                                isExpanded: true,
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: const Text(
+                            //       'Select Supplier',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedSupplier,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         print("Supplier Si No ======> $newValue");
+                            //         _selectedSupplier = newValue.toString();
+                            //         SupplierSlNo = newValue.toString();
+                            //         _selectedSupplier == "General Supplier"
+                            //             ? isVisible = true
+                            //             : isVisible = false;
+                            //         _selectedSupplier == "General Supplier"
+                            //             ? isEnabled = true
+                            //             : isEnabled = false;
+                            //
+                            //         print(_selectedSupplier);
+                            //         print(isVisible);
+                            //         final results = [
+                            //           All_Supplier.where((m) => m.supplierSlNo!
+                            //                   .contains(
+                            //                       '$newValue')) // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //         results.forEach((element) {
+                            //           element.add(element.first);
+                            //           print("dfhsghdfkhgkh");
+                            //           print(
+                            //               "supplierSlNo===> ${element[0].displayName}");
+                            //           print(
+                            //               "supplierName===> ${element[0].supplierName}");
+                            //           supplierMobile =
+                            //               "${element[0].supplierMobile}";
+                            //           _mobileNumberController.text =
+                            //               "${element[0].supplierMobile}";
+                            //           print(
+                            //               "supplierMobile===> ${element[0].supplierMobile}");
+                            //           supplierAddress =
+                            //               "${element[0].supplierAddress}";
+                            //           _addressController.text =
+                            //               "${element[0].supplierAddress}";
+                            //           print(
+                            //               "supplierAddress===> ${element[0].supplierAddress}");
+                            //           previousDue = "${element[0].previousDue}";
+                            //           _previousDueController.text =
+                            //               "${element[0].previousDue}";
+                            //           print(
+                            //               "previousDue===> ${element[0].previousDue}");
+                            //         });
+                            //       });
+                            //     },
+                            //     items: All_Supplier.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.displayName}",
+                            //           style: const TextStyle(
+                            //             overflow: TextOverflow.ellipsis,
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.supplierSlNo,
+                            //       );
+                            //     }).toList(),
+                            //     isExpanded: true,
+                            //   ),
+                            // ),
                           ),
                         ),
                         Expanded(
@@ -442,18 +563,18 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           child: InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SupplierEntryPage()));
+                                  builder: (context) => const SupplierEntryPage()));
                             },
                             child: Container(
                               height: 28.0,
-                              margin: EdgeInsets.only(bottom: 5, right: 5),
+                              margin: const EdgeInsets.only(bottom: 5, right: 5),
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 224, 103, 67),
+                                  color: const Color.fromARGB(255, 224, 103, 67),
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
-                                      color: Color.fromARGB(255, 165, 56, 28),
+                                      color: const Color.fromARGB(255, 165, 56, 28),
                                       width: 1)),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.add,
                                 color: Colors.white,
                                 size: 25.0,
@@ -467,7 +588,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                       visible: isVisible,
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 1,
                             child: Text(
                               "Name",
@@ -479,9 +600,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             flex: 3,
                             child: Container(
                               height: 28.0,
-                              margin: EdgeInsets.only(bottom: 5),
+                              margin: const EdgeInsets.only(bottom: 5),
                               child: TextField(
-                                style: TextStyle(color: Colors.grey),
+                                style: const TextStyle(color: Colors.grey),
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
@@ -489,13 +610,13 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                   fillColor: Colors.white,
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -511,7 +632,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
 
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Mobile No",
@@ -523,9 +644,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 139, 139, 139),
                               ),
                               controller: _mobileNumberController,
@@ -538,13 +659,13 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                     : Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -557,7 +678,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     ), // mobile
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Address",
@@ -568,9 +689,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 139, 139, 139),
                               ),
                               maxLines: 3,
@@ -582,16 +703,16 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                     ? Colors.white
                                     : Colors.grey[200],
                                 contentPadding:
-                                    EdgeInsets.only(left: 10, top: 10),
+                                    const EdgeInsets.only(left: 10, top: 10),
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -607,23 +728,23 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                 ),
               ),
               Container(
-                height: 200.0,
+                height: 210.0,
                 width: double.infinity,
-                margin: EdgeInsets.only(
+                margin: const EdgeInsets.only(
                   top: 10.0,
                 ),
-                padding: EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180), width: 1.0),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Material",
@@ -634,87 +755,195 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            height: 30,
-                            margin: EdgeInsets.only(bottom: 5, right: 5),
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            height: 40,
+                            margin: const EdgeInsets.only(bottom: 5, right: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select Material',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                  ),
-                                ), // Not necessary for Option 1
-                                value: _selectedProduct,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedProduct = newValue.toString();
-                                    final results = [
-                                      allGetMaterialsData
-                                          .where((m) => m.materialId!.contains(
-                                              '$newValue')) // or Testing 123
-                                          .toList(),
-                                    ];
-                                    results.forEach((element) async {
-                                      element.add(element.first);
-                                      print("dfhsghdfkhgkh");
-                                      M_materialId = "${element[0].materialId}";
-                                      print(
-                                          "productSlNo===> ${element[0].materialId}");
-                                      ccategoryName =
-                                          "${element[0].categoryName}";
-                                      print(
-                                          "ccategoryName===> ${element[0].categoryName}");
-                                      M_name = "${element[0].name}";
-                                      print(
-                                          "productName===> ${element[0].name}");
-                                      _matenameController.text =
-                                          "${element[0].name}";
-                                      print(
-                                          "productName===> ${element[0].name}");
-
-                                      // cvat = "${element[0].vat}";
-                                      // print("vat===> ${element[0].vat}");
-
-                                      print(
-                                          "_quantityController ===> ${_quantityController.text}");
-                                      M_purchaseRate =
-                                          "${element[0].purchaseRate}";
-                                      print(
-                                          "M_purchaseRate===> ${element[0].purchaseRate}");
-                                      // _VatController.text = "${element[0].vat}";
-                                      _purcasheRateController.text =
-                                          "${element[0].purchaseRate}";
-                                      Total = (double.parse(
-                                              _quantityController.text) *
-                                          double.parse(
-                                              _purcasheRateController.text));
-                                      //totalStack(cproductId);
-                                    });
-                                  });
-                                },
-                                items: allGetMaterialsData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.name}",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getMaterials(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllGetMaterialClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedProduct = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: materialController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Material',
+                                          suffix: _selectedProduct == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                materialController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.materialId,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.displayText!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allGetMaterialsData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllGetMaterialClass suggestion) {
+                                      materialController.text = suggestion.displayText!;
+                                      setState(() {
+                                        _selectedProduct = suggestion.materialId.toString();
+                                        final results = [
+                                          allGetMaterialsData
+                                              .where((m) => m.materialId!.contains(
+                                                  '${suggestion.materialId}')) // or Testing 123
+                                              .toList(),
+                                        ];
+                                        results.forEach((element) async {
+                                          element.add(element.first);
+                                          print("dfhsghdfkhgkh");
+                                          M_materialId = "${element[0].materialId}";
+                                          print(
+                                              "productSlNo===> ${element[0].materialId}");
+                                          ccategoryName =
+                                              "${element[0].categoryName}";
+                                          print(
+                                              "ccategoryName===> ${element[0].categoryName}");
+                                          M_name = "${element[0].name}";
+                                          print(
+                                              "productName===> ${element[0].name}");
+                                          _matenameController.text =
+                                              "${element[0].name}";
+                                          print(
+                                              "productName===> ${element[0].name}");
+
+                                          // cvat = "${element[0].vat}";
+                                          // print("vat===> ${element[0].vat}");
+
+                                          print(
+                                              "_quantityController ===> ${_quantityController.text}");
+                                          M_purchaseRate =
+                                              "${element[0].purchaseRate}";
+                                          print(
+                                              "M_purchaseRate===> ${element[0].purchaseRate}");
+                                          // _VatController.text = "${element[0].vat}";
+                                          _purcasheRateController.text =
+                                              "${element[0].purchaseRate}";
+                                          Total = (double.parse(
+                                                  _quantityController.text) *
+                                              double.parse(
+                                                  _purcasheRateController.text));
+                                          //totalStack(cproductId);
+                                        });
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: const Text(
+                            //       'Select Material',
+                            //       style: TextStyle(
+                            //         color: Colors.grey,
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedProduct,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedProduct = newValue.toString();
+                            //         final results = [
+                            //           allGetMaterialsData
+                            //               .where((m) => m.materialId!.contains(
+                            //                   '$newValue')) // or Testing 123
+                            //               .toList(),
+                            //         ];
+                            //         results.forEach((element) async {
+                            //           element.add(element.first);
+                            //           print("dfhsghdfkhgkh");
+                            //           M_materialId = "${element[0].materialId}";
+                            //           print(
+                            //               "productSlNo===> ${element[0].materialId}");
+                            //           ccategoryName =
+                            //               "${element[0].categoryName}";
+                            //           print(
+                            //               "ccategoryName===> ${element[0].categoryName}");
+                            //           M_name = "${element[0].name}";
+                            //           print(
+                            //               "productName===> ${element[0].name}");
+                            //           _matenameController.text =
+                            //               "${element[0].name}";
+                            //           print(
+                            //               "productName===> ${element[0].name}");
+                            //
+                            //           // cvat = "${element[0].vat}";
+                            //           // print("vat===> ${element[0].vat}");
+                            //
+                            //           print(
+                            //               "_quantityController ===> ${_quantityController.text}");
+                            //           M_purchaseRate =
+                            //               "${element[0].purchaseRate}";
+                            //           print(
+                            //               "M_purchaseRate===> ${element[0].purchaseRate}");
+                            //           // _VatController.text = "${element[0].vat}";
+                            //           _purcasheRateController.text =
+                            //               "${element[0].purchaseRate}";
+                            //           Total = (double.parse(
+                            //                   _quantityController.text) *
+                            //               double.parse(
+                            //                   _purcasheRateController.text));
+                            //           //totalStack(cproductId);
+                            //         });
+                            //       });
+                            //     },
+                            //     items: allGetMaterialsData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.name}",
+                            //           style: const TextStyle(
+                            //             fontSize: 16,
+                            //           ),
+                            //         ),
+                            //         value: location.materialId,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
 
@@ -747,7 +976,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
 
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Mate.Name",
@@ -759,30 +988,30 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                               controller: _matenameController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 5, left: 5),
+                                    const EdgeInsets.only(top: 5, left: 5),
                                 hintText: "Material Name",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     color: Colors.grey, fontSize: 14.0),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -797,7 +1026,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 2,
                           child: Text(
                             "Pur. Rate",
@@ -805,37 +1034,37 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         Expanded(
                           flex: 4,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                               controller: _purcasheRateController,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 // hintText: "0",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     color: Colors.grey, fontSize: 14.0),
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -844,8 +1073,8 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 5.0),
-                        Expanded(
+                        const SizedBox(width: 5.0),
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Qty",
@@ -857,9 +1086,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(right: 5),
+                            margin: const EdgeInsets.only(right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125),
                                   fontSize: 14.0),
                               controller: _quantityController,
@@ -874,21 +1103,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 //  hintText: "Quantity",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     color: Colors.grey, fontSize: 14.0),
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -899,13 +1128,13 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         ),
                       ],
                     ), // quantity
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
 
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 3,
                           child: Text(
                             "Total Amount",
@@ -916,21 +1145,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                         Expanded(
                           flex: 9,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5, right: 5),
                             height: 30,
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 5, right: 5, top: 5, bottom: 5),
                             decoration: BoxDecoration(
                               color: Colors.grey[200],
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Text(
                               "$Total",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 105, 105, 105),
                                   fontSize: 14.0),
                             ),
@@ -943,7 +1172,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                       alignment: Alignment.bottomRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 107, 134, 146),
+                            backgroundColor: const Color.fromARGB(255, 107, 134, 146),
                           ),
                           onPressed: () {
                             setState(() {
@@ -966,17 +1195,17 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                               print("CartTotal ----------------- ${CartTotal}");
                             });
                           },
-                          child: Text("Add to cart")),
+                          child: const Text("Add to cart")),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
-                    Divider(thickness: 2),
+                    const Divider(thickness: 2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -1002,7 +1231,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                     fontSize: h2TextSize),
                               ),
                             )),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
@@ -1051,7 +1280,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             )),
                       ],
                     ),
-                    Divider(thickness: 2),
+                    const Divider(thickness: 2),
                   ],
                 ),
               ),
@@ -1188,19 +1417,19 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                      color: Color.fromARGB(255, 7, 125, 180), width: 1.0),
+                      color: const Color.fromARGB(255, 7, 125, 180), width: 1.0),
                 ),
                 child: Column(
                   children: [
                     Container(
                       height: 30,
                       width: double.infinity,
-                      color: Color.fromARGB(255, 107, 134, 146),
-                      child: Center(
+                      color: const Color.fromARGB(255, 107, 134, 146),
+                      child: const Center(
                         child: Text(
                           'Amount Details',
                           style: TextStyle(
@@ -1214,7 +1443,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Sub Total",
@@ -1226,21 +1455,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             flex: 3,
                             child: Container(
                               margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                                  const EdgeInsets.only(top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$CartTotal",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 126, 126)),
                               ),
                             )),
@@ -1249,7 +1478,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Vat",
@@ -1261,35 +1490,36 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 2,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(left: 5, right: 5),
+                            margin: const EdgeInsets.only(left: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _VatController,
                               onChanged: (value) {
                                 setState(() {
                                   TotalVat = CartTotal *
                                       (double.parse(_VatController.text) / 100);
-                                  AfteraddVatTotal = CartTotal - TotalVat;
-                                  DiccountTotal = AfteraddVatTotal;
-                                  TransportTotal = DiccountTotal;
+                                  AfteraddVatTotal = CartTotal + TotalVat;
+                                  // DiccountTotal = AfteraddVatTotal;
+                                  // TransportTotal = DiccountTotal;
+                                  Totaltc = AfteraddVatTotal;
                                 });
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1298,33 +1528,33 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           "%",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
                             flex: 1,
                             child: Container(
                               margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                                  const EdgeInsets.only(top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$TotalVat",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 126, 126)),
                               ),
                             )),
@@ -1332,7 +1562,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Tr./L. Cost",
@@ -1344,32 +1574,33 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _transportController,
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     TransportTotal = DiccountTotal +
-                              //         double.parse(_transportController.text);
-                              //   });
-                              // },
+                              onChanged: (value) {
+                                setState(() {
+                                  TransportTotal = AfteraddVatTotal +
+                                      double.parse(_transportController.text);
+                                  Totaltc = TransportTotal;
+                                });
+                              },
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 5, left: 5),
+                                    const EdgeInsets.only(top: 5, left: 5),
                                 hintText: "0",
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1383,7 +1614,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Discount",
@@ -1395,40 +1626,38 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5, right: 5),
+                            margin: const EdgeInsets.only(bottom: 5, right: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _DiscountController,
                               onChanged: (value) {
                                 setState(() {
-                                  Diccountper = AfteraddVatTotal *
-                                      (double.parse(_DiscountController.text) /
-                                          100);
+                                  // Diccountper = AfteraddVatTotal *
+                                  //     (double.parse(_DiscountController.text) /
+                                  //         100);
                                   // _discountPercentController.text =
                                   //     "${Diccountper}";
                                   DiccountTotal =
-                                      AfteraddVatTotal - Diccountper;
-                                  TransportTotal = DiccountTotal;
-                                  Totaltc = TransportTotal +
-                                      double.parse(_transportController.text);
+                                      TransportTotal - double.parse(_DiscountController.text);
+                                  Totaltc = DiccountTotal;
                                 });
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1442,7 +1671,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Total",
@@ -1454,21 +1683,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             flex: 3,
                             child: Container(
                               margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                                  const EdgeInsets.only(top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$Totaltc",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 126, 126)),
                               ),
                             )),
@@ -1476,7 +1705,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Paid",
@@ -1488,17 +1717,17 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _paidController,
                               onChanged: (value) {
                                 setState(() {
-                                  totalDue = DiccountTotal -
+                                  // totalDue = DiccountTotal -
+                                  //     double.parse(_paidController.text);
+                                  totalDueTc = Totaltc -
                                       double.parse(_paidController.text);
-                                  totalDueTc = totalDue +
-                                      double.parse(_transportController.text);
 
                                   // DiccountTotal -=
                                   //     double.parse(_paidController.text);
@@ -1506,19 +1735,19 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                               },
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 filled: true,
                                 fillColor: Colors.grey[200],
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1532,7 +1761,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Previous Due",
@@ -1544,28 +1773,28 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             height: 28.0,
-                            margin: EdgeInsets.only(bottom: 5),
+                            margin: const EdgeInsets.only(bottom: 5),
                             child: TextField(
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: Color.fromARGB(255, 236, 6, 6),
                               ),
                               controller: _previousDueController,
                               //keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 5),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -1579,7 +1808,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Due",
@@ -1591,21 +1820,21 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             flex: 3,
                             child: Container(
                               margin:
-                                  EdgeInsets.only(top: 5, bottom: 5, right: 5),
+                                  const EdgeInsets.only(top: 5, bottom: 5, right: 5),
                               height: 30,
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 5, right: 5, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 7, 125, 180),
+                                  color: const Color.fromARGB(255, 7, 125, 180),
                                   width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Text(
                                 "$totalDueTc",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color.fromARGB(255, 126, 126, 126)),
                               ),
                             )),
@@ -1621,7 +1850,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             onPressed: () {
                               if (DiccountTotal == 0) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                         content: Text("Please Add to Cart")));
                               } else {
                                 getMaterialInvoice();
@@ -1630,16 +1859,16 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: Text("Sales Successfull"),
+                                      title: const Text("Sales Successfull"),
                                       actions: [
                                         ActionChip(
-                                          label: Text("Back"),
+                                          label: const Text("Back"),
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
                                         ),
                                         ActionChip(
-                                          label: Text("Home"),
+                                          label: const Text("Home"),
                                           onPressed: () {
                                             Navigator.pop(context);
                                             Navigator.pushReplacement(
@@ -1660,16 +1889,16 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 DiccountTotal = 0;
                               }
                             },
-                            child: Text("Purchase")),
-                        SizedBox(
+                            child: const Text("Purchase")),
+                        const SizedBox(
                           width: 20,
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 6, 118, 170),
+                              backgroundColor: const Color.fromARGB(255, 6, 118, 170),
                             ),
                             onPressed: () {},
-                            child: Text("New Purchase")),
+                            child: const Text("New Purchase")),
                       ],
                     )
                   ],
@@ -1701,7 +1930,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
             "purchase_id": 0,
             "supplier_id": "$SupplierSlNo",
             "invoice_no": "$materialInvoice",
-            "purchase_date": "${firstPickedDate}",
+            "purchase_date": firstPickedDate == null
+                ? DateFormat('yyyy-MM-dd')
+                .format(DateTime.now()):"${firstPickedDate}",
             "purchase_for": 0,
             "sub_total": "$CartTotal",
             "vat": "$TotalVat",
@@ -1724,7 +1955,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
       var mpdata = jsonDecode(response.data);
       print("${mpdata["message"]}");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
           content: Text("${mpdata["message"]}")));
       _nameController.text = "";
       _paidController.text = "";
@@ -1758,6 +1989,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
       );
       print(response.data);
       var materialInvoice = jsonDecode(response.data);
+      invoiceNoController.text = materialInvoice;
       print("MaterialInvoice Code===========> $materialInvoice");
     } catch (e) {
       print(e);

@@ -60,7 +60,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
     'By Supplier',
   ];
 
-  bool isLoading = false;//for loading circulerprogressindicator
+  bool isLoading = false; //for loading circulerprogressindicator
 
   String? _selectedSupplier;
 
@@ -347,27 +347,30 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
-                            setState(() {
-                    isLoading = true;
-                  });
+                          setState(() {
+                            isLoading = true;
+                          });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getMeterialPurchaseRecord(
                                     context,
-                                    "${_selectedSupplier}",
+                                    "${_selectedSupplier}"??'',
                                     "${firstPickedDate}",
-                                    "${secondPickedDate}");
+                                    "${secondPickedDate}",
+                                    );
 
+                            print(
+                                "firstDate Meterial purchase Record=====::${_selectedSupplier}");
                             print(
                                 "firstDate Meterial purchase Record=====::${firstPickedDate}");
                             print(
                                 "secondDate ++++++Meterial purchase Record=====::${secondPickedDate}");
                           });
                           Future.delayed(Duration(seconds: 3), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
                         },
                         child: Container(
                           height: 35.0,
@@ -394,110 +397,111 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                 ),
               ),
               SizedBox(height: 10.0),
-             isLoading?Center(child: CircularProgressIndicator())
-                    : Container(
-                height: MediaQuery.of(context).size.height / 1.43,
-                width: double.infinity,
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Container(
+                      height: MediaQuery.of(context).size.height / 1.43,
+                      width: double.infinity,
+                      padding: EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Container(
-                        child: DataTable(
-                          showCheckboxColumn: true,
-                          border:
-                              TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            DataColumn(
-                              label: Center(child: Text('Invoice No.')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Date')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Supplier Id')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Supplier Name')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Sub Total')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('VAT')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Total')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Paid')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Due')),
-                            ),
-                          ],
-                          rows: List.generate(
-                            allMeterialPurchaseRecordData.length,
-                            (int index) => DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].invoiceNo}')),
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              child: DataTable(
+                                showCheckboxColumn: true,
+                                border: TableBorder.all(
+                                    color: Colors.black54, width: 1),
+                                columns: [
+                                  DataColumn(
+                                    label: Center(child: Text('Invoice No.')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Date')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Supplier Id')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Supplier Name')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Sub Total')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('VAT')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Total')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Paid')),
+                                  ),
+                                  DataColumn(
+                                    label: Center(child: Text('Due')),
+                                  ),
+                                ],
+                                rows: List.generate(
+                                  allMeterialPurchaseRecordData.length,
+                                  (int index) => DataRow(
+                                    cells: <DataCell>[
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].invoiceNo}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].purchaseDate}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].supplierId}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].supplierName}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].subTotal}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].vat}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].total}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].paid}')),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                '${allMeterialPurchaseRecordData[index].due}')),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].purchaseDate}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].supplierId}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].supplierName}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].subTotal}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].vat}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].total}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].paid}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allMeterialPurchaseRecordData[index].due}')),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

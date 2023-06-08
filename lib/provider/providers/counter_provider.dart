@@ -104,8 +104,8 @@ class CounterProvider extends ChangeNotifier {
 
   Future<List<AllCustomersClass>> getCustomers(BuildContext context) async {
     allCustomerslist = await ApiAllCustomers.GetApiAllCustomers(context);
-    return allCustomerslist;
     notifyListeners();
+    return allCustomerslist;
   }
 
   //Profit & Loss
@@ -252,8 +252,9 @@ class CounterProvider extends ChangeNotifier {
   //Get Districts area
   List<AllGetDistricesClass> allDistrictslist = [];
 
-  getDistricts(BuildContext context) async {
+  Future<List<AllGetDistricesClass>>getDistricts(BuildContext context) async {
     allDistrictslist = await ApiAllGetDistricts.GetApiAllDistricts(context);
+    return allDistrictslist;
     notifyListeners();
   }
 

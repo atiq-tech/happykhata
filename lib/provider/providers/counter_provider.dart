@@ -88,14 +88,13 @@ class CounterProvider extends ChangeNotifier {
 
   }
 
-  //Meterial purchase record
+  //Get Meterial purchase
   List<Purchases> allPurchaseslist = [];
-
-  getMeterialPurchaseRecord(context, String? supplier_id, String? dateFrom,
-      String? dateTo) async {
+  getMeterialPurchase(context, String? dateFrom,
+      String? dateTo, String? supplier_id) async {
     allPurchaseslist =
-    await ApiAllMeterialPurchaseRecord.GetApiAllMeterialPurchaseRecord(
-        context, supplier_id, dateFrom, dateTo);
+    await ApiAllMeterialPurchase.GetApiAllMeterialPurchase(
+        context, dateFrom, dateTo,supplier_id);
     notifyListeners();
   }
 

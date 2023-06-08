@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_supplier_due/api_all_supplier_due.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
@@ -333,71 +334,101 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                     scrollDirection: Axis.vertical,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
-                        // color: Colors.red,
-                        // padding:EdgeInsets.only(bottom: 16.0),
-                        child: DataTable(
-                          showCheckboxColumn: true,
-                          border:
-                              TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            DataColumn(
-                              label: Center(child: Text('Supplier Code')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Supplier Name')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Bill Amount')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Paid Amount')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Returned Amount')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Due')),
-                            ),
-                          ],
-                          rows: List.generate(
-                            allSupplierDueData.length,
-                            (int index) => DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].supplierCode}')),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            // color: Colors.red,
+                            // padding:EdgeInsets.only(bottom: 16.0),
+                            child: DataTable(
+                              showCheckboxColumn: true,
+                              border:
+                                  TableBorder.all(color: Colors.black54, width: 1),
+                              columns: [
+                                DataColumn(
+                                  label: Center(child: Text('Supplier Code')),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].supplierName}')),
+                                DataColumn(
+                                  label: Center(child: Text('Supplier Name')),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].bill}')),
+                                DataColumn(
+                                  label: Center(child: Text('Bill Amount')),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].paid}')),
+                                DataColumn(
+                                  label: Center(child: Text('Paid Amount')),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].returned}')),
+                                DataColumn(
+                                  label: Center(child: Text('Returned Amount')),
                                 ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allSupplierDueData[index].due}')),
+                                DataColumn(
+                                  label: Center(child: Text('Due')),
                                 ),
                               ],
+                              rows: List.generate(
+                                allSupplierDueData.length,
+                                (int index) => DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].supplierCode}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].supplierName}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].bill}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].paid}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].returned}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSupplierDueData[index].due}')),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(height: 10.0),
+                          Row(
+                            children: [
+                              const Text(//5555555
+                                "Total Due Amount        :  ",
+                                style: TextStyle(
+                                    fontWeight:
+                                    FontWeight.bold,
+                                    fontSize: 14),
+                              ),
+                              allSupplierDueData
+                                  .length ==
+                                  0
+                                  ? const Text(
+                                "0",
+                                style: TextStyle(
+                                    fontSize: 14),
+                              )
+                                  : Text(
+                                "${GetStorage().read("totalDue")}",
+                                style: const TextStyle(
+                                    fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

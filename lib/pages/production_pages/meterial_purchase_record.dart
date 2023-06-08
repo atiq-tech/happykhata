@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 
@@ -51,6 +54,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
       });
     }
   }
+  var supplyerController = TextEditingController();
 
   bool isSupplierListClicked = false;
   String? _searchType;
@@ -59,13 +63,13 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
     'All',
     'By Supplier',
   ];
-
+//
   bool isLoading = false; //for loading circulerprogressindicator
 
   String? _selectedSupplier;
 
   ApiAllSuppliers? apiAllSuppliers;
-  ApiAllMeterialPurchaseRecord? apiAllMeterialPurchaseRecord;
+  ApiAllMeterialPurchase? apiAllMeterialPurchase;
   @override
   void initState() {
     firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -78,15 +82,15 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
 
   @override
   Widget build(BuildContext context) {
-    // Suppliers
+    //get Suppliers
     final allSuppliersData =
         Provider.of<CounterProvider>(context).allSupplierslist;
     print("ssssssssssssssssssssssssssssssssssssss${allSuppliersData.length}");
-    //Meterial Purchase Record
-    final allMeterialPurchaseRecordData =
+    //get Meterial Purchase
+    final allMeterialPurchaseData =
         Provider.of<CounterProvider>(context).allPurchaseslist;
     print(
-        "Meterial +++Purchase +++Record=Lenght is:::::${allMeterialPurchaseRecordData.length}");
+        "Meterial +++Purchase +++=Lenght is:::::${allMeterialPurchaseData.length}");
     return Scaffold(
       appBar: CustomAppBar(title: "Meterial Purchase Record"),
       body: Container(
@@ -144,9 +148,13 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       _searchType = newValue!;
-                                      _searchType == "By Supplier"
-                                          ? isSupplierListClicked = true
-                                          : isSupplierListClicked = false;
+                                      _selectedSupplier=null;
+                                      if (_searchType == "By Supplier") {
+
+                                        isSupplierListClicked = true;
+                                      } else {
+                                        isSupplierListClicked = false;
+                                      }
                                     });
                                   },
                                   items: _searchTypeList.map((location) {
@@ -196,42 +204,110 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        hint: Text(
-                                          'Select Supplier',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        dropdownColor: Color.fromARGB(
-                                            255,
-                                            231,
-                                            251,
-                                            255), // Not necessary for Option 1
-                                        value: _selectedSupplier,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            _selectedSupplier =
-                                                newValue.toString();
-                                          });
-                                        },
-                                        items: allSuppliersData.map((location) {
-                                          return DropdownMenuItem(
-                                            child: Text(
-                                              overflow: TextOverflow.visible,
-                                              maxLines: 1,
-                                              "${location.supplierName}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
+                                    child: FutureBuilder(
+                                      future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                                      builder: (context,
+                                          AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return TypeAheadFormField(
+                                            textFieldConfiguration:
+                                            TextFieldConfiguration(
+                                                onChanged: (value){
+                                                  if (value == '') {
+                                                    _selectedSupplier = '';
+                                                  }
+                                                },
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                ),
+                                                controller: supplyerController,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Select Supplier',
+                                                  suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        supplyerController.text = '';
+                                                      });
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                                      child: Icon(Icons.close,size: 14,),
+                                                    ),
+                                                  ),
+                                                )
                                             ),
-                                            value: location.supplierSlNo,
+                                            suggestionsCallback: (pattern) {
+                                              return snapshot.data!
+                                                  .where((element) => element.supplierName!
+                                                  .toLowerCase()
+                                                  .contains(pattern
+                                                  .toString()
+                                                  .toLowerCase()))
+                                                  .take(allSuppliersData.length)
+                                                  .toList();
+                                              // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                            },
+                                            itemBuilder: (context, suggestion) {
+                                              return ListTile(
+                                                title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                              );
+                                            },
+                                            transitionBuilder:
+                                                (context, suggestionsBox, controller) {
+                                              return suggestionsBox;
+                                            },
+                                            onSuggestionSelected:
+                                                (AllSuppliersClass suggestion) {
+                                              supplyerController.text = suggestion.supplierName!;
+                                              setState(() {
+                                                _selectedSupplier =
+                                                    suggestion.supplierSlNo;
+                                                print(
+                                                    "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                              });
+                                            },
+                                            onSaved: (value) {},
                                           );
-                                        }).toList(),
-                                      ),
+                                        }
+                                        return const SizedBox();
+                                      },
                                     ),
+                                    // child: DropdownButtonHideUnderline(
+                                    //   child: DropdownButton(
+                                    //     isExpanded: true,
+                                    //     hint: Text(
+                                    //       'Select Supplier',
+                                    //       style: TextStyle(
+                                    //         fontSize: 14,
+                                    //       ),
+                                    //     ),
+                                    //     dropdownColor: Color.fromARGB(
+                                    //         255,
+                                    //         231,
+                                    //         251,
+                                    //         255), // Not necessary for Option 1
+                                    //     value: _selectedSupplier,
+                                    //     onChanged: (newValue) {
+                                    //       setState(() {
+                                    //         _selectedSupplier =
+                                    //             newValue.toString();
+                                    //       });
+                                    //     },
+                                    //     items: allSuppliersData.map((location) {
+                                    //       return DropdownMenuItem(
+                                    //         child: Text(
+                                    //           overflow: TextOverflow.visible,
+                                    //           maxLines: 1,
+                                    //           "${location.supplierName}",
+                                    //           style: TextStyle(
+                                    //             fontSize: 14,
+                                    //           ),
+                                    //         ),
+                                    //         value: location.supplierSlNo,
+                                    //       );
+                                    //     }).toList(),
+                                    //   ),
+                                    // ),
                                   ),
                                 ),
                               ],
@@ -352,19 +428,19 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                           });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
-                                .getMeterialPurchaseRecord(
+                                .getMeterialPurchase(
                                     context,
-                                    "${_selectedSupplier}"??'',
                                     "${firstPickedDate}",
                                     "${secondPickedDate}",
+                                    _selectedSupplier??''
                                     );
-
-                            print(
-                                "firstDate Meterial purchase Record=====::${_selectedSupplier}");
                             print(
                                 "firstDate Meterial purchase Record=====::${firstPickedDate}");
                             print(
                                 "secondDate ++++++Meterial purchase Record=====::${secondPickedDate}");
+                            print(
+                                "firstDate Meterial purchase Record=====::${_selectedSupplier}");
+
                           });
                           Future.delayed(Duration(seconds: 3), () {
                             setState(() {
@@ -410,93 +486,172 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                           scrollDirection: Axis.vertical,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: Container(
-                              child: DataTable(
-                                showCheckboxColumn: true,
-                                border: TableBorder.all(
-                                    color: Colors.black54, width: 1),
-                                columns: [
-                                  DataColumn(
-                                    label: Center(child: Text('Invoice No.')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Date')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Supplier Id')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Supplier Name')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Sub Total')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('VAT')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Total')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Paid')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Due')),
-                                  ),
-                                ],
-                                rows: List.generate(
-                                  allMeterialPurchaseRecordData.length,
-                                  (int index) => DataRow(
-                                    cells: <DataCell>[
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].invoiceNo}')),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  child: DataTable(
+                                    showCheckboxColumn: true,
+                                    border: TableBorder.all(
+                                        color: Colors.black54, width: 1),
+                                    columns: [
+                                      DataColumn(
+                                        label: Center(child: Text('Invoice No.')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].purchaseDate}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Date')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].supplierId}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Supplier Id')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].supplierName}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Supplier Name')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].subTotal}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Sub Total')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].vat}')),
+                                      DataColumn(
+                                        label: Center(child: Text('VAT')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].total}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Total')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].paid}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Paid')),
                                       ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${allMeterialPurchaseRecordData[index].due}')),
+                                      DataColumn(
+                                        label: Center(child: Text('Due')),
                                       ),
                                     ],
+                                    rows: List.generate(
+                                      allMeterialPurchaseData.length,
+                                      (int index) => DataRow(
+                                        cells: <DataCell>[
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].invoiceNo}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].purchaseDate}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].supplierCode}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].supplierName}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].subTotal}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].vat}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].total}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].paid}')),
+                                          ),
+                                          DataCell(
+                                            Center(
+                                                child: Text(
+                                                    '${allMeterialPurchaseData[index].due}')),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                                SizedBox(height: 10.0),
+                                Row(
+                                  children: [
+                                    const Text(//5555555
+                                      "Total Ammount        :  ",
+                                      style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          fontSize: 14),
+                                    ),
+                                    allMeterialPurchaseData
+                                        .length ==
+                                        0
+                                        ? const Text(
+                                      "0",
+                                      style: TextStyle(
+                                          fontSize: 14),
+                                    )
+                                        : Text(
+                                      "${GetStorage().read("totalTotal")}",
+                                      style: const TextStyle(
+                                          fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(//6666666
+                                      "Total Paid                  :  ",
+                                      style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          fontSize: 14),
+                                    ),
+                                    allMeterialPurchaseData
+                                        .length ==
+                                        0
+                                        ? const Text(
+                                      "0",
+                                      style: TextStyle(
+                                          fontSize: 14),
+                                    )
+                                        : Text(
+                                      "${GetStorage().read("totalPaid")}",
+                                      style: const TextStyle(
+                                          fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+
+                                  children: [
+                                    const Text(//77777777
+                                      "Total Due                   :  ",
+                                      style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          fontSize: 14),
+                                    ),
+                                    allMeterialPurchaseData
+                                        .length ==
+                                        0
+                                        ? const Text(
+                                      "0",
+                                      style: TextStyle(
+                                          fontSize: 14),
+                                    )
+                                        : Text(
+                                      "${GetStorage().read("totalDue")}",
+                                      style: const TextStyle(
+                                          fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),

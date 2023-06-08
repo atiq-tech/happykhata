@@ -1,11 +1,14 @@
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_product_ledger/api_all_product_ledger.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_products/api_all_products.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 
 import 'package:provider/provider.dart';
 
@@ -72,6 +75,8 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
     super.initState();
   }
 
+  var productAllController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     //Products
@@ -93,7 +98,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
             Container(
               padding: EdgeInsets.all(6.0),
               child: Container(
-                height: 130.0,
+                height: 150.0,
                 width: double.infinity,
                 padding: EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
@@ -117,7 +122,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
                             padding: EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
@@ -126,36 +131,104 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select Product',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedAccount,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedAccount = newValue!.toString();
-                                  });
-                                },
-                                items: allProductsData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.productName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedAccount = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: productAllController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Product',
+                                          suffix: _selectedAccount == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                productAllController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.productSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.productName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allProductsData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllProductModelClass suggestion) {
+                                      productAllController.text = suggestion.productName!;
+                                      setState(() {
+                                        _selectedAccount =
+                                            suggestion.productSlNo.toString();
+
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: Text(
+                            //       'Select Product',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedAccount,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedAccount = newValue!.toString();
+                            //       });
+                            //     },
+                            //     items: allProductsData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.productName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.productSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],

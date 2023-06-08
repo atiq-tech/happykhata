@@ -1,16 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_customers/Api_all_add_customer.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_districes/Api_all_get_districes.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_get_districes_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -46,10 +43,16 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
     Provider.of<CounterProvider>(context, listen: false).getDistricts(context);
     //get customers
     ApiAllCustomers apiAllCustomers;
-    Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
+    getCustomer();
     // TODO: implement initState
     super.initState();
   }
+
+  getCustomer(){
+    Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
+  }
+
+  var areaController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -69,18 +72,18 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Container(
-                height: 350.0,
+                height: 360.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   top: 6.0,
                   left: 8.0,
                   right: 8.0,
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -128,7 +131,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
 
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Customer Name",
@@ -136,10 +139,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -147,13 +150,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -164,10 +167,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Owner Name",
@@ -175,10 +178,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -186,13 +189,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -203,10 +206,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Address",
@@ -214,10 +217,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -225,13 +228,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -242,10 +245,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Area",
@@ -253,57 +256,125 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 30.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: Text(
-                                  'Select area',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedArea,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedArea = newValue!.toString();
-                                    //getCustomerCode();
-                                  });
-                                },
-                                items: allDistrictsData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.districtName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getDistricts(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllGetDistricesClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedArea = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: areaController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Distric',
+                                          suffix: _selectedArea == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                areaController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.districtSlNo,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.districtName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allDistrictsData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.districtName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllGetDistricesClass suggestion) {
+                                      areaController.text = suggestion.districtName!;
+                                      setState(() {
+                                        _selectedArea =
+                                            suggestion.districtSlNo.toString();
+
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     hint: Text(
+                            //       'Select area',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedArea,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedArea = newValue!.toString();
+                            //         //getCustomerCode();
+                            //       });
+                            //     },
+                            //     items: allDistrictsData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.districtName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.districtSlNo,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Mobile",
@@ -311,10 +382,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -322,13 +393,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -339,10 +410,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Office Phone",
@@ -350,10 +421,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -361,13 +432,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -378,10 +449,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Previous Due",
@@ -389,10 +460,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -400,13 +471,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -417,10 +488,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.0),
+                    const SizedBox(height: 3.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Credit Limit",
@@ -428,10 +499,10 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
@@ -439,13 +510,13 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -524,7 +595,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           "Customer Type       :",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
@@ -536,7 +607,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               Radio(
                                 value: "retail",
                                 groupValue: _Get_customerType,
-                                activeColor: Color.fromARGB(255, 84, 107, 241),
+                                activeColor: const Color.fromARGB(255, 84, 107, 241),
                                 onChanged: (value) {
                                   setState(() {
                                     _Get_customerType = value;
@@ -556,7 +627,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               Radio(
                                 value: "wholesale",
                                 groupValue: _Get_customerType,
-                                activeColor: Color.fromARGB(255, 84, 107, 241),
+                                activeColor: const Color.fromARGB(255, 84, 107, 241),
                                 onChanged: (value) {
                                   setState(() {
                                     _Get_customerType = value;
@@ -579,18 +650,19 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                             getCustomerCode();
                           });
                           _AddCustomer(context);
+                          getCustomer();
                         },
                         child: Container(
                           height: 35.0,
                           width: 80.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 173, 241, 179),
+                                color: const Color.fromARGB(255, 173, 241, 179),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 94, 136, 84),
+                            color: const Color.fromARGB(255, 94, 136, 84),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "SAVE",
                             style: TextStyle(
@@ -674,115 +746,128 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
             //   ),
             // ),
             // SizedBox(height: 10.0),
-            Container(
-              height: MediaQuery.of(context).size.height / 1.43,
-              width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      // color: Colors.red,
-                      // padding:EdgeInsets.only(bottom: 16.0),
-                      child: DataTable(
-                        showCheckboxColumn: true,
-                        border:
+            ///
+            FutureBuilder(
+              future: Provider.of<CounterProvider>(context, listen: false).getCustomers(context),
+                builder: (context, snapshot) {
+              if(snapshot.hasData){
+                return Container(
+                  height: MediaQuery.of(context).size.height / 1.43,
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          // color: Colors.red,
+                          // padding:EdgeInsets.only(bottom: 16.0),
+                          child: DataTable(
+                            showCheckboxColumn: true,
+                            border:
                             TableBorder.all(color: Colors.black54, width: 1),
-                        columns: [
-                          DataColumn(
-                            label: Center(child: Text('Added Date')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Customer Id')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Customer Name')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Owner Name')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Area')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Contact Number')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Customer Type')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Credit Limit')),
-                          ),
-                          // DataColumn(
-                          //   label: Center(child: Text('Image')),
-                          // ),
-                        ],
-                        rows: List.generate(
-                          allCustomerData.length,
-                          (int index) => DataRow(
-                            cells: <DataCell>[
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].addTime}')),
+                            columns: [
+                              const DataColumn(
+                                label: Center(child: Text('Added Date')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].customerCode}')),
+                              const DataColumn(
+                                label: Center(child: Text('Customer Id')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].customerName}')),
+                              const DataColumn(
+                                label: Center(child: Text('Customer Name')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].ownerName}')),
+                              const DataColumn(
+                                label: Center(child: Text('Owner Name')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].districtName}')),
+                              const DataColumn(
+                                label: Center(child: Text('Area')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].customerMobile}')),
+                              const DataColumn(
+                                label: Center(child: Text('Contact Number')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].customerType}')),
+                              const DataColumn(
+                                label: Center(child: Text('Customer Type')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allCustomerData[index].customerCreditLimit}')),
+                              const DataColumn(
+                                label: Center(child: Text('Credit Limit')),
                               ),
-                              // DataCell(
-                              //   Center(
-                              //       child: Container(
-                              //           width: 40.0,
-                              //           height: 40.0,
-                              //           color: Colors.black,
-                              //           child: Image.network(
-                              //               "${allCustomerData[index].imageName}"))),
+                              // DataColumn(
+                              //   label: Center(child: Text('Image')),
                               // ),
                             ],
+                            rows: List.generate(
+                              allCustomerData.length,
+                                  (int index) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].addTime}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].customerCode}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].customerName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].ownerName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].districtName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].customerMobile}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].customerType}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allCustomerData[index].customerCreditLimit}')),
+                                  ),
+                                  // DataCell(
+                                  //   Center(
+                                  //       child: Container(
+                                  //           width: 40.0,
+                                  //           height: 40.0,
+                                  //           color: Colors.black,
+                                  //           child: Image.network(
+                                  //               "${allCustomerData[index].imageName}"))),
+                                  // ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
+                );
+              }
+              else if(snapshot.connectionState == ConnectionState.waiting){
+                return CircularProgressIndicator();
+              }
+              else{
+               return Container();
+              }
+            },)
           ],
         ),
       ),
@@ -867,16 +952,14 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
       print("message =================> ${item["message"]}");
       print("supplierCode================>  ${item["customerCode"]}");
       if (item["message"] == "Customer added successfully") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(255, 4, 108, 156),
             duration: Duration(seconds: 2),
             content: Center(child: Text("Customer added successfull"))));
       } else {
-        Center(child: Text("Customer data added not successfull"));
+        const Center(child: Text("Customer data added not successfull"));
       }
       emtyMethod();
-      Provider.of<CounterProvider>(context, listen: false)
-          .getCustomers(context);
 
       // print("Customer DDDDDDDDDDDATA ${response.data}");
       // print("success============> ${response.data["success"]}");

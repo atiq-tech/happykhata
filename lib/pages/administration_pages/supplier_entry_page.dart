@@ -359,6 +359,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                             getSupplierCode();
                           });
                           _AddSupply(context);
+                          getSupplier();
                         },
                         child: Container(
                           height: 35.0,
@@ -432,89 +433,101 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
             //   ),
             // ),
             SizedBox(height: 10.0),
-            Container(
-              height: MediaQuery.of(context).size.height / 1.43,
-              width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+            FutureBuilder(
+              future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 1.43,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
-                      child: DataTable(
-                        showCheckboxColumn: true,
-                        border:
-                            TableBorder.all(color: Colors.black54, width: 1),
-                        columns: [
-                          DataColumn(
-                            label: Center(child: Text('Supplier Id')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Supplier Name')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Contact Person')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Address')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Contact Number')),
-                          ),
-                          // DataColumn(
-                          //   label: Center(child: Text('Image')),
-                          // ),
-                        ],
-                        rows: List.generate(
-                          allSuppliersData.length,
-                          (int index) => DataRow(
-                            cells: <DataCell>[
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allSuppliersData[index].supplierCode}')),
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            child: DataTable(
+                              showCheckboxColumn: true,
+                              border:
+                              TableBorder.all(color: Colors.black54, width: 1),
+                              columns: [
+                                DataColumn(
+                                  label: Center(child: Text('Supplier Id')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Supplier Name')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Contact Person')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Address')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Contact Number')),
+                                ),
+                                // DataColumn(
+                                //   label: Center(child: Text('Image')),
+                                // ),
+                              ],
+                              rows: List.generate(
+                                allSuppliersData.length,
+                                    (int index) => DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSuppliersData[index].supplierCode}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSuppliersData[index].supplierName}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSuppliersData[index].contactPerson}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSuppliersData[index].supplierAddress}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${allSuppliersData[index].supplierMobile}')),
+                                    ),
+                                    // DataCell(
+                                    //   Center(
+                                    //       child: Container(
+                                    //           width: 44.0,
+                                    //           height: 42.0,
+                                    //           color: Colors.black,
+                                    //           child: Image.network(
+                                    //               "http://testapi.happykhata.com/${allSuppliersData[index].imageName}"))),
+                                    // ),
+                                  ],
+                                ),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allSuppliersData[index].supplierName}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allSuppliersData[index].contactPerson}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allSuppliersData[index].supplierAddress}')),
-                              ),
-                              DataCell(
-                                Center(
-                                    child: Text(
-                                        '${allSuppliersData[index].supplierMobile}')),
-                              ),
-                              // DataCell(
-                              //   Center(
-                              //       child: Container(
-                              //           width: 44.0,
-                              //           height: 42.0,
-                              //           color: Colors.black,
-                              //           child: Image.network(
-                              //               "http://testapi.happykhata.com/${allSuppliersData[index].imageName}"))),
-                              // ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ),
+                  );
+                }
+                else if(snapshot.connectionState == ConnectionState.waiting){
+                  return CircularProgressIndicator();
+                }
+                else{
+                  return Container();
+                }
+              },)
           ],
         ),
       ),
@@ -583,10 +596,6 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
         Center(child: Text("Supplier data added not successfull"));
       }
       emtyMethod();
-      getSupplier();
-      setState(() {
-
-      });
     } catch (e) {
       return e;
     }

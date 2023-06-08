@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'package:poss/const_page.dart';
@@ -52,6 +53,13 @@ class ApiAllAddProduct {
       var data = jsonDecode(response.data);
       Provider.of<CounterProvider>(context, listen: false).getProducts(context);
       print("AddProduct AddProduct length is ${data}");
+      print("AddProduction AddProduction length is ${data}");
+      print("success============> ${data["success"]}");
+      print("message =================> ${data["message"]}");
+      print("productionId ================>  ${data["productionId"]}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Color.fromARGB(255, 4, 108, 156),
+          duration: Duration(seconds: 1), content: Center(child: Text("${data["message"]}"))));
     } catch (e) {
       print("Something is wrong AddProduct=======:$e");
     }

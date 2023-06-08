@@ -414,7 +414,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].productCode}"),
@@ -445,7 +445,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].productName}"),
@@ -476,7 +476,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].saleDetailsTotalQuantity}"),
@@ -507,7 +507,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].purchaseRate}"),
@@ -538,7 +538,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].purchasedAmount}"),
@@ -569,7 +569,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].saleDetailsTotalAmount}"),
@@ -600,7 +600,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                                   .length,
                                               itemBuilder: (context, j) {
                                                 return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.1)),
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
                                                   child: Center(
                                                     child: Text(
                                                         "${allProfitLossData[index].saleDetails![j].profitLoss}"),
@@ -609,9 +609,6 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                               },
                                             ),
                                           )),
-                                      // Center(
-                                      //     child: Text(
-                                      //         '${allProfitLossData[0].saleDetails![index].profitLoss}')),
                                     ),
                                   ],
                                 ),

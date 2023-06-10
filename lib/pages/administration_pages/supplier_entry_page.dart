@@ -53,14 +53,14 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: Container(
                 height: 245.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -121,7 +121,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -133,13 +133,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -150,7 +150,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -161,7 +161,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -173,13 +173,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -190,7 +190,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -201,7 +201,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -213,13 +213,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -230,7 +230,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -241,7 +241,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -253,13 +253,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -270,7 +270,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -281,7 +281,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -293,13 +293,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -310,7 +310,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.0),
+                    const SizedBox(height: 4.0),
                     Row(
                       children: [
                         const Expanded(
@@ -321,7 +321,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -333,13 +333,13 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 7, 125, 180),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
@@ -350,7 +350,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -366,12 +366,12 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                           width: 70.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 173, 241, 179),
+                                color: const Color.fromARGB(255, 173, 241, 179),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 75, 90, 131),
+                            color: const Color.fromARGB(255, 75, 90, 131),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "SAVE",
                             style: TextStyle(
@@ -432,7 +432,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
             //     ],
             //   ),
             // ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             FutureBuilder(
               future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
               builder: (context, snapshot) {
@@ -440,7 +440,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                   return Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -454,19 +454,19 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                               border:
                               TableBorder.all(color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Supplier Id')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Supplier Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Contact Person')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Address')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Contact Number')),
                                 ),
                                 // DataColumn(
@@ -522,7 +522,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                   );
                 }
                 else if(snapshot.connectionState == ConnectionState.waiting){
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 else{
                   return Container();
@@ -588,12 +588,12 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
       if (item["message"] == "Supplier added successfully") {
         FocusScope.of(context).requestFocus(FocusNode());
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(255, 4, 108, 156),
             duration: Duration(seconds: 2),
             content: Center(child: Text("Supplier added successfull"))));
       } else {
-        Center(child: Text("Supplier data added not successfull"));
+        const Center(child: Text("Supplier data added not successfull"));
       }
       emtyMethod();
     } catch (e) {

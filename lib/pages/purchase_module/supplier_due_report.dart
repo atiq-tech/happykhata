@@ -201,7 +201,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                             ),
                                             suggestionsCallback: (pattern) {
                                               return snapshot.data!
-                                                  .where((element) => element.supplierName!
+                                                  .where((element) => element.supplierName.toString()
                                                   .toLowerCase()
                                                   .contains(pattern
                                                   .toString()

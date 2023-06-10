@@ -157,8 +157,8 @@ class CounterProvider extends ChangeNotifier {
 
   Future<List<AllAccountsModelClass>>getAccounts(BuildContext context) async {
     allAccountslist = await ApiAllAccounts.GetApiAllAccounts(context);
-    notifyListeners();
     return allAccountslist;
+    notifyListeners();
   }
 
   //CashTransactions
@@ -185,9 +185,10 @@ class CounterProvider extends ChangeNotifier {
   // Bank ACCOUNTS
   List<AllBankAccountModelClass> allBankAccountlist = [];
 
-  getBankAccounts(BuildContext context) async {
+  Future<List<AllBankAccountModelClass>>getBankAccounts(BuildContext context) async {
     allBankAccountlist =
     await ApiAllBankAccounts.GetApiAllBankAccounts(context);
+    return allBankAccountlist;
     notifyListeners();
   }
 
@@ -204,11 +205,14 @@ class CounterProvider extends ChangeNotifier {
   //Bank Transactions
   List<AllBankTransactionModelClass> allBankTransactionslist = [];
 
-  getBankTransactions(context, String? accountId, String? dateFrom,
-      String? dateTo, String? transactionType) async {
+  Future<List<AllBankTransactionModelClass>>getBankTransactions(context, {String? accountId,
+      String? dateFrom,
+      String? dateTo,
+      String? transactionType}) async {
     allBankTransactionslist =
     await ApiAllBankTransactions.GetApiAllBankTransactions(
         context, accountId, dateFrom, dateTo, transactionType);
+    return allBankTransactionslist;
     notifyListeners();
   }
 

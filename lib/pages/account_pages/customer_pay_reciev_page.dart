@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
-import 'package:jiffy/jiffy.dart' as jiffy;
-import 'package:jiffy/jiffy.dart';
+
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_customer_payment/Api_all_add_customer_payment.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_accounts/Api_all_bank_accounts.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by_employee_modelclass.dart';
 
 
 import 'package:poss/common_widget/custom_appbar.dart';
 
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 
 import 'package:provider/provider.dart';
 
@@ -28,6 +32,8 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _DescriptionController = TextEditingController();
   final TextEditingController _AmountController = TextEditingController();
+  final TextEditingController bankController = TextEditingController();
+  final TextEditingController customerController = TextEditingController();
 
   String? firstPickedDate;
   void _firstSelectedDate() async {
@@ -113,7 +119,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
       appBar: CustomAppBar(
         title: "Customer Payment",
       ),
-      body: InkWell(
+      body: GestureDetector(
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
         },
@@ -123,7 +129,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
               Container(
                 padding: EdgeInsets.all(10),
                 child: Container(
-                  height: 325.0,
+                  height: isBankListClicked ? 350.0 : 320,
                   width: double.infinity,
                   padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
@@ -283,7 +289,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                             Expanded(
                               flex: 11,
                               child: Container(
-                                height: 28.0,
+                                height: 38.0,
                                 width:
                                 MediaQuery.of(context).size.width / 2,
                                 padding: EdgeInsets.only(left: 5.0),
@@ -295,40 +301,106 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   borderRadius:
                                   BorderRadius.circular(10.0),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    hint: Text(
-                                      'Select account',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    dropdownColor: Color.fromARGB(
-                                        255,
-                                        231,
-                                        251,
-                                        255), // Not necessary for Option 1
-                                    value: _selectedBank,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        _selectedBank =
-                                            newValue!.toString();
-                                      });
-                                    },
-                                    items: allBankAccountsData
-                                        .map((location) {
-                                      return DropdownMenuItem(
-                                        child: Text(
-                                          "${location.bankName}",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                child: FutureBuilder(
+                                  future: Provider.of<CounterProvider>(context).getBankAccounts(context),
+                                  builder: (context,
+                                      AsyncSnapshot<List<AllBankAccountModelClass>> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return TypeAheadFormField(
+                                        textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                            onChanged: (value){
+                                              if (value == '') {
+                                                _selectedBank = '';
+                                              }
+                                            },
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                            controller: bankController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Account',
+                                              suffix: _selectedBank == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    bankController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
+                                            )
                                         ),
-                                        value: location.accountId,
+                                        suggestionsCallback: (pattern) {
+                                          return snapshot.data!
+                                              .where((element) => element.accountName!
+                                              .toLowerCase()
+                                              .contains(pattern
+                                              .toString()
+                                              .toLowerCase()))
+                                              .take(allBankAccountsData.length)
+                                              .toList();
+                                          // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                        },
+                                        itemBuilder: (context, suggestion) {
+                                          return ListTile(
+                                            title: SizedBox(child: Text("${suggestion.accountName} - ${suggestion.accountNumber} (${suggestion.bankName})",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                          );
+                                        },
+                                        transitionBuilder:
+                                            (context, suggestionsBox, controller) {
+                                          return suggestionsBox;
+                                        },
+                                        onSuggestionSelected:
+                                            (AllBankAccountModelClass suggestion) {
+                                              bankController.text = "${suggestion.accountName}-${suggestion.accountNumber} (${suggestion.bankName})";
+                                          setState(() {
+                                            _selectedBank = suggestion.accountId.toString();
+                                          });
+                                        },
+                                        onSaved: (value) {},
                                       );
-                                    }).toList(),
-                                  ),
+                                    }
+                                    return const SizedBox();
+                                  },
                                 ),
+
+                                // child: DropdownButtonHideUnderline(
+                                //   child: DropdownButton(
+                                //     hint: Text(
+                                //       'Select account',
+                                //       style: TextStyle(
+                                //         fontSize: 14,
+                                //       ),
+                                //     ),
+                                //     dropdownColor: Color.fromARGB(
+                                //         255,
+                                //         231,
+                                //         251,
+                                //         255), // Not necessary for Option 1
+                                //     value: _selectedBank,
+                                //     onChanged: (newValue) {
+                                //       setState(() {
+                                //         _selectedBank =
+                                //             newValue!.toString();
+                                //       });
+                                //     },
+                                //     items: allBankAccountsData
+                                //         .map((location) {
+                                //       return DropdownMenuItem(
+                                //         child: Text(
+                                //           "${location.bankName}",
+                                //           style: TextStyle(
+                                //             fontSize: 14,
+                                //           ),
+                                //         ),
+                                //         value: location.accountId,
+                                //       );
+                                //     }).toList(),
+                                //   ),
+                                // ),
                               ),
                             ),
                           ],
@@ -415,7 +487,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 30.0,
+                              height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
@@ -424,34 +496,100 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  hint: Text(
-                                    'Select Customer',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ), // Not necessary for Option 1
-                                  value: _selectedCustomer,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedCustomer = newValue!.toString();
-                                    });
-                                  },
-                                  items: allCustomersData.map((location) {
-                                    return DropdownMenuItem(
-                                      child: Text(
-                                        "${location.customerName}",
-                                        style: TextStyle(
-                                          fontSize: 14,
+                              child: FutureBuilder(
+                                future: Provider.of<AllProductProvider>(context).Fatch_By_all_Customer(context),
+                                builder: (context,
+                                    AsyncSnapshot<List<By_all_Customer>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedCustomer = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: customerController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Customer',
+                                          suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                customerController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      value: location.customerSlNo,
+                                      suggestionsCallback: (pattern) {
+                                        return snapshot.data!
+                                            .where((element) => element.displayName!
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(allCustomersData.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (By_all_Customer suggestion) {
+                                            customerController.text = suggestion.displayName!;
+                                        setState(() {
+                                          _selectedCustomer = suggestion.customerSlNo.toString();
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     );
-                                  }).toList(),
-                                ),
+                                  }
+                                  return const SizedBox();
+                                },
                               ),
+
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton(
+                              //     isExpanded: true,
+                              //     hint: Text(
+                              //       'Select Customer',
+                              //       style: TextStyle(
+                              //         fontSize: 14,
+                              //       ),
+                              //     ), // Not necessary for Option 1
+                              //     value: _selectedCustomer,
+                              //     onChanged: (newValue) {
+                              //       setState(() {
+                              //         _selectedCustomer = newValue!.toString();
+                              //       });
+                              //     },
+                              //     items: allCustomersData.map((location) {
+                              //       return DropdownMenuItem(
+                              //         child: Text(
+                              //           "${location.customerName}",
+                              //           style: TextStyle(
+                              //             fontSize: 14,
+                              //           ),
+                              //         ),
+                              //         value: location.customerSlNo,
+                              //       );
+                              //     }).toList(),
+                              //   ),
+                              // ),
                             ),
                           ),
                         ],

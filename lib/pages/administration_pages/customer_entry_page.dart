@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_districes/Api_all_get_districes.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_get_districes_class.dart';
@@ -805,7 +806,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                   DataCell(
                                     Center(
                                         child: Text(
-                                            '${allCustomerData[index].addTime}')),
+                                            "${DateFormat('dd-MM-yyyy').format(DateTime.parse('${allCustomerData[index].addTime}'))}")),
                                   ),
                                   DataCell(
                                     Center(
@@ -900,18 +901,15 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
     images = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {});
   }
-
   emtyMethod() {
     setState(() {
       _customerNameController.text = "";
       _Get_customerType = "";
-
       _mobileController.text = "";
-
       _officePhoneController.text = "";
       _addressController.text = "";
       _OwnerNameController.text = "";
-      _selectedArea = "";
+      areaController.text = "";
       _creditLimitController.text = "";
       _previousDueController.text = "";
     });
@@ -960,14 +958,6 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
         const Center(child: Text("Customer data added not successfull"));
       }
       emtyMethod();
-
-      // print("Customer DDDDDDDDDDDATA ${response.data}");
-      // print("success============> ${response.data["success"]}");
-      // print("message =================> ${response.data["message"]}");
-      // print("Customer code================>  ${response.data["customerCode"]}");
-      // emtyMethod();
-      // Provider.of<CounterProvider>(context, listen: false)
-      //     .getCustomers(context);
     } catch (e) {
       return e;
     }

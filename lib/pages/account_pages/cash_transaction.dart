@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_accounts.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_cash_transaction/Api_all_add_cash_transaction.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_cash_transaction/Api_all_get_cash_transaction.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_accounts_model_class.dart';
 
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
@@ -27,7 +28,6 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _transactionTypeController =
       TextEditingController();
-  final TextEditingController _accountController = TextEditingController();
 
   final TextEditingController _DescriptionController = TextEditingController();
   final TextEditingController _AmountController = TextEditingController();
@@ -67,7 +67,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
     // TODO: implement initState
     super.initState();
   }
-
+  var  _accountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     //Account
@@ -247,37 +247,103 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  hint: Text(
-                                    'Select account',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
-                                      255), // Not necessary for Option 1
-                                  value: _selectedAccount,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedAccount = newValue!.toString();
-
-                                      getCashTransactionId();
-                                    });
-                                  },
-                                  items: allAccountsData.map((location) {
-                                    return DropdownMenuItem(
-                                      child: Text(
-                                        "${location.accName}",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                              child: FutureBuilder(
+                                future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
+                                builder: (context,
+                                    AsyncSnapshot<List<AllAccountsModelClass>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                          onChanged: (value){
+                                            if (value == '') {
+                                              _selectedAccount = '';
+                                            }
+                                          },
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                          controller: _accountController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Select Category',
+                                            suffix: _selectedAccount == '' ? null : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _accountController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                child: Icon(Icons.close,size: 14,),
+                                              ),
+                                            ),
+                                          )
                                       ),
-                                      value: location.accSlNo,
+                                      suggestionsCallback: (pattern) {
+                                        return snapshot.data!
+                                            .where((element) => element.productCategoryName!
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(allAccountsData.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (AllAccountsModelClass suggestion) {
+                                        categoryController.text = suggestion.productCategoryName!;
+                                        setState(() {
+                                          _selectedAccount = suggestion.productCategorySlNo.toString();
+                                          getCashTransactionId();
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     );
-                                  }).toList(),
-                                ),
+                                  }
+                                  return const SizedBox();
+                                },
                               ),
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton(
+                              //     hint: Text(
+                              //       'Select account',
+                              //       style: TextStyle(
+                              //         fontSize: 14,
+                              //       ),
+                              //     ),
+                              //     dropdownColor: Color.fromARGB(255, 231, 251,
+                              //         255), // Not necessary for Option 1
+                              //     value: _selectedAccount,
+                              //     onChanged: (newValue) {
+                              //       setState(() {
+                              //         _selectedAccount = newValue!.toString();
+                              //
+                              //         getCashTransactionId();
+                              //       });
+                              //     },
+                              //     items: allAccountsData.map((location) {
+                              //       return DropdownMenuItem(
+                              //         child: Text(
+                              //           "${location.accName}",
+                              //           style: TextStyle(
+                              //             fontSize: 14,
+                              //           ),
+                              //         ),
+                              //         value: location.accSlNo,
+                              //       );
+                              //     }).toList(),
+                              //   ),
+                              // ),
                             ),
                           ),
                         ],

@@ -557,6 +557,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                               "",
                               check1,
                               "${_vatController.text}");
+                          emtyMethod();
 
                           Provider.of<CounterProvider>(context, listen: false)
                               .getProducts(context);
@@ -694,7 +695,20 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
       ),
     );
   }
-
+  emtyMethod() {
+    setState(() {
+      iitem = "";
+      categoryController.text= "";
+      _productNameController.text= "";
+      _selectedUnit = null;
+      _vatController.text = "";
+      _reOrderLevelController.text = "";
+      _purchaseRateController.text = "";
+      _salesRateController.text = "";
+      _WholesaleRateController.text = "";
+      check1=false;
+    });
+  }
   String? iitem;
   getProductCode() async {
     String link = "${BaseUrl}api/v1/getProductCode";

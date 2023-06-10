@@ -59,6 +59,7 @@ class ApiAllAddProduct {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Color.fromARGB(255, 4, 108, 156),
           duration: Duration(seconds: 1), content: Center(child: Text("${data["message"]}"))));
+
     } catch (e) {
       print("Something is wrong AddProduct=======:$e");
     }

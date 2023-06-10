@@ -165,7 +165,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                     ),
                                     suggestionsCallback: (pattern) {
                                       return snapshot.data!
-                                          .where((element) => element.productName!
+                                          .where((element) => element.displayText!
                                           .toLowerCase()
                                           .contains(pattern
                                           .toString()
@@ -176,7 +176,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                     },
                                     itemBuilder: (context, suggestion) {
                                       return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                       );
                                     },
                                     transitionBuilder:
@@ -185,7 +185,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                     },
                                     onSuggestionSelected:
                                         (AllProductModelClass suggestion) {
-                                      productAllController.text = suggestion.productName!;
+                                      productAllController.text = suggestion.displayText!;
                                       setState(() {
                                         _selectedAccount =
                                             suggestion.productSlNo.toString();

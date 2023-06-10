@@ -122,6 +122,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   @override
   void initState() {
      _quantityController.text = "1";
+     supplyerController.text = '';
     firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     // get materials
     ApiAllGetMaterial apiAllGetMaterial;
@@ -320,7 +321,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                 ),
               ),
               Container(
-                height: 220.0,
+                height: _selectedSupplier == 'null' ? 250 : 220.0,
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
@@ -405,7 +406,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                     ),
                                     suggestionsCallback: (pattern) {
                                       return snapshot.data!
-                                          .where((element) => element.displayName!
+                                          .where((element) => element.displayName.toString()
                                           .toLowerCase()
                                           .contains(pattern
                                           .toString()
@@ -427,49 +428,56 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                         (AllSuppliersClass suggestion) {
                                       supplyerController.text = suggestion.displayName!;
                                       setState(() {
-                                        print("Supplier Si No ======> ${suggestion.supplierSlNo}");
                                         _selectedSupplier = suggestion.supplierSlNo.toString();
-                                        SupplierSlNo = suggestion.supplierSlNo.toString();
-                                        _selectedSupplier == "General Supplier"
-                                            ? isVisible = true
-                                            : isVisible = false;
-                                        _selectedSupplier == "General Supplier"
-                                            ? isEnabled = true
-                                            : isEnabled = false;
+                                        if (_selectedSupplier == 'null') {
+                                          print("No has not $_selectedSupplier");
 
-                                        print(_selectedSupplier);
-                                        print(isVisible);
-                                        final results = [
-                                          All_Supplier.where((m) => m.supplierSlNo!
+                                          isVisible = true;
+                                          isEnabled = true;
+                                          _nameController.text = '';
+                                          _mobileNumberController.text = '';
+                                          _addressController.text = '';
+                                        }
+
+                                        else{
+                                            print("Yes has $_selectedSupplier");
+
+                                            isEnabled = false;
+                                            isVisible = false;
+                                            print(isVisible);
+                                            final results = [
+                                              All_Supplier.where((m) => m.supplierSlNo!
                                                   .contains(
-                                                      '${suggestion.supplierSlNo}')) // or Testing 123
-                                              .toList(),
-                                        ];
-                                        results.forEach((element) {
-                                          element.add(element.first);
-                                          print("dfhsghdfkhgkh");
-                                          print(
-                                              "supplierSlNo===> ${element[0].displayName}");
-                                          print(
-                                              "supplierName===> ${element[0].supplierName}");
-                                          supplierMobile =
+                                                  '${suggestion.supplierSlNo}')) // or Testing 123
+                                                  .toList(),
+                                            ];
+                                            results.forEach((element) {
+                                              element.add(element.first);
+                                              print("dfhsghdfkhgkh");
+                                              print(
+                                                  "supplierSlNo===> ${element[0].displayName}");
+                                              print(
+                                                  "supplierName===> ${element[0].supplierName}");
+                                              supplierMobile =
                                               "${element[0].supplierMobile}";
-                                          _mobileNumberController.text =
+                                              _mobileNumberController.text =
                                               "${element[0].supplierMobile}";
-                                          print(
-                                              "supplierMobile===> ${element[0].supplierMobile}");
-                                          supplierAddress =
+                                              print(
+                                                  "supplierMobile===> ${element[0].supplierMobile}");
+                                              supplierAddress =
                                               "${element[0].supplierAddress}";
-                                          _addressController.text =
+                                              _addressController.text =
                                               "${element[0].supplierAddress}";
-                                          print(
-                                              "supplierAddress===> ${element[0].supplierAddress}");
-                                          previousDue = "${element[0].previousDue}";
-                                          _previousDueController.text =
+                                              print(
+                                                  "supplierAddress===> ${element[0].supplierAddress}");
+                                              previousDue = "${element[0].previousDue}";
+                                              _previousDueController.text =
                                               "${element[0].previousDue}";
-                                          print(
-                                              "previousDue===> ${element[0].previousDue}");
-                                        });
+                                              print(
+                                                  "previousDue===> ${element[0].previousDue}");
+                                            });
+
+                                          }
                                       });
                                     },
                                     onSaved: (value) {},
@@ -478,6 +486,122 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 return const SizedBox();
                               },
                             ),
+
+                            // child: FutureBuilder(
+                            //   future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                            //   builder: (context,
+                            //       AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                            //     if (snapshot.hasData) {
+                            //       return TypeAheadFormField(
+                            //         textFieldConfiguration:
+                            //         TextFieldConfiguration(
+                            //             onChanged: (value){
+                            //               if (value == '') {
+                            //                 _selectedSupplier = '';
+                            //               }
+                            //             },
+                            //             style: const TextStyle(
+                            //               fontSize: 15,
+                            //             ),
+                            //             controller: supplyerController,
+                            //             decoration: InputDecoration(
+                            //               hintText: 'Select Supplier',
+                            //               suffix: _selectedSupplier == '' ? null : GestureDetector(
+                            //                 onTap: () {
+                            //                   setState(() {
+                            //                     supplyerController.text = '';
+                            //                   });
+                            //                 },
+                            //                 child: const Padding(
+                            //                   padding: EdgeInsets.symmetric(horizontal: 3),
+                            //                   child: Icon(Icons.close,size: 14,),
+                            //                 ),
+                            //               ),
+                            //             )
+                            //         ),
+                            //         suggestionsCallback: (pattern) {
+                            //           return snapshot.data!
+                            //               .where((element) => element.displayName!
+                            //               .toLowerCase()
+                            //               .contains(pattern
+                            //               .toString()
+                            //               .toLowerCase()))
+                            //               .take(All_Supplier.length)
+                            //               .toList();
+                            //           // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                            //         },
+                            //         itemBuilder: (context, suggestion) {
+                            //           return ListTile(
+                            //             title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                            //           );
+                            //         },
+                            //         transitionBuilder:
+                            //             (context, suggestionsBox, controller) {
+                            //           return suggestionsBox;
+                            //         },
+                            //         onSuggestionSelected:
+                            //             (AllSuppliersClass suggestion) {
+                            //           supplyerController.text = suggestion.displayName!;
+                            //           setState(() {
+                            //             print("Supplier Si No ======> ${suggestion.supplierSlNo}");
+                            //             _selectedSupplier = suggestion.supplierSlNo.toString();
+                            //             SupplierSlNo = suggestion.supplierSlNo.toString();
+                            //
+                            //             if (_selectedSupplier == 'null') {
+                            //               print("No has not $_selectedSupplier");
+                            //
+                            //               isVisible = true;
+                            //               isEnabled = true;
+                            //               _nameController.text = '';
+                            //               _mobileNumberController.text = '';
+                            //               _addressController.text = '';
+                            //             }else {
+                            //               print("Yes has $_selectedSupplier");
+                            //
+                            //               isEnabled = false;
+                            //               isVisible = false;
+                            //               print(isVisible);
+                            //               final results = [
+                            //                 All_Supplier.where((m) => m.supplierSlNo!
+                            //                     .contains(
+                            //                     '${suggestion.supplierSlNo}')) // or Testing 123
+                            //                     .toList(),
+                            //               ];
+                            //               results.forEach((element) {
+                            //                 element.add(element.first);
+                            //                 print("dfhsghdfkhgkh");
+                            //                 print(
+                            //                     "supplierSlNo===> ${element[0].displayName}");
+                            //                 print(
+                            //                     "supplierName===> ${element[0].supplierName}");
+                            //                 supplierMobile =
+                            //                 "${element[0].supplierMobile}";
+                            //                 _mobileNumberController.text =
+                            //                 "${element[0].supplierMobile}";
+                            //                 print(
+                            //                     "supplierMobile===> ${element[0].supplierMobile}");
+                            //                 supplierAddress =
+                            //                 "${element[0].supplierAddress}";
+                            //                 _addressController.text =
+                            //                 "${element[0].supplierAddress}";
+                            //                 print(
+                            //                     "supplierAddress===> ${element[0].supplierAddress}");
+                            //                 previousDue = "${element[0].previousDue}";
+                            //                 _previousDueController.text =
+                            //                 "${element[0].previousDue}";
+                            //                 print(
+                            //                     "previousDue===> ${element[0].previousDue}");
+                            //               });
+                            //
+                            //             }
+                            //           });
+                            //         },
+                            //         onSaved: (value) {},
+                            //       );
+                            //     }
+                            //     return const SizedBox();
+                            //   },
+                            // ),
 
                             // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(
@@ -595,10 +719,16 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                             child: Container(
                               height: 28.0,
                               margin: const EdgeInsets.only(bottom: 5),
-                              child: TextField(
+                              child: TextFormField(
                                 style: const TextStyle(color: Colors.grey),
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if(value != null || value != ''){
+                                    _nameController.text = value.toString();
+                                  }
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
@@ -639,11 +769,17 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           child: Container(
                             height: 28.0,
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 139, 139, 139),
                               ),
                               controller: _mobileNumberController,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _mobileNumberController.text = value.toString();
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -684,12 +820,18 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                           flex: 3,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 139, 139, 139),
                               ),
                               maxLines: 3,
                               controller: _addressController,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _addressController.text = value.toString();
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                               decoration: InputDecoration(
                                 filled: true,
@@ -1938,7 +2080,16 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
             "previous_due": "$previousDue",
             "note": ""
           },
-          "purchasedMaterials": materialPurchasemap
+          "purchasedMaterials": materialPurchasemap,
+          "supplier": {
+            "Supplier_Address": _addressController.text.trim(),
+            "Supplier_Code": "",
+            "Supplier_Mobile": _mobileNumberController.text.trim(),
+            "Supplier_Name": _nameController.text.trim(),
+            "Supplier_SlNo": "",
+            "Supplier_Type": "G",
+            "display_name" : "General Supplier"
+          }
         },
         options: Options(headers: {
           "Content-Type": "application/json",

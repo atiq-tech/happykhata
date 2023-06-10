@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
+import 'package:poss/pages/invoice_screen.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -522,6 +523,9 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                       DataColumn(
                                         label: Center(child: Text('Due')),
                                       ),
+                                      // DataColumn(
+                                      //   label: Center(child: Text('Action')),
+                                      // ),
                                     ],
                                     rows: List.generate(
                                       allMeterialPurchaseData.length,
@@ -572,6 +576,16 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                                 child: Text(
                                                     '${allMeterialPurchaseData[index].due}')),
                                           ),
+                                          // DataCell(
+                                          //   Row(
+                                          //     children: [
+                                          //       GestureDetector(child: Icon(Icons.save),onTap: () {
+                                          //         Navigator.push(context, MaterialPageRoute(builder: (context) => InvoicePage(id: "${allMeterialPurchaseData[index].invoiceNo}".substring("${allMeterialPurchaseData[index].invoiceNo}".indexOf('-')).replaceAll('-', '')),));
+                                          //       },),
+                                          //       GestureDetector(child: Icon(Icons.delete)),
+                                          //     ],
+                                          //   )
+                                          // ),
                                         ],
                                       ),
                                     ),

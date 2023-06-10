@@ -60,8 +60,6 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   String? _selectedCustomer;
   String? _selectedCategory;
   String? _selectedProduct;
-  String? customerSlNo;
-  String? productSlNo;
   String? employeeSlNo;
   String? previousDue;
   String level = "retail";
@@ -351,7 +349,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
               ///my practice
               ///
               Container(
-                height: 225.0,
+                height: _selectedCustomer == 'null' ? 250 : 225.0,
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: BoxDecoration(
@@ -452,7 +450,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                           onChanged: (newValue) {
                                                 print("On change Value is $newValue");
                                                 if (newValue == '') {
-                                                  customerSlNo = '';
+                                                  _selectedCustomer = '';
                                                 }
                                               },
                                             style: const TextStyle(
@@ -461,7 +459,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                             controller: customerController,
                                             decoration: InputDecoration(
                                                 hintText: 'Select Customer',
-                                              suffix: customerSlNo == '' ? null : GestureDetector(
+                                              suffix: _selectedCustomer == '' ? null : GestureDetector(
                                                 onTap: () {
                                                   setState(() {
                                                     customerController.text = '';
@@ -506,57 +504,61 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                       customerController.text =
                                           suggestion.displayName!;
                                       setState(() {
-                                        customerSlNo =
-                                            suggestion.customerSlNo.toString();
-
-                                        print(
-                                            "customerSlNo ======> ${suggestion.customerSlNo}");
                                         _selectedCustomer =
                                             suggestion.customerSlNo.toString();
+                                        print("customer selected ======> ${_selectedCustomer}");
 
-                                        if (_selectedCustomer ==
-                                            "General Customer") {
+                                        if (_selectedCustomer == 'null') {
+                                          print("No has not $_selectedCustomer");
+
                                           isVisible = true;
                                           isEnabled = true;
+                                          _nameController.text = '';
+                                          _mobileNumberController.text = '';
+                                          _addressController.text = '';
                                         } else {
+                                           print("Yes has $_selectedCustomer");
+
                                           isEnabled = false;
                                           isVisible = false;
+
+                                           final results = [
+                                             All_Customer.where((m) => m
+                                                 .customerSlNo.toString()
+                                                 .contains(
+                                                 '${suggestion.customerSlNo}')) // or Testing 123
+                                                 .toList(),
+                                           ];
+                                           results.forEach((element) {
+                                             element.add(element.first);
+                                             print("dfhsghdfkhgkh");
+                                             print(
+                                                 "productSlNo===> ${element[0].displayName}");
+                                             print(
+                                                 "productCategoryName===> ${element[0].customerName}");
+                                             customerMobile =
+                                             "${element[0].customerMobile}";
+                                             _mobileNumberController.text =
+                                             "${element[0].customerMobile}";
+                                             print(
+                                                 "customerMobile===> ${element[0].customerMobile}");
+                                             customerAddress =
+                                             "${element[0].customerAddress}";
+                                             _addressController.text =
+                                             "${element[0].customerAddress}";
+                                             print(
+                                                 "customerAddress===> ${element[0].customerAddress}");
+                                             previousDue =
+                                             "${element[0].previousDue}";
+                                             _previousDueController.text =
+                                             "${element[0].previousDue}";
+                                             print("previousDue===> ${element[0].previousDue}");
+                                           });
                                         }
                                         //  print(_selectedCustomer);
-                                        print(isVisible);
+                                        print('isVisible $isVisible');
 
-                                        final results = [
-                                          All_Customer.where((m) => m
-                                              .customerSlNo!
-                                              .contains(
-                                              '${suggestion.customerSlNo}')) // or Testing 123
-                                              .toList(),
-                                        ];
-                                        results.forEach((element) {
-                                          element.add(element.first);
-                                          print("dfhsghdfkhgkh");
-                                          print(
-                                              "productSlNo===> ${element[0].displayName}");
-                                          print(
-                                              "productCategoryName===> ${element[0].customerName}");
-                                          customerMobile =
-                                          "${element[0].customerMobile}";
-                                          _mobileNumberController.text =
-                                          "${element[0].customerMobile}";
-                                          print(
-                                              "customerMobile===> ${element[0].customerMobile}");
-                                          customerAddress =
-                                          "${element[0].customerAddress}";
-                                          _addressController.text =
-                                          "${element[0].customerAddress}";
-                                          print(
-                                              "customerAddress===> ${element[0].customerAddress}");
-                                          previousDue =
-                                          "${element[0].previousDue}";
-                                          _previousDueController.text =
-                                          "${element[0].previousDue}";
-                                          print("previousDue===> ${element[0].previousDue}");
-                                        });
+
                                       });
                                     },
                                     onSaved: (value) {},
@@ -685,8 +687,14 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                             child: Container(
                               height: 28.0,
                               margin: const EdgeInsets.only(bottom: 5),
-                              child: TextField(
+                              child: TextFormField(
                                 controller: _nameController,
+                                validator: (value) {
+                                  if(value != null || value != ''){
+                                    _nameController.text = value.toString();
+                                  }
+                                  return null;
+                                },
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   filled: true,
@@ -726,10 +734,16 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           child: Container(
                             height: 28.0,
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               enabled: isEnabled,
                               controller: _mobileNumberController,
                               keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _mobileNumberController.text = value.toString();
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: isEnabled == true
@@ -768,9 +782,15 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           flex: 3,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               maxLines: 3,
                               controller: _addressController,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _addressController.text = value.toString();
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                               decoration: InputDecoration(
                                 filled: true,
@@ -983,7 +1003,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     TextFieldConfiguration(
                                         onChanged: (value){
                                           if (value == '') {
-                                            productSlNo = '';
+                                            _selectedProduct = '';
                                           }
                                         },
                                         style: const TextStyle(
@@ -992,7 +1012,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                         controller: productController,
                                         decoration: InputDecoration(
                                           hintText: 'Select Product',
-                                          suffix: productSlNo == '' ? null : GestureDetector(
+                                          suffix: _selectedProduct == '' ? null : GestureDetector(
                                             onTap: () {
                                               setState(() {
                                                 productController.text = '';
@@ -1029,18 +1049,18 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                         (AllProductModelClass suggestion) {
                                       productController.text = suggestion.displayText!;
                                       setState(() {
-                                        productSlNo =
-                                            suggestion.productSlNo.toString();
-
-                                        _selectedProduct = suggestion.productSlNo.toString();
+                                        _selectedProduct = "${suggestion.productSlNo}";
 
                                         print("dfhsghdfkhgkh $_selectedProduct");
+
                                         final results = [
                                           CategoryWiseProductList.where((m) =>
-                                                  m.productSlNo!.contains(
+                                                  m.productSlNo.toString().contains(
                                                       suggestion.productSlNo.toString())) // or Testing 123
                                               .toList(),
                                         ];
+                                        print("dfhsghdfkhgkh $results");
+
                                         results.forEach((element) async {
                                           element.add(element.first);
                                           cproductId = "${element[0].productSlNo}";
@@ -2078,6 +2098,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     const SnackBar(
                                         content: Text("Please Add to Cart")));
                               } else {
+
+                                print("Name controller ${_nameController.text}");
+                                print("Name controller $_selectedCustomer");
                                 AddSales();
                                 showDialog(
                                   context: context,
@@ -2179,7 +2202,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             "salesType": level,
             "salesFrom": "1",
             "salesDate": "${firstPickedDate}",
-            "customerId": "$customerSlNo",
+            "customerId": "$_selectedCustomer",
             "employeeId": "$employeeSlNo",
             "subTotal": "$CartTotal",
             "discount": _discountPercentController.text,
@@ -2193,6 +2216,15 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             //"due": "$DiccountTotal",
             "isService": "false",
             "note": "Note Here"
+          },
+          "customer":{
+            "Customer_Address": _addressController.text.trim(),
+            "Customer_Code": '',
+            "Customer_Mobile": _mobileNumberController.text.trim(),
+            "Customer_Name": _nameController.text.trim(),
+            "Customer_SlNo": '',
+            "Customer_Type": "G",
+            "display_name": 'General Customer'
           },
           "cart": studentsmap
         },

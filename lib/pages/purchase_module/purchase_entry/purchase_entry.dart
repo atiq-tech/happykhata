@@ -227,7 +227,7 @@ double TotalVat=0;
                                     ),
                                     suggestionsCallback: (pattern) {
                                       return snapshot.data!
-                                          .where((element) => element.supplierName!
+                                          .where((element) => element.displayName.toString()
                                           .toLowerCase()
                                           .contains(pattern
                                           .toString()
@@ -238,7 +238,7 @@ double TotalVat=0;
                                     },
                                     itemBuilder: (context, suggestion) {
                                       return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                       );
                                     },
                                     transitionBuilder:
@@ -247,33 +247,51 @@ double TotalVat=0;
                                     },
                                     onSuggestionSelected:
                                         (AllSuppliersClass suggestion) {
-                                      supplyerController.text = suggestion.supplierName!;
+                                      supplyerController.text = suggestion.displayName!;
                                       setState(() {
                                         _selectedSupplier = suggestion.supplierSlNo.toString();
-                                        _selectedSupplier == "General Supplier" ? isVisible = true : isVisible = false;
-                                        _selectedSupplier == "General Supplier" ? isEnabled = true : isEnabled = false;
-                                        print( suggestion.supplierSlNo);
-                                        print(isVisible);
-                                        supplierId= suggestion.supplierSlNo;
-                                        final results = [
-                                          All_Supplier
-                                              .where((m) =>
-                                              m.supplierSlNo!.contains('${suggestion.supplierSlNo}'))// or Testing 123
-                                              .toList(),
-                                        ];
-                                        results.forEach((element) async{
-                                          element.add(element.first);
-                                          print("supplierSlNo  ${element[0].supplierSlNo}");
-                                          print("supplierMobile  ${element[0].supplierMobile}");
-                                          print("supplierName  ${element[0].supplierName}");
-                                          print("supplierAddress  ${element[0].supplierAddress}");
-                                          print("previousDue  ${element[0].previousDue}");
+                                        if (_selectedSupplier == 'null') {
+                                          print("No has not $_selectedSupplier");
 
-                                          Previousdue =double.parse("${element[0].previousDue}");
-                                          _nameController.text="${element[0].supplierName}";
-                                          _mobileNumberController.text="${element[0].supplierMobile}";
-                                          _addressController.text="${element[0].supplierAddress}";
-                                        });
+                                          isVisible = true;
+                                          isEnabled = true;
+                                          _nameController.text = '';
+                                          _mobileNumberController.text = '';
+                                          _addressController.text = '';
+                                        }
+
+                                        else{
+                                          print("Yes has $_selectedSupplier");
+
+                                          isEnabled = false;
+                                          isVisible = false;
+
+                                          print( suggestion.supplierSlNo);
+                                          print(isVisible);
+                                          supplierId= suggestion.supplierSlNo;
+                                          final results = [
+                                            All_Supplier
+                                                .where((m) =>
+                                                m.supplierSlNo!.contains('${suggestion.supplierSlNo}'))// or Testing 123
+                                                .toList(),
+                                          ];
+                                          results.forEach((element) async{
+                                            element.add(element.first);
+                                            print("supplierSlNo  ${element[0].supplierSlNo}");
+                                            print("supplierMobile  ${element[0].supplierMobile}");
+                                            print("supplierName  ${element[0].supplierName}");
+                                            print("supplierAddress  ${element[0].supplierAddress}");
+                                            print("previousDue  ${element[0].previousDue}");
+
+                                            Previousdue =double.parse("${element[0].previousDue}");
+                                            _nameController.text="${element[0].supplierName}";
+                                            _mobileNumberController.text="${element[0].supplierMobile}";
+                                            _addressController.text="${element[0].supplierAddress}";
+                                          });
+                                        }
+
+                                        // _selectedSupplier == "General Supplier" ? isEnabled = true : isEnabled = false;
+
                                       });
                                     },
                                     onSaved: (value) {},
@@ -375,9 +393,15 @@ double TotalVat=0;
                             child: Container(
                               height: 28.0,
                               margin: const EdgeInsets.only(bottom: 5),
-                              child: TextField(
+                              child: TextFormField(
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if(value != null || value != ''){
+                                    _nameController.text = value.toString();
+                                  }
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
@@ -415,9 +439,15 @@ double TotalVat=0;
                           child: Container(
                             height: 28.0,
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               controller: _mobileNumberController,
                               enabled: isEnabled,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _mobileNumberController.text = value.toString();
+                                }
+                                return null;
+                              },
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 filled: true,
@@ -454,10 +484,16 @@ double TotalVat=0;
                           flex: 3,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            child: TextFormField(
                               maxLines: 3,
                               controller: _addressController,
                               enabled: isEnabled,
+                              validator: (value) {
+                                if(value != null || value != ''){
+                                  _addressController.text = value.toString();
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: isEnabled == true ? Colors.white : Colors.grey[200],
@@ -753,7 +789,7 @@ double TotalVat=0;
                                           print("_quantityController ===> ${_quantityController.text}");
                                           print("productPurchaseRate===> ${element[0].productPurchaseRate}");
                                           _salesRateController.text="${element[0].productPurchaseRate}";
-                                          Amount=double.parse("${_salesRateController.text}");
+                                          Amount=double.parse(_salesRateController.text);
                                           print(Amount);
                                         });
                                       });
@@ -882,9 +918,9 @@ double TotalVat=0;
                                 setState(() {
                                   if(_quantityController.text=="0"){
                                     _quantityController.text="1";
-                                    Amount=double.parse("${_salesRateController.text}") * double.parse("${_quantityController.text}");
+                                    Amount=double.parse(_salesRateController.text) * double.parse(_quantityController.text);
                                   }else{
-                                    Amount=double.parse("${_salesRateController.text}") * double.parse("${_quantityController.text}");
+                                    Amount=double.parse(_salesRateController.text) * double.parse(_quantityController.text);
                                   }
                                 });
                               },
@@ -995,12 +1031,12 @@ double TotalVat=0;
                               PurchaseCartList.add(
                                   PurchaseApiModelClass(
                                       productId:"$productId" ,
-                                      quantity: "${_quantityController.text}",
+                                      quantity: _quantityController.text,
                                       categoryId:"$categoryId" ,
                                       categoryName: "$productCategoryName",
                                       name: "$productname",
-                                      purchaseRate:"${_Selling_PriceController.text}",
-                                      salesRate:"${_salesRateController.text}" ,
+                                      purchaseRate:_Selling_PriceController.text,
+                                      salesRate:_salesRateController.text ,
                                       total: "$Amount",
                                   ));
                                   CartTotal+=Amount;
@@ -1637,7 +1673,16 @@ double TotalVat=0;
           "previousDue": "$Previousdue",
           "note": " "
         },
-        "cartProducts": studentsmap
+        "cartProducts": studentsmap,
+        "supplier": {
+          "Supplier_Address": _addressController.text.trim(),
+          "Supplier_Code": "",
+          "Supplier_Mobile": _mobileNumberController.text.trim(),
+          "Supplier_Name": _nameController.text.trim(),
+          "Supplier_SlNo": "",
+          "Supplier_Type": "G",
+          "display_name" : "General Supplier"
+        }
       },
         options: Options(headers: {
           "Content-Type": "application/json",
@@ -1663,7 +1708,9 @@ double TotalVat=0;
       // Previousdue=0;
       // TotalVat=0;
       // CartTotal=0;
-    }catch(e){print(e);}
+    }catch(e) {
+      print(e);
+    }
   }
 
 

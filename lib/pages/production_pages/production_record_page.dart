@@ -291,7 +291,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                     DataCell(
                                       Center(
                                           child: Text(
-                                              '${allProductionRecordData[index].productionId}')),
+                                              '${allProductionRecordData[index].productionSl}')),
                                     ),
                                     DataCell(
                                       Center(
@@ -320,13 +320,59 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].products![0].name}')),
+                                          child: SizedBox(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProductionRecordData[
+                                              index]
+                                                  .products!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProductionRecordData[index].products![j].name}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
                                     ),
                                     DataCell(
                                       Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].products![0].quantity}')),
+                                          child: SizedBox(
+                                            // color: Colors.green,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.5,
+                                            child: ListView.builder(
+                                              scrollDirection:
+                                              Axis.vertical,
+                                              itemCount:
+                                              allProductionRecordData[
+                                              index]
+                                                  .products!
+                                                  .length,
+                                              itemBuilder: (context, j) {
+                                                return Container(
+                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
+                                                  child: Center(
+                                                    child: Text(
+                                                        "${allProductionRecordData[index].products![j].quantity}"),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )),
                                     ),
                                   ],
                                 ),

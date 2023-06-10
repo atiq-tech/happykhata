@@ -156,9 +156,10 @@ class CounterProvider extends ChangeNotifier {
   //ACCOUNTS
   List<AllAccountsModelClass> allAccountslist = [];
 
-  getAccounts(BuildContext context) async {
+  Future<List<AllAccountsModelClass>>getAccounts(BuildContext context) async {
     allAccountslist = await ApiAllAccounts.GetApiAllAccounts(context);
     notifyListeners();
+    return allAccountslist;
   }
 
   //CashTransactions

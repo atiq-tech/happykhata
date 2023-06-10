@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_accounts.dart';
@@ -93,7 +94,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
               Container(
                 padding: EdgeInsets.all(10),
                 child: Container(
-                  height: 250.0,
+                  height: 260.0,
                   width: double.infinity,
                   padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
@@ -238,7 +239,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 28.0,
+                              height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
@@ -248,7 +249,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: FutureBuilder(
-                                future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
+                                future: Provider.of<CounterProvider>(context).getAccounts(context),
                                 builder: (context,
                                     AsyncSnapshot<List<AllAccountsModelClass>> snapshot) {
                                   if (snapshot.hasData) {
@@ -281,7 +282,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                       ),
                                       suggestionsCallback: (pattern) {
                                         return snapshot.data!
-                                            .where((element) => element.productCategoryName!
+                                            .where((element) => element.accName!
                                             .toLowerCase()
                                             .contains(pattern
                                             .toString()
@@ -292,7 +293,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                       },
                                       itemBuilder: (context, suggestion) {
                                         return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                          title: SizedBox(child: Text("${suggestion.accName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                         );
                                       },
                                       transitionBuilder:
@@ -301,9 +302,9 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                       },
                                       onSuggestionSelected:
                                           (AllAccountsModelClass suggestion) {
-                                        categoryController.text = suggestion.productCategoryName!;
+                                            _accountController.text = suggestion.accName!;
                                         setState(() {
-                                          _selectedAccount = suggestion.productCategorySlNo.toString();
+                                          _selectedAccount = suggestion.accSlNo.toString();
                                           getCashTransactionId();
                                         });
                                       },

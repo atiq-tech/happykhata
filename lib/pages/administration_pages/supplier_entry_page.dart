@@ -35,7 +35,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
     //get Suppliers
     ApiAllSuppliers apiAllSuppliers;
 
-    getSupplier();
+    getSuppliers();
     // TODO: implement initState
     super.initState();
   }
@@ -359,7 +359,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                             getSupplierCode();
                           });
                           _AddSupply(context);
-                          getSupplier();
+                          getSuppliers();
                         },
                         child: Container(
                           height: 35.0,
@@ -601,7 +601,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
     }
   }
 
-  getSupplier(){
+  getSuppliers(){
     Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
   }
 

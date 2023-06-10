@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart' as jiffy;
 import 'package:jiffy/jiffy.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_supplier_payment/Api_all_add_supplier_payment.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_accounts/Api_all_bank_accounts.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +30,8 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
   final TextEditingController _paymentDateController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController bankController = TextEditingController();
+  final TextEditingController supplyerController = TextEditingController();
   //
   String? firstPickedDate;
   void _firstSelectedDate() async {
@@ -102,7 +107,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
               Container(
                 padding: EdgeInsets.all(4.0),
                 child: Container(
-                  height: 320.0,
+                  height: isBankListClicked ? 350 : 320.0,
                   width: double.infinity,
                   padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
@@ -255,7 +260,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                             Expanded(
                               flex: 11,
                               child: Container(
-                                height: 28.0,
+                                height: 38.0,
                                 width:
                                 MediaQuery.of(context).size.width / 2,
                                 padding: EdgeInsets.only(left: 5.0),
@@ -267,40 +272,106 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   borderRadius:
                                   BorderRadius.circular(10.0),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    hint: Text(
-                                      'Select account',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    dropdownColor: Color.fromARGB(
-                                        255,
-                                        231,
-                                        251,
-                                        255), // Not necessary for Option 1
-                                    value: _selectedBank,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        _selectedBank =
-                                            newValue!.toString();
-                                      });
-                                    },
-                                    items: allBankAccountsData
-                                        .map((location) {
-                                      return DropdownMenuItem(
-                                        child: Text(
-                                          "${location.bankName}",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                child: FutureBuilder(
+                                  future: Provider.of<CounterProvider>(context).getBankAccounts(context),
+                                  builder: (context,
+                                      AsyncSnapshot<List<AllBankAccountModelClass>> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return TypeAheadFormField(
+                                        textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                            onChanged: (value){
+                                              if (value == '') {
+                                                _selectedBank = '';
+                                              }
+                                            },
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                            controller: bankController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Select Account',
+                                              suffix: _selectedBank == '' ? null : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    bankController.text = '';
+                                                  });
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                                  child: Icon(Icons.close,size: 14,),
+                                                ),
+                                              ),
+                                            )
                                         ),
-                                        value: location.accountId,
+                                        suggestionsCallback: (pattern) {
+                                          return snapshot.data!
+                                              .where((element) => element.accountName!
+                                              .toLowerCase()
+                                              .contains(pattern
+                                              .toString()
+                                              .toLowerCase()))
+                                              .take(allBankAccountsData.length)
+                                              .toList();
+                                          // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                        },
+                                        itemBuilder: (context, suggestion) {
+                                          return ListTile(
+                                            title: SizedBox(child: Text("${suggestion.accountName} - ${suggestion.accountNumber} (${suggestion.bankName})",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                          );
+                                        },
+                                        transitionBuilder:
+                                            (context, suggestionsBox, controller) {
+                                          return suggestionsBox;
+                                        },
+                                        onSuggestionSelected:
+                                            (AllBankAccountModelClass suggestion) {
+                                          bankController.text = "${suggestion.accountName}-${suggestion.accountNumber} (${suggestion.bankName})";
+                                          setState(() {
+                                            _selectedBank = suggestion.accountId.toString();
+                                          });
+                                        },
+                                        onSaved: (value) {},
                                       );
-                                    }).toList(),
-                                  ),
+                                    }
+                                    return const SizedBox();
+                                  },
                                 ),
+
+                                // child: DropdownButtonHideUnderline(
+                                //   child: DropdownButton(
+                                //     hint: Text(
+                                //       'Select account',
+                                //       style: TextStyle(
+                                //         fontSize: 14,
+                                //       ),
+                                //     ),
+                                //     dropdownColor: Color.fromARGB(
+                                //         255,
+                                //         231,
+                                //         251,
+                                //         255), // Not necessary for Option 1
+                                //     value: _selectedBank,
+                                //     onChanged: (newValue) {
+                                //       setState(() {
+                                //         _selectedBank =
+                                //             newValue!.toString();
+                                //       });
+                                //     },
+                                //     items: allBankAccountsData
+                                //         .map((location) {
+                                //       return DropdownMenuItem(
+                                //         child: Text(
+                                //           "${location.bankName}",
+                                //           style: TextStyle(
+                                //             fontSize: 14,
+                                //           ),
+                                //         ),
+                                //         value: location.accountId,
+                                //       );
+                                //     }).toList(),
+                                //   ),
+                                // ),
                               ),
                             ),
                           ],
@@ -322,7 +393,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 30.0,
+                              height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
@@ -331,34 +402,103 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  hint: Text(
-                                    'Select Supplier',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ), // Not necessary for Option 1
-                                  value: _selectedSupplier,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedSupplier = newValue!.toString();
-                                    });
-                                  },
-                                  items: allSuppliersData.map((location) {
-                                    return DropdownMenuItem(
-                                      child: Text(
-                                        "${location.supplierName}",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                              child: FutureBuilder(
+                                future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                                builder: (context,
+                                    AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                          onChanged: (value){
+                                            if (value == '') {
+                                              _selectedSupplier = '';
+                                            }
+                                          },
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                          controller: supplyerController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Select Supplier',
+                                            suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  supplyerController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                child: Icon(Icons.close,size: 14,),
+                                              ),
+                                            ),
+                                          )
                                       ),
-                                      value: location.supplierSlNo,
+                                      suggestionsCallback: (pattern) {
+                                        return snapshot.data!
+                                            .where((element) => element.supplierName.toString()
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(allSuppliersData.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                      },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (AllSuppliersClass suggestion) {
+                                        supplyerController.text = suggestion.supplierName!;
+                                        setState(() {
+                                          _selectedSupplier =
+                                              suggestion.supplierSlNo;
+                                          print(
+                                              "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     );
-                                  }).toList(),
-                                ),
+                                  }
+                                  return const SizedBox();
+                                },
                               ),
+
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton(
+                              //     isExpanded: true,
+                              //     hint: Text(
+                              //       'Select Supplier',
+                              //       style: TextStyle(
+                              //         fontSize: 14,
+                              //       ),
+                              //     ), // Not necessary for Option 1
+                              //     value: _selectedSupplier,
+                              //     onChanged: (newValue) {
+                              //       setState(() {
+                              //         _selectedSupplier = newValue!.toString();
+                              //       });
+                              //     },
+                              //     items: allSuppliersData.map((location) {
+                              //       return DropdownMenuItem(
+                              //         child: Text(
+                              //           "${location.supplierName}",
+                              //           style: TextStyle(
+                              //             fontSize: 14,
+                              //           ),
+                              //         ),
+                              //         value: location.supplierSlNo,
+                              //       );
+                              //     }).toList(),
+                              //   ),
+                              // ),
                             ),
                           ),
                         ],

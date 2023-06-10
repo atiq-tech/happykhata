@@ -2,11 +2,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:intl/intl.dart';
 
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_accounts/Api_all_bank_accounts.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_transaction/Api_all_bank_transaction.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_transaction_model_class.dart';
 
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -33,6 +36,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
 
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
+  final TextEditingController accountController = TextEditingController();
   String? firstPickedDate;
 
   void _firstSelectedDate() async {
@@ -99,7 +103,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
             Container(
               padding: EdgeInsets.all(6.0),
               child: Container(
-                height: 160.0,
+                height: 170.0,
                 width: double.infinity,
                 padding: EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
@@ -124,7 +128,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 28.0,
+                            height: 38.0,
                             width: MediaQuery.of(context).size.width / 2,
                             padding: EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
@@ -133,36 +137,103 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                hint: Text(
-                                  'Select account',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
-                                    255), // Not necessary for Option 1
-                                value: _selectedAccount,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedAccount = newValue!.toString();
-                                  });
-                                },
-                                items: allBankAccountsData.map((location) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      "${location.bankName}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context).getBankAccounts(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<AllBankAccountModelClass>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            _selectedAccount = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: accountController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Account',
+                                          suffix: _selectedAccount == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                accountController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
                                     ),
-                                    value: location.accountId,
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.bankName
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(allBankAccountsData.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.accountNumber} (${suggestion.bankName})",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (AllBankAccountModelClass suggestion) {
+                                      accountController.text = "${suggestion.accountNumber} ${suggestion.bankName}";
+                                      setState(() {
+                                        _selectedAccount = suggestion.accountId.toString();
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   );
-                                }).toList(),
-                              ),
+                                }
+                                return const SizedBox();
+                              },
                             ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: Text(
+                            //       'Select account',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     dropdownColor: Color.fromARGB(255, 231, 251,
+                            //         255), // Not necessary for Option 1
+                            //     value: _selectedAccount,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedAccount = newValue!.toString();
+                            //       });
+                            //     },
+                            //     items: allBankAccountsData.map((location) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           "${location.bankName}",
+                            //           style: TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         value: location.accountId,
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
                           ),
                         ),
                       ],
@@ -335,10 +406,10 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                           Provider.of<CounterProvider>(context, listen: false)
                               .getBankTransactions(
                             context,
-                            "${_selectedAccount}",
-                            "${firstPickedDate}",
-                            "${secondPickedDate}",
-                            "${paymentType}",
+                           accountId: "${_selectedAccount}",
+                            dateFrom: "${firstPickedDate}",
+                            dateTo: "${secondPickedDate}",
+                             transactionType: "${paymentType}",
                           );
 
                           print("CashTransactions ::${_selectedAccount}");

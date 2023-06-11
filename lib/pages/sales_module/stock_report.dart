@@ -151,7 +151,7 @@ class _StockReportPageState extends State<StockReportPage> {
                               flex: 3,
                               child: Container(
                                 margin: EdgeInsets.only(top: 5, bottom: 5),
-                                height: 30,
+                                height: 38,
                                 padding: EdgeInsets.only(left: 5, right: 5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -195,7 +195,8 @@ class _StockReportPageState extends State<StockReportPage> {
                                         ),
                                         suggestionsCallback: (pattern) {
                                           return snapshot.data!
-                                              .where((element) => element.productCategoryName!
+                                              .where((element) => element.productCategoryName
+                                              .toString()
                                               .toLowerCase()
                                               .contains(pattern
                                               .toString()
@@ -225,7 +226,7 @@ class _StockReportPageState extends State<StockReportPage> {
 
                                                       Provider.of<TotalStockWithCategoryProvider>(context, listen: false)
                                                           .getAllTotalStockWithCategoryData(context, categoryId);
-                                                      print("first index =====${provideTotalStockWithCategoryList[0].productName}");
+                                                      // print("first index =====${provideTotalStockWithCategoryList[0].productName}");
                                                     });
                                         },
                                         onSaved: (value) {},
@@ -340,7 +341,8 @@ class _StockReportPageState extends State<StockReportPage> {
                                         ),
                                         suggestionsCallback: (pattern) {
                                           return snapshot.data!
-                                              .where((element) => element.displayText!
+                                              .where((element) => element.displayText
+                                              .toString()
                                               .toLowerCase()
                                               .contains(pattern
                                               .toString()
@@ -370,7 +372,6 @@ class _StockReportPageState extends State<StockReportPage> {
 
                                                       Provider.of<TotalStockWithProductProvider>(context, listen: false)
                                                           .getAllTotalStockWithProductData(context, productId);
-                                                      print("first index =====${provideTotalStockWithProductList[0].productName}");
                                                     });
                                         },
                                         onSaved: (value) {},

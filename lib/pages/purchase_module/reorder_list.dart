@@ -42,44 +42,45 @@ class _ReorderListState extends State<ReorderList> {
         appBar: CustomAppBar(title: "Reorder List"),
         body: Column(
           children: [
-            Container(
-              height: 40.0,
-              margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-              child: TextField(
-                controller: _searchController,
-                keyboardType: TextInputType.text,
-                onChanged: (value) {
-                  setState(() {
-                    searchQuery = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: InputBorder.none,
-                  hintText: "Search",
-                  contentPadding: const EdgeInsets.only(left: 10, right: 0, top: 0, bottom: 0),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 7, 125, 180),
-                    ),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 7, 125, 180),
-                    ),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   height: 40.0,
+            //   margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            //   child: TextField(
+            //     controller: _searchController,
+            //     keyboardType: TextInputType.text,
+            //     onChanged: (value) {
+            //       setState(() {
+            //         searchQuery = value;
+            //       });
+            //     },
+            //     decoration: InputDecoration(
+            //       filled: true,
+            //       fillColor: Colors.white,
+            //       border: InputBorder.none,
+            //       hintText: "Search",
+            //       contentPadding: const EdgeInsets.only(left: 10, right: 0, top: 0, bottom: 0),
+            //       focusedBorder: OutlineInputBorder(
+            //         borderSide: const BorderSide(
+            //           color: Color.fromARGB(255, 7, 125, 180),
+            //         ),
+            //         borderRadius: BorderRadius.circular(10.0),
+            //       ),
+            //       enabledBorder: OutlineInputBorder(
+            //         borderSide: const BorderSide(
+            //           color: Color.fromARGB(255, 7, 125, 180),
+            //         ),
+            //         borderRadius: BorderRadius.circular(10.0),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Container(
+                    padding: EdgeInsets.all(10),
                     child: DataTable(
                       showCheckboxColumn: true,
                       border: TableBorder.all(color: Colors.black54, width: 1),

@@ -157,7 +157,8 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                   ),
                                   suggestionsCallback: (pattern) {
                                     return snapshot.data!
-                                        .where((element) => element.supplierName!
+                                        .where((element) => element.supplierName
+                                        .toString()
                                         .toLowerCase()
                                         .contains(pattern
                                         .toString()
@@ -181,9 +182,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                     setState(() {
                                       _selectedCustomer =
                                           suggestion.supplierSlNo;
-                                      print(
-                                          "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
-                                    });
+                                       });
                                   },
                                   onSaved: (value) {},
                                 );

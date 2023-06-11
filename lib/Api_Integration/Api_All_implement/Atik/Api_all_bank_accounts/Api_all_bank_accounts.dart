@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
+import 'package:poss/const_page.dart';
 
 class ApiAllBankAccounts {
   static GetApiAllBankAccounts(context) async {
@@ -12,7 +13,7 @@ class ApiAllBankAccounts {
     AllBankAccountModelClass allBankAccountModelClass;
     try {
       var Response = await http.post(
-          Uri.parse("http://testapi.happykhata.com/api/v1/getBankAccounts"),
+          Uri.parse("${BaseUrl}api/v1/getBankAccounts"),
           headers: {
             "Authorization": "Bearer ${GetStorage().read("token")}",
           },

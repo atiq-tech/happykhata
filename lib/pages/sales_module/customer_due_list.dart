@@ -153,7 +153,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                               flex: 3,
                               child: Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 38,
+                                  height: 40,
                                   padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,

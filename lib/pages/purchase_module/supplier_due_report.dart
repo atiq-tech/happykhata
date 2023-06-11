@@ -201,7 +201,8 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                             ),
                                             suggestionsCallback: (pattern) {
                                               return snapshot.data!
-                                                  .where((element) => element.supplierName.toString()
+                                                  .where((element) => element.supplierName
+                                                  .toString()
                                                   .toLowerCase()
                                                   .contains(pattern
                                                   .toString()
@@ -221,7 +222,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                             },
                                             onSuggestionSelected:
                                                 (AllSuppliersClass suggestion) {
-                                                  supplyerController.text = suggestion.supplierName!;
+                                              supplyerController.text = suggestion.supplierName!;
                                               setState(() {
                                                 _selectedSupplier =
                                                     suggestion.supplierSlNo;

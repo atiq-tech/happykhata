@@ -289,7 +289,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                             Expanded(
                               flex: 11,
                               child: Container(
-                                height: 38.0,
+                                height: 40.0,
                                 width:
                                 MediaQuery.of(context).size.width / 2,
                                 padding: EdgeInsets.only(left: 5.0),
@@ -487,7 +487,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 38.0,
+                              height: 40.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(

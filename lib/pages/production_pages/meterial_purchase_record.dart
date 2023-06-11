@@ -195,7 +195,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 Expanded(
                                   flex: 11,
                                   child: Container(
-                                    height: 30.0,
+                                    height: 38.0,
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     padding: EdgeInsets.only(left: 5.0),
@@ -239,7 +239,8 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                             ),
                                             suggestionsCallback: (pattern) {
                                               return snapshot.data!
-                                                  .where((element) => element.supplierName!
+                                                  .where((element) => element.supplierName
+                                                  .toString()
                                                   .toLowerCase()
                                                   .contains(pattern
                                                   .toString()
@@ -263,8 +264,6 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                               setState(() {
                                                 _selectedSupplier =
                                                     suggestion.supplierSlNo;
-                                                print(
-                                                    "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
                                               });
                                             },
                                             onSaved: (value) {},

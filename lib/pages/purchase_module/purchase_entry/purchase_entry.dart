@@ -272,7 +272,7 @@ double TotalVat=0;
                                           final results = [
                                             All_Supplier
                                                 .where((m) =>
-                                                m.supplierSlNo!.contains('${suggestion.supplierSlNo}'))// or Testing 123
+                                                m.supplierSlNo.toString().contains('${suggestion.supplierSlNo}'))// or Testing 123
                                                 .toList(),
                                           ];
                                           results.forEach((element) async{

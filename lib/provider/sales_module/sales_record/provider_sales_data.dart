@@ -224,12 +224,12 @@ class AllProductProvider extends ChangeNotifier {
 
   ///////////Get User Wise Pruchase All////////////////// eita
   List<AllProductModelClass> CategoryWiseProductList = [];
-  Future<List<AllProductModelClass>>CategoryWiseProduct(
+  CategoryWiseProduct(
       {String? isService, String? categoryId}) async {
     CategoryWiseProductList =
         await Api_Uzzal_implement_Class.CategoryWiseProduct(
             isService, categoryId);
-    return CategoryWiseProductList;
+    // return CategoryWiseProductList;
     notifyListeners();
 
     // List<Purchases> UserWisePurchasesList = [];

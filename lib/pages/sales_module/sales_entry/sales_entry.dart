@@ -993,12 +993,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context).CategoryWiseProduct(isService: 'false', categoryId: categoryId),
-                              builder: (context,
-                                  AsyncSnapshot<List<AllProductModelClass>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
+                            child: TypeAheadFormField(
                                     textFieldConfiguration:
                                     TextFieldConfiguration(
                                         onChanged: (value){
@@ -1026,13 +1021,13 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                         )
                                     ),
                                     suggestionsCallback: (pattern) {
-                                      return snapshot.data!
+                                      return CategoryWiseProductList
                                           .where((element) => element.displayText!
                                           .toLowerCase()
                                           .contains(pattern
                                           .toString()
                                           .toLowerCase()))
-                                          .take(All_Category.length)
+                                          .take(CategoryWiseProductList.length)
                                           .toList();
                                       // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                     },
@@ -1097,11 +1092,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                       });
                                     },
                                     onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
-                              },
-                            ),
+                                  )
 
                             // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(

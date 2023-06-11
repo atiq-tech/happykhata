@@ -709,96 +709,87 @@ double TotalVat=0;
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context).CategoryWiseProduct(isService: 'false', categoryId: categoryId),
-                              builder: (context,
-                                  AsyncSnapshot<List<AllProductModelClass>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                    TextFieldConfiguration(
-                                        onChanged: (value){
-                                          if (value == '') {
-                                            _selectedProduct = '';
-                                          }
-                                        },
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                        controller: productController,
-                                        decoration: InputDecoration(
-                                          hintText: 'Select Product',
-                                          suffix: _selectedProduct == '' ? null : GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                productController.text = '';
-                                              });
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 3),
-                                              child: Icon(Icons.close,size: 14,),
-                                            ),
-                                          ),
-                                        )
-                                    ),
-                                    suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element.displayText!
-                                          .toLowerCase()
-                                          .contains(pattern
-                                          .toString()
-                                          .toLowerCase()))
-                                          .take(All_Category.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (AllProductModelClass suggestion) {
-                                      productController.text = suggestion.displayText!;
-                                      setState(() {
-
-                                        _selectedProduct = suggestion.productSlNo.toString();
-
-                                        print("dfhsghdfkhgkh $_selectedProduct");
-                                        final results = [
-                                          CategoryWiseProductList.where((m) =>
-                                              m.productSlNo!.contains(
-                                                  '${suggestion.productSlNo}')) // or Testing 123
-                                              .toList(),
-                                        ];
-                                        results.forEach((element) async{
-                                          element.add(element.first);
-                                          print("dfhsghdfkhgkh");
-                                          productId="${element[0].productSlNo}";
-                                          print("productSlNo===> ${element[0].productSlNo}");
-                                          print("productCategoryName===> ${element[0].productCategoryName}");
-                                          productname="${element[0].productName}";
-                                          print("productName===> ${element[0].productName}");
-                                          _Selling_PriceController.text= "${element[0].productSellingPrice}";
-                                          print("productSellingPrice===> ${element[0].productSellingPrice}");
-                                          print("vat===> ${element[0].vat}");
-                                          print("_quantityController ===> ${_quantityController.text}");
-                                          print("productPurchaseRate===> ${element[0].productPurchaseRate}");
-                                          _salesRateController.text="${element[0].productPurchaseRate}";
-                                          Amount=double.parse(_salesRateController.text);
-                                          print(Amount);
+                            child: TypeAheadFormField(
+                              textFieldConfiguration:
+                              TextFieldConfiguration(
+                                  onChanged: (value){
+                                    if (value == '') {
+                                      _selectedProduct = '';
+                                    }
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  controller: productController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Product',
+                                    suffix: _selectedProduct == '' ? null : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          productController.text = '';
                                         });
-                                      });
-                                    },
-                                    onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 3),
+                                        child: Icon(Icons.close,size: 14,),
+                                      ),
+                                    ),
+                                  )
+                              ),
+                              suggestionsCallback: (pattern) {
+                                return CategoryWiseProductList
+                                    .where((element) => element.displayText!
+                                    .toLowerCase()
+                                    .contains(pattern
+                                    .toString()
+                                    .toLowerCase()))
+                                    .take(CategoryWiseProductList.length)
+                                    .toList();
+                                // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                               },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                );
+                              },
+                              transitionBuilder:
+                                  (context, suggestionsBox, controller) {
+                                return suggestionsBox;
+                              },
+                              onSuggestionSelected:
+                                  (AllProductModelClass suggestion) {
+                                productController.text = suggestion.displayText!;
+                                setState(() {
+
+                                  _selectedProduct = suggestion.productSlNo.toString();
+
+                                  print("dfhsghdfkhgkh $_selectedProduct");
+                                  final results = [
+                                    CategoryWiseProductList.where((m) =>
+                                        m.productSlNo!.contains(
+                                            '${suggestion.productSlNo}')) // or Testing 123
+                                        .toList(),
+                                  ];
+                                  results.forEach((element) async{
+                                    element.add(element.first);
+                                    print("dfhsghdfkhgkh");
+                                    productId="${element[0].productSlNo}";
+                                    print("productSlNo===> ${element[0].productSlNo}");
+                                    print("productCategoryName===> ${element[0].productCategoryName}");
+                                    productname="${element[0].productName}";
+                                    print("productName===> ${element[0].productName}");
+                                    _Selling_PriceController.text= "${element[0].productSellingPrice}";
+                                    print("productSellingPrice===> ${element[0].productSellingPrice}");
+                                    print("vat===> ${element[0].vat}");
+                                    print("_quantityController ===> ${_quantityController.text}");
+                                    print("productPurchaseRate===> ${element[0].productPurchaseRate}");
+                                    _salesRateController.text="${element[0].productPurchaseRate}";
+                                    Amount=double.parse(_salesRateController.text);
+                                    print(Amount);
+                                  });
+                                });
+                              },
+                              onSaved: (value) {},
                             ),
 
                             // child: DropdownButtonHideUnderline(

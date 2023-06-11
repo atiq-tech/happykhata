@@ -82,10 +82,9 @@ class CounterProvider extends ChangeNotifier {
 
   Future<List<AllSuppliersClass>>getSupplier(BuildContext context) async {
     allSupplierslist = await ApiAllSuppliers.GetApiAllSuppliers(context);
-    allSupplierslist.insert(0, AllSuppliersClass(displayName: "General Supplier"));
-    return allSupplierslist;
+    allSupplierslist.insert(0, AllSuppliersClass(displayName: "General Supplier", supplierName:''));
     notifyListeners();
-
+    return allSupplierslist;
   }
 
   //Get Meterial purchase

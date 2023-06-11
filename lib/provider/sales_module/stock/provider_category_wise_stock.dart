@@ -9,5 +9,6 @@ class CategoryWiseStockProvider extends ChangeNotifier {
     provideCategoryWiseStockList = await AllApiImplement.FetchCategoryWiseStock(categoryId);
     return provideCategoryWiseStockList;
     notifyListeners();
+
   }
 }

@@ -15,6 +15,7 @@ import 'package:poss/home_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../../common_widget/custom_appbar.dart';
 import 'add_supplier_page.dart';
@@ -36,7 +37,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
   final TextEditingController _discountController = TextEditingController();
   final TextEditingController _paidController = TextEditingController();
 
-double TotalVat=0;
+  double TotalVat=0;
 
   final TextEditingController _transportController = TextEditingController();
 
@@ -54,6 +55,7 @@ double TotalVat=0;
 
   double h1TextSize = 16.0;
   double h2TextSize = 12.0;
+  double TotalAmount = 0;
 
   bool isVisible = false;
   bool isEnabled = false;
@@ -66,8 +68,29 @@ double TotalVat=0;
   void initState() {
     super.initState();
     _quantityController.text="1";
-    firstPickedDate=DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
   }
+
+  Response? result;
+  void dueReport(String? supplierId) async {
+    print("Call Api $supplierId");
+
+    result = await Dio().post("${BaseUrl}api/v1/getSupplierDue",
+        data: {"supplierId": "$supplierId"},
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${GetStorage().read("token")}",
+        }));
+      var data = jsonDecode(result?.data);
+
+    if(data!=null){
+      print("responses result========> ${data[0]['due']}");
+      setState(() {
+        Previousdue = double.parse("${data[0]['due']}");
+      });
+    }
+  }
+
   Widget build(BuildContext context) {
 
     final All_Supplier=Provider.of<CounterProvider>(context).allSupplierslist;
@@ -146,11 +169,7 @@ double TotalVat=0;
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              firstPickedDate == null
-                                  ? Jiffy(DateTime.now()).format("dd - MMM - yyyy")
-                                  : firstPickedDate!,
-                            ),
+                            Text("$firstPickedDate"),
                             const Icon(Icons.calendar_month)
                           ],
                         ),
@@ -183,7 +202,7 @@ double TotalVat=0;
                           flex: 5,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 5, right: 5),
-                            height: 38,
+                            height: 40,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -281,12 +300,13 @@ double TotalVat=0;
                                             print("supplierMobile  ${element[0].supplierMobile}");
                                             print("supplierName  ${element[0].supplierName}");
                                             print("supplierAddress  ${element[0].supplierAddress}");
-                                            print("previousDue  ${element[0].previousDue}");
+                                            // print("previousDue  ${element[0].previousDue}");
 
-                                            Previousdue =double.parse("${element[0].previousDue}");
+                                            // Previousdue =double.parse("${element[0].previousDue}");
                                             _nameController.text="${element[0].supplierName}";
                                             _mobileNumberController.text="${element[0].supplierMobile}";
                                             _addressController.text="${element[0].supplierAddress}";
+                                            dueReport(supplierId);
                                           });
                                         }
 
@@ -522,7 +542,7 @@ double TotalVat=0;
                 ),
               ),
               Container(
-                height: 250.0,
+                height: 260.0,
                 width: double.infinity,
                 margin: const EdgeInsets.only(
                   top: 10.0,
@@ -547,7 +567,7 @@ double TotalVat=0;
                         Expanded(
                           flex: 3,
                           child: Container(
-                            height: 38,
+                            height: 40,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             margin: const EdgeInsets.only(bottom: 5),
                             decoration: BoxDecoration(
@@ -616,6 +636,8 @@ double TotalVat=0;
                                       setState(() {
                                         _selectedCategory = suggestion.productCategorySlNo.toString();
                                         categoryId = suggestion.productCategorySlNo;
+                                        print("dfhsghdfkhgkh $categoryId");
+
                                         final results = [
                                                     All_Category
                                                       .where((m) =>
@@ -624,7 +646,6 @@ double TotalVat=0;
                                                   ];
                                                   results.forEach((element) async{
                                                   element.add(element.first);
-                                                  print("dfhsghdfkhgkh");
                                                   productCategoryName="${element[0].productCategoryName}";});
                                                 print(productCategoryName);
 
@@ -1381,10 +1402,11 @@ double TotalVat=0;
                             onChanged: (value) {
                               setState(() {
                                 Transport=discountTotal+double.parse(_transportController.text);
+                                Paid = Transport;
                               });
                             },
                             controller: _transportController,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -1432,7 +1454,7 @@ double TotalVat=0;
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Text(
-                              "$Transport",
+                              "$Paid",
                             ),
                           )),
                     ],
@@ -1455,12 +1477,12 @@ double TotalVat=0;
                           child: TextField(
                             onChanged: (value) {
                               setState(() {
-                                Paid=Transport-double.parse(_paidController.text);
-
+                                TotalAmount = Paid-double.parse(_paidController.text);
+                                print("Paid amout $TotalAmount");
                               });
                             },
                             controller: _paidController,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -1509,6 +1531,7 @@ double TotalVat=0;
                             ),
                             child: Text(
                               "$Previousdue",
+                              style: TextStyle(color: Colors.red),
                             ),
                           )),
                     ],
@@ -1538,7 +1561,7 @@ double TotalVat=0;
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Text(
-                              "${Paid + Previousdue}",
+                              "$TotalAmount",
                             ),
                           )),
                     ],
@@ -1552,7 +1575,7 @@ double TotalVat=0;
                           ),
                           onPressed: () {
 
-                            if((Paid + Previousdue) ==0){
+                            if((Paid + Previousdue) == 0){
                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Add to Cart")));
                             }else{
                               AddPuschase();
@@ -1599,14 +1622,19 @@ double TotalVat=0;
   }
 
   String? firstPickedDate;
-
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context, initialDate: DateTime.now(), firstDate: DateTime(1950), lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -1625,7 +1653,7 @@ double TotalVat=0;
   String ? purchaseRate;
   String ? supplierId;
 
-  double Previousdue=0;
+  double Previousdue = 0;
   double Paid=0;
  List<PurchaseApiModelClass> PurchaseCartList =[];
 
@@ -1658,9 +1686,9 @@ double TotalVat=0;
           "vat": TotalVat,
           "discount": "${double.parse(_discountController.text)}",
           "freight": "${double.parse(_transportController.text)}",
-          "total":  Paid + Previousdue,
+          "total": Paid,
           "paid":  "${double.parse(_paidController.text)}",
-          "due": "${Paid + Previousdue}",
+          "due": "$TotalAmount",
           "previousDue": "$Previousdue",
           "note": " "
         },

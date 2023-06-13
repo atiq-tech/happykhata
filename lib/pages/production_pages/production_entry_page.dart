@@ -16,6 +16,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/all_get_material_class.dart'
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../Api_Integration/Api_All_implement/Atik/Api_all_get_employees/Api_all_get_employees.dart';
 import '../../Api_Integration/Api_All_implement/Atik/Api_all_get_material/Api_all_get_material.dart';
@@ -53,6 +54,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
   // String? inChargeName;
   // String? shiftName;
   String? firstPickedDate;
+  var toDay = DateTime.now();
+
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -61,7 +64,14 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -920,10 +930,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                   ),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
+                                  hintText: firstPickedDate??Utils.formatDate(toDay),
                                   hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),

@@ -4,8 +4,10 @@ import '../../Api_Integration/Api_Modelclass/sales_module/customer_list_model.da
 
 class CustomerListByCustomerTypeProvider extends ChangeNotifier {
   List<CustomerListModel> provideCustomerListByCustomerType = [];
-  getCustomerListByCustomerTypeData(BuildContext context, String? customerType) async {
+  getCustomerListByCustomerTypeData(BuildContext context,
+      {String? customerType}) async {
     provideCustomerListByCustomerType = await AllApiImplement.FetchCustomerListWithCustomerType(context, customerType);
+    provideCustomerListByCustomerType.insert(0, CustomerListModel(displayName: "General Customer"));
     notifyListeners();
   }
 }

@@ -8,6 +8,7 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_account
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class BankTransactionPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
   final TextEditingController accountController = TextEditingController();
   String? _selectedAccount;
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -36,7 +38,14 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -53,7 +62,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
   ApiAllAddBankTransactions? apiAllAddBankTransactions;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
     //bank ACCOUNTS
     ApiAllBankAccounts apiAllBankAccounts;
     Provider.of<CounterProvider>(context, listen: false)
@@ -84,14 +93,14 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Container(
                   height: 225.0,
                   width: double.infinity,
-                  padding: EdgeInsets.only(left: 6.0, right: 6.0),
+                  padding: const EdgeInsets.only(left: 6.0, right: 6.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromARGB(255, 5, 107, 155),
+                      color: const Color.fromARGB(255, 5, 107, 155),
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -99,7 +108,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Date",
@@ -108,11 +117,11 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 5,
                                 top: 5,
                                 bottom: 5,
@@ -126,20 +135,17 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   enabled: false,
                                   decoration: InputDecoration(
                                     contentPadding:
-                                        EdgeInsets.only(top: 10, left: 10),
+                                        const EdgeInsets.only(top: 10, left: 10),
                                     filled: true,
                                     fillColor: Colors.blue[50],
-                                    suffixIcon: Icon(
+                                    suffixIcon: const Icon(
                                       Icons.calendar_month,
                                       color: Colors.black87,
                                     ),
-                                    border: OutlineInputBorder(
+                                    border: const OutlineInputBorder(
                                         borderSide: BorderSide.none),
-                                    hintText: firstPickedDate == null
-                                        ? DateFormat('yyyy-MM-dd')
-                                            .format(DateTime.now())
-                                        : firstPickedDate,
-                                    hintStyle: TextStyle(
+                                    hintText:firstPickedDate,
+                                    hintStyle: const TextStyle(
                                         fontSize: 14, color: Colors.black87),
                                   ),
                                   validator: (value) {
@@ -156,7 +162,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                       ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Account",
@@ -165,16 +171,16 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -278,10 +284,10 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Transaction Type",
@@ -290,23 +296,23 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   isExpanded: true,
-                                  hint: Text(
+                                  hint: const Text(
                                     'Select Type',
                                     style: TextStyle(
                                         fontSize: 14,
@@ -329,7 +335,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                     return DropdownMenuItem(
                                       child: Text(
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             color: Color.fromARGB(
                                                 255, 126, 125, 125)),
@@ -343,10 +349,10 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Amount",
@@ -355,7 +361,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
@@ -364,17 +370,17 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                               child: TextField(
                                 controller: _amountController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -385,10 +391,10 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Note",
@@ -397,7 +403,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
@@ -406,17 +412,17 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                               child: TextField(
                                 controller: _noteController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -427,7 +433,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       Align(
                         alignment: Alignment.bottomRight,
                         child: InkWell(
@@ -453,7 +459,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                       // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}"
                                       );
                        
-                            Future.delayed(Duration(seconds: 3), () {
+                            Future.delayed(const Duration(seconds: 3), () {
                               setState(() {
                                 isLoading = false;
                               });
@@ -466,12 +472,12 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                             width: 180.0,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Color.fromARGB(255, 131, 224, 146),
+                                  color: const Color.fromARGB(255, 131, 224, 146),
                                   width: 2.0),
-                              color: Color.fromARGB(255, 5, 120, 165),
+                              color: const Color.fromARGB(255, 5, 120, 165),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            child: Center(
+                            child: const Center(
                                 child: Text(
                               "SAVE TRANSACTIONS",
                               style: TextStyle(
@@ -508,13 +514,13 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
               //     ),
               //   ),
               // ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : Container(
                       height: MediaQuery.of(context).size.height / 1.43,
                       width: double.infinity,
-                      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Container(
                         width: double.infinity,
                         height: double.infinity,
@@ -530,28 +536,28 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                 border: TableBorder.all(
                                     color: Colors.black54, width: 1),
                                 columns: [
-                                  DataColumn(
+                                  const DataColumn(
                                     label:
                                         Center(child: Text('Transaction Date')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label: Center(child: Text('Account Name')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label:
                                         Center(child: Text('Account Number')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label: Center(child: Text('Bank Name')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label:
                                         Center(child: Text('Transaction Type')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label: Center(child: Text('Note')),
                                   ),
-                                  DataColumn(
+                                  const DataColumn(
                                     label: Center(child: Text('Amount')),
                                   ),
                                 ],

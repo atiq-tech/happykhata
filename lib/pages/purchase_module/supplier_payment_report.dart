@@ -5,6 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/sales_module/provider_customer_payment_history.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/providers/counter_provider.dart';
@@ -36,6 +37,8 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   String paymentType = "";
 
   String? firstPickedDate;
+  var toDay = DateTime.now();
+
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -44,7 +47,14 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -58,7 +68,14 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        secondPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $secondPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        secondPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $secondPickedDate");
       });
     }
   }
@@ -69,8 +86,8 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   @override
   void initState() {
     // firstPickedDate = "2000-03-01";
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     Provider.of<CounterProvider>(context, listen: false).getSupplier(
       context,
     );
@@ -81,6 +98,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   Widget build(BuildContext context) {
     final allSupplierslist =
         Provider.of<CounterProvider>(context).allSupplierslist;
+    allSupplierslist.removeAt(0);
 
     final provideSupplierPaymentReportList =
         Provider.of<SupplierPaymentReportProvider>(context)
@@ -123,73 +141,131 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                          child: FutureBuilder(
-                            future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
-                            builder: (context,
-                                AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
-                              if (snapshot.hasData) {
-                                return TypeAheadFormField(
-                                  textFieldConfiguration:
-                                  TextFieldConfiguration(
-                                      onChanged: (value){
-                                        if (value == '') {
-                                          _selectedCustomer = '';
-                                        }
-                                      },
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      controller: supplyerController,
-                                      decoration: InputDecoration(
-                                        hintText: 'Select Supplier',
-                                        suffix: _selectedCustomer == '' ? null : GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              supplyerController.text = '';
-                                            });
-                                          },
-                                          child: const Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 3),
-                                            child: Icon(Icons.close,size: 14,),
-                                          ),
-                                        ),
-                                      )
+                          child: TypeAheadFormField(
+                            textFieldConfiguration:
+                            TextFieldConfiguration(
+                                onChanged: (value){
+                                  if (value == '') {
+                                    _selectedCustomer = '';
+                                  }
+                                },
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                controller: supplyerController,
+                                decoration: InputDecoration(
+                                  hintText: 'Select Supplier',
+                                  suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        supplyerController.text = '';
+                                      });
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      child: Icon(Icons.close,size: 14,),
+                                    ),
                                   ),
-                                  suggestionsCallback: (pattern) {
-                                    return snapshot.data!
-                                        .where((element) => element.supplierName
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(pattern
-                                        .toString()
-                                        .toLowerCase()))
-                                        .take(allSupplierslist.length)
-                                        .toList();
-                                    // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                  },
-                                  itemBuilder: (context, suggestion) {
-                                    return ListTile(
-                                      title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                    );
-                                  },
-                                  transitionBuilder:
-                                      (context, suggestionsBox, controller) {
-                                    return suggestionsBox;
-                                  },
-                                  onSuggestionSelected:
-                                      (AllSuppliersClass suggestion) {
-                                    supplyerController.text = suggestion.supplierName!;
-                                    setState(() {
-                                      _selectedCustomer =
-                                          suggestion.supplierSlNo;
-                                       });
-                                  },
-                                  onSaved: (value) {},
-                                );
-                              }
-                              return const SizedBox();
+                                )
+                            ),
+                            suggestionsCallback: (pattern) {
+                              return allSupplierslist
+                                  .where((element) => element.supplierName
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(pattern
+                                  .toString()
+                                  .toLowerCase()))
+                                  .take(allSupplierslist.length)
+                                  .toList();
+                              // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                             },
+                            itemBuilder: (context, suggestion) {
+                              return ListTile(
+                                title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                              );
+                            },
+                            transitionBuilder:
+                                (context, suggestionsBox, controller) {
+                              return suggestionsBox;
+                            },
+                            onSuggestionSelected:
+                                (AllSuppliersClass suggestion) {
+                              supplyerController.text = suggestion.supplierName!;
+                              setState(() {
+                                _selectedCustomer =
+                                    suggestion.supplierSlNo;
+                              });
+                            },
+                            onSaved: (value) {},
                           ),
+                          // child: FutureBuilder(
+                          //   future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                          //   builder: (context,
+                          //       AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                          //     if (snapshot.hasData) {
+                          //       return TypeAheadFormField(
+                          //         textFieldConfiguration:
+                          //         TextFieldConfiguration(
+                          //             onChanged: (value){
+                          //               if (value == '') {
+                          //                 _selectedCustomer = '';
+                          //               }
+                          //             },
+                          //             style: const TextStyle(
+                          //               fontSize: 15,
+                          //             ),
+                          //             controller: supplyerController,
+                          //             decoration: InputDecoration(
+                          //               hintText: 'Select Supplier',
+                          //               suffix: _selectedCustomer == '' ? null : GestureDetector(
+                          //                 onTap: () {
+                          //                   setState(() {
+                          //                     supplyerController.text = '';
+                          //                   });
+                          //                 },
+                          //                 child: const Padding(
+                          //                   padding: EdgeInsets.symmetric(horizontal: 3),
+                          //                   child: Icon(Icons.close,size: 14,),
+                          //                 ),
+                          //               ),
+                          //             )
+                          //         ),
+                          //         suggestionsCallback: (pattern) {
+                          //           return snapshot.data!
+                          //               .where((element) => element.supplierName
+                          //               .toString()
+                          //               .toLowerCase()
+                          //               .contains(pattern
+                          //               .toString()
+                          //               .toLowerCase()))
+                          //               .take(allSupplierslist.length)
+                          //               .toList();
+                          //           // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                          //         },
+                          //         itemBuilder: (context, suggestion) {
+                          //           return ListTile(
+                          //             title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                          //           );
+                          //         },
+                          //         transitionBuilder:
+                          //             (context, suggestionsBox, controller) {
+                          //           return suggestionsBox;
+                          //         },
+                          //         onSuggestionSelected:
+                          //             (AllSuppliersClass suggestion) {
+                          //           supplyerController.text = suggestion.supplierName!;
+                          //           setState(() {
+                          //             _selectedCustomer =
+                          //                 suggestion.supplierSlNo;
+                          //              });
+                          //         },
+                          //         onSaved: (value) {},
+                          //       );
+                          //     }
+                          //     return const SizedBox();
+                          //   },
+                          // ),
 
                           // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(
@@ -269,10 +345,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                 ),
                                 border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: firstPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : firstPickedDate,
+                                hintText: firstPickedDate,
                                 hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
@@ -324,10 +397,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                 ),
                                 border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: secondPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : secondPickedDate,
+                                hintText: secondPickedDate,
                                 hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),

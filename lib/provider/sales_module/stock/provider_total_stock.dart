@@ -4,8 +4,9 @@ import '../../../Api_Integration/Api_All_implement/Riaz/all_api_implement.dart';
 
 class TotalStockProvider extends ChangeNotifier {
   List<Stock> provideTotalStockList = [];
-  getAllTotalStockData(BuildContext context) async {
+  Future<List<Stock>>getAllTotalStockData(BuildContext context) async {
     provideTotalStockList = await AllApiImplement.FetchTotalStock(context);
+    return provideTotalStockList;
     notifyListeners();
   }
 }

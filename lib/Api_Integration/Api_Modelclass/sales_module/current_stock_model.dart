@@ -67,7 +67,7 @@ class Stock {
   final String? productCode;
   final String? productReOrederLevel;
   final String? stockValue;
-  final ProductCategoryName? productCategoryName;
+  final String? productCategoryName;
   final dynamic brandName;
   final UnitName? unitName;
 
@@ -88,7 +88,7 @@ class Stock {
         productCode: json["Product_Code"],
         productReOrederLevel: json["Product_ReOrederLevel"],
         stockValue: json["stock_value"],
-        productCategoryName: productCategoryNameValues.map[json["ProductCategory_Name"]]!,
+        productCategoryName: json["ProductCategory_Name"],
         brandName: json["brand_name"],
         unitName: unitNameValues.map[json["Unit_Name"]]!,
       );
@@ -110,55 +110,55 @@ class Stock {
         "Product_Code": productCode,
         "Product_ReOrederLevel": productReOrederLevel,
         "stock_value": stockValue,
-        "ProductCategory_Name": productCategoryNameValues.reverse[productCategoryName],
+        "ProductCategory_Name": productCategoryName,
         "brand_name": brandName,
         "Unit_Name": unitNameValues.reverse[unitName],
       };
 }
 
-enum ProductCategoryName {
-  FIXED_ASSET,
-  OTHER,
-  PAPER,
-  KHATA,
-  HAPPY_KHATA,
-  PHOTOSTATE,
-  REGISTER,
-  TALI_KHATA,
-  PRINTING_PAPER,
-  FRESS_TISSUE,
-  TISSUE,
-  FRESS_KHATA,
-  FRESS_PEN,
-  POTTI,
-  INK,
-  TEP,
-  STATIONARY,
-  DAIRY,
-  FILE
-}
+// enum ProductCategoryName {
+//   FIXED_ASSET,
+//   OTHER,
+//   PAPER,
+//   KHATA,
+//   HAPPY_KHATA,
+//   PHOTOSTATE,
+//   REGISTER,
+//   TALI_KHATA,
+//   PRINTING_PAPER,
+//   FRESS_TISSUE,
+//   TISSUE,
+//   FRESS_KHATA,
+//   FRESS_PEN,
+//   POTTI,
+//   INK,
+//   TEP,
+//   STATIONARY,
+//   DAIRY,
+//   FILE
+// }
 
-final productCategoryNameValues = EnumValues({
-  "Dairy": ProductCategoryName.DAIRY,
-  "File": ProductCategoryName.FILE,
-  "Fixed Asset": ProductCategoryName.FIXED_ASSET,
-  "Fress Khata": ProductCategoryName.FRESS_KHATA,
-  "Fress Pen": ProductCategoryName.FRESS_PEN,
-  "Fress Tissue": ProductCategoryName.FRESS_TISSUE,
-  "Happy Khata": ProductCategoryName.HAPPY_KHATA,
-  "Ink": ProductCategoryName.INK,
-  "Khata": ProductCategoryName.KHATA,
-  "Other": ProductCategoryName.OTHER,
-  "Paper": ProductCategoryName.PAPER,
-  "Photostate": ProductCategoryName.PHOTOSTATE,
-  "Potti": ProductCategoryName.POTTI,
-  "Printing Paper": ProductCategoryName.PRINTING_PAPER,
-  "Register": ProductCategoryName.REGISTER,
-  "Stationary": ProductCategoryName.STATIONARY,
-  "Tali Khata": ProductCategoryName.TALI_KHATA,
-  "Tep ": ProductCategoryName.TEP,
-  "Tissue": ProductCategoryName.TISSUE
-});
+// final productCategoryNameValues = EnumValues({
+//   "Dairy": ProductCategoryName.DAIRY,
+//   "File": ProductCategoryName.FILE,
+//   "Fixed Asset": ProductCategoryName.FIXED_ASSET,
+//   "Fress Khata": ProductCategoryName.FRESS_KHATA,
+//   "Fress Pen": ProductCategoryName.FRESS_PEN,
+//   "Fress Tissue": ProductCategoryName.FRESS_TISSUE,
+//   "Happy Khata": ProductCategoryName.HAPPY_KHATA,
+//   "Ink": ProductCategoryName.INK,
+//   "Khata": ProductCategoryName.KHATA,
+//   "Other": ProductCategoryName.OTHER,
+//   "Paper": ProductCategoryName.PAPER,
+//   "Photostate": ProductCategoryName.PHOTOSTATE,
+//   "Potti": ProductCategoryName.POTTI,
+//   "Printing Paper": ProductCategoryName.PRINTING_PAPER,
+//   "Register": ProductCategoryName.REGISTER,
+//   "Stationary": ProductCategoryName.STATIONARY,
+//   "Tali Khata": ProductCategoryName.TALI_KHATA,
+//   "Tep ": ProductCategoryName.TEP,
+//   "Tissue": ProductCategoryName.TISSUE
+// });
 
 enum UnitName { PCS, REEM, PACKET, K_G }
 

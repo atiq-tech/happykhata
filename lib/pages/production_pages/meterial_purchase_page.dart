@@ -17,6 +17,7 @@ import 'package:poss/pages/administration_pages/supplier_entry_page.dart';
 import 'package:poss/pages/production_pages/material_page.dart';
 import 'package:poss/pages/production_pages/supplier_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/sales_cart_model_class.dart';
@@ -95,6 +96,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   bool isEnabled = false;
 
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -104,7 +106,14 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -123,7 +132,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   void initState() {
      _quantityController.text = "1";
      supplyerController.text = '';
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
     // get materials
     ApiAllGetMaterial apiAllGetMaterial;
     Provider.of<CounterProvider>(context, listen: false).getMaterials(context);
@@ -298,10 +307,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                   ),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
+                                  hintText: firstPickedDate,
                                   hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),

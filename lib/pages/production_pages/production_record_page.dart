@@ -4,6 +4,7 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_All_get_producti
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:intl/intl.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ProductionRecordPage extends StatefulWidget {
@@ -16,7 +17,9 @@ class ProductionRecordPage extends StatefulWidget {
 class _ProductionRecordPageState extends State<ProductionRecordPage> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
+
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -26,7 +29,14 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -41,7 +51,14 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        secondPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $secondPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        secondPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $secondPickedDate");
       });
     }
   }
@@ -51,8 +68,8 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
   ApiallProductionRecord? apiallProductionRecord;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     // TODO: implement initState
     super.initState();
   }
@@ -115,10 +132,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                   ),
                                   border: OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
+                                  hintText: firstPickedDate,
                                   hintStyle: TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
@@ -167,10 +181,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                   ),
                                   border: OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : secondPickedDate,
+                                  hintText: secondPickedDate,
                                   hintStyle: TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),

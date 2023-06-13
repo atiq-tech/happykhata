@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/account_module/cash_paid_transaction_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../provider/account_module/bank_deposit_transaction_provider.dart';
 import '../../provider/account_module/bank_withdraw_transaction_provider.dart';
@@ -26,15 +27,23 @@ class CashStatementPage extends StatefulWidget {
 
 class _CashStatementPageState extends State<CashStatementPage> {
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
-        context: context, initialDate: DateTime.now(), firstDate: DateTime(1950), lastDate: DateTime(2050));
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1950),
+        lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-
-        print("secondPickedDate $firstPickedDate");
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -43,11 +52,19 @@ class _CashStatementPageState extends State<CashStatementPage> {
 
   void _secondSelectedDate() async {
     final selectedDate = await showDatePicker(
-        context: context, initialDate: DateTime.now(), firstDate: DateTime(1950), lastDate: DateTime(2050));
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1950),
+        lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-        print("secondPickedDate $secondPickedDate");
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -55,8 +72,8 @@ class _CashStatementPageState extends State<CashStatementPage> {
   @override
   void initState() {
     // firstPickedDate = "2000-03-01";
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     super.initState();
   }
 
@@ -100,10 +117,10 @@ class _CashStatementPageState extends State<CashStatementPage> {
               child: Container(
                 height: 100.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -112,7 +129,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Date :",
                           style: TextStyle(color: Color.fromARGB(255, 126, 125, 125)),
                         ),
@@ -127,18 +144,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                               child: TextFormField(
                                 enabled: false,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(top: 10, left: 5),
+                                  contentPadding: const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? Jiffy(DateTime.now()).format("dd - MMM - yyyy")
-                                      : firstPickedDate,
-                                  hintStyle: TextStyle(fontSize: 14, color: Colors.black87),
+                                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                                  hintText: firstPickedDate,
+                                  hintStyle: const TextStyle(fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -151,7 +166,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                         ),
                         Container(
-                          child: Text("to"),
+                          child: const Text("to"),
                         ),
                         Expanded(
                           flex: 1,
@@ -164,18 +179,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                               child: TextFormField(
                                 enabled: false,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(top: 10, left: 5),
+                                  contentPadding: const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? Jiffy(DateTime.now()).format("dd - MMM - yyyy")
-                                      : secondPickedDate,
-                                  hintStyle: TextStyle(fontSize: 14, color: Colors.black87),
+                                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                                  hintText: secondPickedDate,
+                                  hintStyle: const TextStyle(fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -189,7 +202,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -281,7 +294,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           // provideSaleList.length == 0
                           //     ? GetStorage().write("totalSales", "0")
                           //     : debugPrint("/totalSales/");
-                            Future.delayed(Duration(seconds: 3), () {
+                            Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -291,11 +304,11 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           height: 35.0,
                           width: 85.0,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color.fromARGB(255, 40, 104, 163), width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            border: Border.all(color: const Color.fromARGB(255, 40, 104, 163), width: 2.0),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(letterSpacing: 1.0, color: Colors.white, fontWeight: FontWeight.w500),
@@ -465,7 +478,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
             //     ],
             //   ),
             // ),
-            Center(
+            const Center(
                 child: Text(
               "Sales",
               style: TextStyle(
@@ -474,13 +487,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
             isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -498,16 +511,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                             showCheckboxColumn: true,
                             border: TableBorder.all(color: Colors.black54, width: 1),
                             columns: [
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Invoice')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Date')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Customer')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Received')),
                               ),
                             ],
@@ -533,18 +546,18 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Total:",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               provideSaleList.length == 0
-                                  ? Text(
+                                  ? const Text(
                                       "0",
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : Text(
                                       "${GetStorage().read("totalSales")}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
                             ],
                           ),
@@ -555,7 +568,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Received from Customers",
               style: TextStyle(
@@ -564,13 +577,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -588,16 +601,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                             showCheckboxColumn: true,
                             border: TableBorder.all(color: Colors.black54, width: 1),
                             columns: [
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Invoice')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Date')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Customer')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Received')),
                               ),
                             ],
@@ -624,18 +637,18 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Total:",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               provideCashReceivedFromCustomerList.length == 0
-                                  ? Text(
+                                  ? const Text(
                                       "0",
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : Text(
                                       "${GetStorage().read("totalAmountReceivedFromCustomer")}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
                             ],
                           ),
@@ -646,10 +659,10 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.black,
             ),
-            Center(
+            const Center(
                 child: Text(
               "Received from Suppliers",
               style: TextStyle(
@@ -658,13 +671,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -682,16 +695,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                             showCheckboxColumn: true,
                             border: TableBorder.all(color: Colors.black54, width: 1),
                             columns: [
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Invoice')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Date')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Supplier')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Received')),
                               ),
                             ],
@@ -718,18 +731,18 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Total:",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               provideCashReceivedFromSupplierList.length == 0
-                                  ? Text(
+                                  ? const Text(
                                       "0",
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : Text(
                                       "${GetStorage().read("totalAmountReceivedFromSupplier")}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
                             ],
                           ),
@@ -740,7 +753,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Cash Received",
               style: TextStyle(
@@ -749,13 +762,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -773,16 +786,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                             showCheckboxColumn: true,
                             border: TableBorder.all(color: Colors.black54, width: 1),
                             columns: [
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Transaction Id')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Date')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Account Name')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Received')),
                               ),
                             ],
@@ -808,18 +821,18 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Total:",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               provideCashReceivedTransactionList.length == 0
-                                  ? Text(
+                                  ? const Text(
                                       "0",
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : Text(
                                       "${GetStorage().read("totalCashReceived")}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
                             ],
                           ),
@@ -830,7 +843,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Bank Withdraws",
               style: TextStyle(
@@ -839,13 +852,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -863,22 +876,22 @@ class _CashStatementPageState extends State<CashStatementPage> {
                             showCheckboxColumn: true,
                             border: TableBorder.all(color: Colors.black54, width: 1),
                             columns: [
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Sl')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Account Name')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Account Number')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Bank Name')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Date')),
                               ),
-                              DataColumn(
+                              const DataColumn(
                                 label: Center(child: Text('Withdraw')),
                               ),
                             ],
@@ -910,18 +923,18 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Total:",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               provideBankWithdrawTransactionList.length == 0
-                                  ? Text(
+                                  ? const Text(
                                       "0",
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : Text(
                                       "${GetStorage().read("totalBankWithdraw")}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
                             ],
                           ),
@@ -932,7 +945,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Purchases",
               style: TextStyle(
@@ -941,13 +954,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -962,16 +975,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Invoice')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Supplier')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Paid')),
                           ),
                         ],
@@ -1000,7 +1013,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Paid to Suppliers",
               style: TextStyle(
@@ -1009,13 +1022,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -1030,16 +1043,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Invoice')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Supplier')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Paid')),
                           ),
                         ],
@@ -1068,7 +1081,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Paid to Customers",
               style: TextStyle(
@@ -1077,13 +1090,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -1098,16 +1111,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Invoice')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Customer')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Paid')),
                           ),
                         ],
@@ -1136,7 +1149,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Cash Paid",
               style: TextStyle(
@@ -1145,13 +1158,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -1166,16 +1179,16 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Transaction Id')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Account Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Paid')),
                           ),
                         ],
@@ -1204,7 +1217,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Bank Deposits",
               style: TextStyle(
@@ -1213,13 +1226,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -1234,22 +1247,22 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Sl')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Account Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Account Number')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Bank Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Deposit')),
                           ),
                         ],
@@ -1284,7 +1297,7 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 ),
               ),
             ),
-            Center(
+            const Center(
                 child: Text(
               "Employee Payments",
               style: TextStyle(
@@ -1293,13 +1306,13 @@ class _CashStatementPageState extends State<CashStatementPage> {
                 color: Color.fromARGB(255, 15, 101, 199),
               ),
             )),
-            SizedBox(height: 3.0),
+            const SizedBox(height: 3.0),
              isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Container(
               height: MediaQuery.of(context).size.height / 1.8,
               width: double.infinity,
-              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -1314,19 +1327,19 @@ class _CashStatementPageState extends State<CashStatementPage> {
                         showCheckboxColumn: true,
                         border: TableBorder.all(color: Colors.black54, width: 1),
                         columns: [
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Employee Id')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Employee Name')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Date')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Month')),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Center(child: Text('Amount')),
                           ),
                         ],

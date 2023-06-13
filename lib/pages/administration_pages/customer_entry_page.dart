@@ -39,19 +39,15 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
   ApiAllCustomers? apiAllCustomers;
   @override
   void initState() {
-    //get Products><get unit
-    ApiAllGetDistricts apiAllGetDistricts;
-    Provider.of<CounterProvider>(context, listen: false).getDistricts(context);
-    //get customers
-    ApiAllCustomers apiAllCustomers;
-    getCustomer();
+
     // TODO: implement initState
     super.initState();
-  }
 
-  getCustomer(){
+    Provider.of<CounterProvider>(context, listen: false).getDistricts(context);
+
     Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
   }
+
 
   var areaController = TextEditingController();
 
@@ -60,13 +56,11 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
     //get Districts area
     final allDistrictsData =
         Provider.of<CounterProvider>(context).allDistrictslist;
-    print(
-        "Districts Districts Districts=======Lenght is:::::${allDistrictsData.length}");
+
     //get Customer
     final allCustomerData =
         Provider.of<CounterProvider>(context).allCustomerslist;
-    print(
-        "Customers Customers Customers=======Lenght is:::::${allCustomerData.length}");
+
     return Scaffold(
       appBar: CustomAppBar(title: "Customer Entry"),
       body: SingleChildScrollView(
@@ -75,7 +69,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
             Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                height: 360.0,
+                height: 370.0,
                 width: double.infinity,
                 padding: const EdgeInsets.only(
                   top: 6.0,
@@ -406,6 +400,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
+                              keyboardType: TextInputType.phone,
                             ),
                           ),
                         ),
@@ -430,6 +425,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
                               controller: _officePhoneController,
+                              keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
@@ -469,6 +465,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
                               controller: _previousDueController,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
@@ -508,6 +505,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextField(
                               controller: _creditLimitController,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: OutlineInputBorder(
@@ -597,12 +595,12 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Customer Type       :",
+                          "Customer Type   :",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
                         Expanded(
-                          flex: 3,
+                          flex: 4,
                           child: Row(
                             children: [
                               Radio(
@@ -648,10 +646,11 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
+                            customerEntryBtnClk = true;
                             getCustomerCode();
                           });
                           _AddCustomer(context);
-                          getCustomer();
+                          // getCustomer();
                         },
                         child: Container(
                           height: 35.0,
@@ -663,8 +662,8 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                             color: const Color.fromARGB(255, 94, 136, 84),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: const Center(
-                              child: Text(
+                          child: Center(
+                              child: customerEntryBtnClk ? SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
                             "SAVE",
                             style: TextStyle(
                                 letterSpacing: 1.0,
@@ -800,7 +799,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                               // ),
                             ],
                             rows: List.generate(
-                              allCustomerData.length,
+                              allCustomerData.length > 100 ? 100 : allCustomerData.length,
                                   (int index) => DataRow(
                                 cells: <DataCell>[
                                   DataCell(
@@ -863,7 +862,7 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
                 );
               }
               else if(snapshot.connectionState == ConnectionState.waiting){
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
               else{
                return Container();
@@ -949,18 +948,29 @@ class _CustomerEntryPage2State extends State<CustomerEntryPage2> {
       print("success============> ${item["success"]}");
       print("message =================> ${item["message"]}");
       print("supplierCode================>  ${item["customerCode"]}");
-      if (item["message"] == "Customer added successfully") {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Color.fromARGB(255, 4, 108, 156),
-            duration: Duration(seconds: 2),
-            content: Center(child: Text("Customer added successfull"))));
+      if (item["success"] == true) {
+        setState(() {
+          customerEntryBtnClk = false;
+        });
+        emtyMethod();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: const Color.fromARGB(255, 4, 108, 156),
+            duration: const Duration(seconds: 2),
+            content: Center(child: Text("${item["message"]}",style: const TextStyle(color: Colors.white),))));
+        Navigator.pop(context);
       } else {
-        const Center(child: Text("Customer data added not successfull"));
+        setState(() {
+          customerEntryBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            duration: const Duration(seconds: 2),
+            content: Center(child: Text("${item["message"]}",style: const TextStyle(color: Colors.red),))));
       }
-      emtyMethod();
     } catch (e) {
       return e;
     }
   }
+  bool customerEntryBtnClk = false;
 }
 //Customer added successfully

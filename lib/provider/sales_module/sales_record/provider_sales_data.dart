@@ -44,7 +44,7 @@ class AllProductProvider extends ChangeNotifier {
       String? userFullName}) async {
     by_all_customer_list = await Api_Uzzal_implement_Class.FetchgetCustomers(
         dateFrom, dateTo, customerId, employeeId, productId, userFullName);
-    by_all_customer_list.insert(0, By_all_Customer(displayName: "General Customer"));
+    // by_all_customer_list.insert(0, By_all_Customer(displayName: "General Customer"));
     return by_all_customer_list;
     notifyListeners();
   }
@@ -178,7 +178,7 @@ class AllProductProvider extends ChangeNotifier {
 
   List<AllCustomerDueList> AllCustomerDueListList = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
-  FetchAllCustomerDueList(context, String? customerId) async {
+  FetchAllCustomerDueList(context, {String? customerId}) async {
     AllCustomerDueListList =
         await Api_Uzzal_implement_Class.FetchAllCustomerDueList(
             context, customerId);

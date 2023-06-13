@@ -15,6 +15,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_accounts_
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 
 import 'package:provider/provider.dart';
 
@@ -41,6 +42,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
   ];
   String? _selectedAccount;
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -50,8 +52,14 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-        print("firstPickedDate=============${firstPickedDate}");
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -61,7 +69,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
   ApiAllGetCashTransactions? apiAllGetCashTransactions;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
     // ACCOUNTS
     ApiAllAccounts apiAllAccounts;
     Provider.of<CounterProvider>(context, listen: false).getAccounts(context);
@@ -92,14 +100,14 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Container(
                   height: 260.0,
                   width: double.infinity,
-                  padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                  padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromARGB(255, 5, 107, 155),
+                      color: const Color.fromARGB(255, 5, 107, 155),
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -107,7 +115,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Date",
@@ -115,11 +123,11 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 5,
                                 top: 5,
                                 bottom: 5,
@@ -133,20 +141,17 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   enabled: false,
                                   decoration: InputDecoration(
                                     contentPadding:
-                                        EdgeInsets.only(top: 10, left: 10),
+                                        const EdgeInsets.only(top: 10, left: 10),
                                     filled: true,
                                     fillColor: Colors.blue[50],
-                                    suffixIcon: Icon(
+                                    suffixIcon: const Icon(
                                       Icons.calendar_month,
                                       color: Colors.black87,
                                     ),
-                                    border: OutlineInputBorder(
+                                    border: const OutlineInputBorder(
                                         borderSide: BorderSide.none),
-                                    hintText: firstPickedDate == null
-                                        ? DateFormat('yyyy-MM-dd')
-                                            .format(DateTime.now())
-                                        : firstPickedDate,
-                                    hintStyle: TextStyle(
+                                    hintText: firstPickedDate,
+                                    hintStyle: const TextStyle(
                                         fontSize: 14, color: Colors.black87),
                                   ),
                                   validator: (value) {
@@ -161,10 +166,10 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Transaction Type",
@@ -172,28 +177,28 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'Select Type',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _selectedType,
                                   onChanged: (newValue) {
@@ -211,7 +216,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                     return DropdownMenuItem(
                                       child: Text(
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
@@ -224,10 +229,10 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Account",
@@ -235,16 +240,16 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -349,10 +354,10 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.0),
+                      const SizedBox(height: 5.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Description",
@@ -360,7 +365,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
@@ -369,17 +374,17 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                               child: TextField(
                                 controller: _DescriptionController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -390,10 +395,10 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.0),
+                      const SizedBox(height: 5.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: Text(
                               "Amount",
@@ -401,7 +406,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
@@ -410,17 +415,17 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                               child: TextField(
                                 controller: _AmountController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -431,7 +436,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -464,12 +469,12 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 75, 196, 201),
+                                    color: const Color.fromARGB(255, 75, 196, 201),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 105, 170, 88),
+                                color: const Color.fromARGB(255, 105, 170, 88),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                 "SAVE",
                                 style: TextStyle(
@@ -479,7 +484,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                               )),
                             ),
                           ),
-                          SizedBox(width: 4.0),
+                          const SizedBox(width: 4.0),
                           InkWell(
                             onTap: () {
                               _AmountController.text = '';
@@ -492,12 +497,12 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 75, 196, 201),
+                                    color: const Color.fromARGB(255, 75, 196, 201),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 196, 81, 65),
+                                color: const Color.fromARGB(255, 196, 81, 65),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                 "CANCEL",
                                 style: TextStyle(
@@ -537,11 +542,11 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
               //   ),
               // ),
 
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Container(
                 height: MediaQuery.of(context).size.height / 1.43,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -557,25 +562,25 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           border:
                               TableBorder.all(color: Colors.black54, width: 1),
                           columns: [
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Transaction Id')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Account Name')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Date')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Description')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Received Amount ')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Paid Amount ')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Saved By ')),
                             ),
                           ],

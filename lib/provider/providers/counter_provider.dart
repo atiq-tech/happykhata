@@ -82,9 +82,9 @@ class CounterProvider extends ChangeNotifier {
 
   Future<List<AllSuppliersClass>>getSupplier(BuildContext context) async {
     allSupplierslist = await ApiAllSuppliers.GetApiAllSuppliers(context);
-    allSupplierslist.insert(0, AllSuppliersClass(displayName: "General Supplier", supplierName:''));
-    notifyListeners();
+    allSupplierslist.insert(0, AllSuppliersClass(displayName: "General Supplier"));
     return allSupplierslist;
+    // notifyListeners();
   }
 
   //Get Meterial purchase
@@ -102,7 +102,6 @@ class CounterProvider extends ChangeNotifier {
 
   Future<List<AllCustomersClass>> getCustomers(BuildContext context) async {
     allCustomerslist = await ApiAllCustomers.GetApiAllCustomers(context);
-    notifyListeners();
     return allCustomerslist;
   }
 
@@ -258,7 +257,6 @@ class CounterProvider extends ChangeNotifier {
   Future<List<AllGetDistricesClass>>getDistricts(BuildContext context) async {
     allDistrictslist = await ApiAllGetDistricts.GetApiAllDistricts(context);
     return allDistrictslist;
-    notifyListeners();
   }
 
   //Get Material
@@ -321,12 +319,13 @@ class CounterProvider extends ChangeNotifier {
   List<Sales> getSaleslist = [];
 
   getSales(context,
-      String? customerId,
-      String? dateFrom,
-      String? dateTo,
-      String? employeeId,
-      String? productId,
-      String? userFullName,) async {
+    String? customerId,
+    String? dateFrom,
+    String? dateTo,
+    String? employeeId,
+    String? productId,
+    String? userFullName,
+  ) async {
     getSaleslist = await ApiGetSales.GetApiGetSales(
       context,
       customerId,
@@ -343,12 +342,14 @@ class CounterProvider extends ChangeNotifier {
   List<SalseRecordModelClass> getSalesRecordlist = [];
 
   getSalesRecord(context,
-      String? customerId,
-      String? dateFrom,
-      String? dateTo,
-      String? employeeId,
-      String? productId,
-      String? userFullName,) async {
+
+    String? customerId,
+    String? dateFrom,
+    String? dateTo,
+    String? employeeId,
+    String? productId,
+    String? userFullName,
+  ) async {
     getSalesRecordlist = await ApiGetSalesRecord.GetApiGetSalesRecord(
       context,
       customerId,

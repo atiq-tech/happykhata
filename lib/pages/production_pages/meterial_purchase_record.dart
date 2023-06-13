@@ -10,6 +10,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/pages/invoice_screen.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -36,7 +38,14 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -51,7 +60,14 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        secondPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $secondPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        secondPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $secondPickedDate");
       });
     }
   }
@@ -73,8 +89,8 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
   ApiAllMeterialPurchase? apiAllMeterialPurchase;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     ApiAllSuppliers apiAllSuppliers;
     Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
     // TODO: implement initState
@@ -95,17 +111,17 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
     return Scaffold(
       appBar: CustomAppBar(title: "Meterial Purchase Record"),
       body: Container(
-        padding: EdgeInsets.all(6),
+        padding: const EdgeInsets.all(6),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
                 height: 210.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -114,7 +130,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                     Container(
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 4,
                             child: Text(
                               "Search Type",
@@ -122,28 +138,28 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 30.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'All',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _searchType,
                                   onChanged: (newValue) {
@@ -163,7 +179,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                       child: Text(
                                         maxLines: 1,
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
@@ -177,12 +193,12 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     isSupplierListClicked == true
                         ? Container(
                             child: Row(
                               children: [
-                                Expanded(
+                                const Expanded(
                                   flex: 4,
                                   child: Text(
                                     "Supplier",
@@ -191,17 +207,17 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                             Color.fromARGB(255, 126, 125, 125)),
                                   ),
                                 ),
-                                Expanded(flex: 1, child: Text(":")),
+                                const Expanded(flex: 1, child: Text(":")),
                                 Expanded(
                                   flex: 11,
                                   child: Container(
                                     height: 38.0,
                                     width:
                                         MediaQuery.of(context).size.width / 2,
-                                    padding: EdgeInsets.only(left: 5.0),
+                                    padding: const EdgeInsets.only(left: 5.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 5, 107, 155),
+                                        color: const Color.fromARGB(255, 5, 107, 155),
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
@@ -314,10 +330,10 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                             ),
                           )
                         : Container(),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 4,
                           child: Text(
                             "Date From",
@@ -325,7 +341,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -338,20 +354,17 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: firstPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -366,10 +379,10 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 4,
                           child: Text(
                             "Date To",
@@ -377,7 +390,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -390,20 +403,17 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : secondPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: secondPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -418,7 +428,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -442,7 +452,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 "firstDate Meterial purchase Record=====::${_selectedSupplier}");
 
                           });
-                          Future.delayed(Duration(seconds: 3), () {
+                          Future.delayed(const Duration(seconds: 3), () {
                             setState(() {
                               isLoading = false;
                             });
@@ -453,12 +463,12 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                           width: 80.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -472,13 +482,13 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                   ],
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : Container(
                       height: MediaQuery.of(context).size.height / 1.43,
                       width: double.infinity,
-                      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Container(
                         width: double.infinity,
                         height: double.infinity,
@@ -495,31 +505,31 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                     border: TableBorder.all(
                                         color: Colors.black54, width: 1),
                                     columns: [
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Invoice No.')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Date')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Supplier Id')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Supplier Name')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Sub Total')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('VAT')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Total')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Paid')),
                                       ),
-                                      DataColumn(
+                                      const DataColumn(
                                         label: Center(child: Text('Due')),
                                       ),
                                       // DataColumn(
@@ -590,7 +600,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 10.0),
+                                const SizedBox(height: 10.0),
                                 Row(
                                   children: [
                                     const Text(//5555555

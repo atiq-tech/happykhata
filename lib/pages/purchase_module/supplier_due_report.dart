@@ -18,13 +18,14 @@ class SupplierDueReport extends StatefulWidget {
 
 class _SupplierDueReportState extends State<SupplierDueReport> {
   bool isSupplierListClicked = false;
-  String? _searchType;
+  String? _searchType = "All";
 
-  List<String> _searchTypeList = [
+  final List<String> _searchTypeList = [
     'All',
     'By Supplier',
   ];
   bool isLoading = false;
+  var data;
 
   String? _selectedSupplier;
   ApiAllSuppliers? apiAllSuppliers;
@@ -56,17 +57,17 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
     return Scaffold(
       appBar: CustomAppBar(title: "Supplier Due Report"),
       body: Container(
-        padding: EdgeInsets.all(6),
+        padding: const EdgeInsets.all(6),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                height: 130.0,
+                height: !isSupplierListClicked ? 100 : 140.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -75,7 +76,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                     Container(
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 4,
                             child: Text(
                               "Search Type",
@@ -84,38 +85,39 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                             ),
                           ),
                           //
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 30.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'All',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _searchType,
                                   onChanged: (newValue) {
                                     setState(() {
                                       _searchType = newValue!;
-                                      _selectedSupplier=null;
-                                      if (_searchType == "By Supplier") {
+                                      _selectedSupplier='';
 
+                                      if (_searchType == "By Supplier") {
                                         isSupplierListClicked = true;
                                       } else {
+                                        supplyerController.text = '';
                                         isSupplierListClicked = false;
                                       }
                                     });
@@ -125,7 +127,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                       child: Text(
                                         maxLines: 1,
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
@@ -139,12 +141,12 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     isSupplierListClicked == true
                         ? Container(
                             child: Row(
                               children: [
-                                Expanded(
+                                const Expanded(
                                   flex: 4,
                                   child: Text(
                                     "Supplier",
@@ -153,89 +155,150 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                             Color.fromARGB(255, 126, 125, 125)),
                                   ),
                                 ),
-                                Expanded(flex: 1, child: Text(":")),
+                                const Expanded(flex: 1, child: Text(":")),
                                 Expanded(
                                   flex: 11,
                                   child: Container(
                                     height: 38.0,
                                     width:
                                         MediaQuery.of(context).size.width / 2,
-                                    padding: EdgeInsets.only(left: 5.0),
+                                    padding: const EdgeInsets.only(left: 5.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 5, 107, 155),
+                                        color: const Color.fromARGB(255, 5, 107, 155),
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: FutureBuilder(
-                                      future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
-                                      builder: (context,
-                                          AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
-                                        if (snapshot.hasData) {
-                                          return TypeAheadFormField(
-                                            textFieldConfiguration:
-                                            TextFieldConfiguration(
-                                                onChanged: (value){
-                                                  if (value == '') {
-                                                    _selectedSupplier = '';
-                                                  }
-                                                },
-                                                style: const TextStyle(
-                                                  fontSize: 15,
-                                                ),
-                                                controller: supplyerController,
-                                                decoration: InputDecoration(
-                                                  hintText: 'Select Supplier',
-                                                  suffix: _selectedSupplier == '' ? null : GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        supplyerController.text = '';
-                                                      });
-                                                    },
-                                                    child: const Padding(
-                                                      padding: EdgeInsets.symmetric(horizontal: 3),
-                                                      child: Icon(Icons.close,size: 14,),
-                                                    ),
-                                                  ),
-                                                )
+                                    child: TypeAheadFormField(
+                                      textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                          onChanged: (value){
+                                            if (value == '') {
+                                              _selectedSupplier = '';
+                                            }
+                                          },
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                          controller: supplyerController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Select Supplier',
+                                            suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  supplyerController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                child: Icon(Icons.close,size: 14,),
+                                              ),
                                             ),
-                                            suggestionsCallback: (pattern) {
-                                              return snapshot.data!
-                                                  .where((element) => element.supplierName
-                                                  .toString()
-                                                  .toLowerCase()
-                                                  .contains(pattern
-                                                  .toString()
-                                                  .toLowerCase()))
-                                                  .take(allSuppliersData.length)
-                                                  .toList();
-                                              // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                            },
-                                            itemBuilder: (context, suggestion) {
-                                              return ListTile(
-                                                title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                              );
-                                            },
-                                            transitionBuilder:
-                                                (context, suggestionsBox, controller) {
-                                              return suggestionsBox;
-                                            },
-                                            onSuggestionSelected:
-                                                (AllSuppliersClass suggestion) {
-                                              supplyerController.text = suggestion.supplierName!;
-                                              setState(() {
-                                                _selectedSupplier =
-                                                    suggestion.supplierSlNo;
-                                                print(
-                                                    "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
-                                              });
-                                            },
-                                            onSaved: (value) {},
-                                          );
-                                        }
-                                        return const SizedBox();
+                                          )
+                                      ),
+                                      suggestionsCallback: (pattern) {
+                                        allSuppliersData.removeAt(0);
+                                        return allSuppliersData
+                                            .where((element) => element.supplierName
+                                            .toString()
+                                            .toLowerCase()
+                                            .contains(pattern
+                                            .toString()
+                                            .toLowerCase()))
+                                            .take(allSuppliersData.length)
+                                            .toList();
+                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                       },
+                                      itemBuilder: (context, suggestion) {
+                                        return ListTile(
+                                          title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                        );
+                                      },
+                                      transitionBuilder:
+                                          (context, suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected:
+                                          (AllSuppliersClass suggestion) {
+                                        supplyerController.text = suggestion.supplierName!;
+                                        setState(() {
+                                          _selectedSupplier =
+                                              suggestion.supplierSlNo;
+                                          print(
+                                              "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                        });
+                                      },
+                                      onSaved: (value) {},
                                     ),
+                                    // child: FutureBuilder(
+                                    //   future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
+                                    //   builder: (context,
+                                    //       AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
+                                    //     if (snapshot.hasData) {
+                                    //       return TypeAheadFormField(
+                                    //         textFieldConfiguration:
+                                    //         TextFieldConfiguration(
+                                    //             onChanged: (value){
+                                    //               if (value == '') {
+                                    //                 _selectedSupplier = '';
+                                    //               }
+                                    //             },
+                                    //             style: const TextStyle(
+                                    //               fontSize: 15,
+                                    //             ),
+                                    //             controller: supplyerController,
+                                    //             decoration: InputDecoration(
+                                    //               hintText: 'Select Supplier',
+                                    //               suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                    //                 onTap: () {
+                                    //                   setState(() {
+                                    //                     supplyerController.text = '';
+                                    //                   });
+                                    //                 },
+                                    //                 child: const Padding(
+                                    //                   padding: EdgeInsets.symmetric(horizontal: 3),
+                                    //                   child: Icon(Icons.close,size: 14,),
+                                    //                 ),
+                                    //               ),
+                                    //             )
+                                    //         ),
+                                    //         suggestionsCallback: (pattern) {
+                                    //           return snapshot.data!
+                                    //               .where((element) => element.supplierName
+                                    //               .toString()
+                                    //               .toLowerCase()
+                                    //               .contains(pattern
+                                    //               .toString()
+                                    //               .toLowerCase()))
+                                    //               .take(allSuppliersData.length)
+                                    //               .toList();
+                                    //           // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    //         },
+                                    //         itemBuilder: (context, suggestion) {
+                                    //           return ListTile(
+                                    //             title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                    //           );
+                                    //         },
+                                    //         transitionBuilder:
+                                    //             (context, suggestionsBox, controller) {
+                                    //           return suggestionsBox;
+                                    //         },
+                                    //         onSuggestionSelected:
+                                    //             (AllSuppliersClass suggestion) {
+                                    //           supplyerController.text = suggestion.supplierName!;
+                                    //           setState(() {
+                                    //             _selectedSupplier =
+                                    //                 suggestion.supplierSlNo;
+                                    //             print(
+                                    //                 "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                    //           });
+                                    //         },
+                                    //         onSaved: (value) {},
+                                    //       );
+                                    //     }
+                                    //     return const SizedBox();
+                                    //   },
+                                    // ),
                                     // child: DropdownButtonHideUnderline(
                                     //   child: DropdownButton(
                                     //     isExpanded: true,
@@ -278,20 +341,24 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                             ),
                           )
                         : Container(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
                           setState(() {
                             isLoading = true;
+                            _searchType == "By Supplier"
+                                ? data = 'by supplier'
+                                : _searchType == "All"
+                                ? data = 'all' : '';
                           });
                           setState(() {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSupplierDue(context, _selectedSupplier??"");
                             print("Supplier due repot======================::${_selectedSupplier}");
                           });
-                           Future.delayed(Duration(seconds: 3), () {
+                           Future.delayed(const Duration(seconds: 3), () {
                     setState(() {
                       isLoading = false;
                     });
@@ -302,12 +369,12 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                           width: 80.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -321,13 +388,14 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                   ],
                 ),
               ),
-              SizedBox(height: 10.0),
-             isLoading
-                    ? Center(child: CircularProgressIndicator())
+              const SizedBox(height: 10.0),
+              if (data == 'all' || data == 'by supplier' )
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
                     : Container(
                 height: MediaQuery.of(context).size.height / 1.43,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -346,22 +414,22 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                               border:
                                   TableBorder.all(color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Supplier Code')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Supplier Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Bill Amount')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Paid Amount')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Returned Amount')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Due')),
                                 ),
                               ],
@@ -404,7 +472,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           Row(
                             children: [
                               const Text(//5555555

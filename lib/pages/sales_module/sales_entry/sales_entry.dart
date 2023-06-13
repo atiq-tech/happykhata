@@ -8,17 +8,21 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Riaz/all_api_implement.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/sales_cart_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/customer_list_model.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by_employee_modelclass.dart';
 import 'package:poss/const_page.dart';
 import 'package:poss/hive/hive/product.dart';
 import 'package:poss/home_page.dart';
 import 'package:poss/pages/administration_pages/customer_entry_page.dart';
+import 'package:poss/provider/sales_module/provider_customer_list_with_customer_type.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../../common_widget/custom_appbar.dart';
 import 'add_customer.dart';
@@ -46,6 +50,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   var empluyeeNameController = TextEditingController();
   var categoryController = TextEditingController();
   var productController = TextEditingController();
+
+  var customerSlNo;
 
   List<String> salesByList = ['A', 'B', 'C', 'D'];
   List<String> customerList = ['General Customer', 'C0123', 'C0456', 'C0789'];
@@ -97,6 +103,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   @override
   void initState() {
     super.initState();
+    Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
     _quantityController.text = "1";
     firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
@@ -116,12 +123,33 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     print("response========> ${response!.data}");
   }
 
+  Response? result;
+  void dueReport(String? customerId) async {
+    print("Call Api ${customerId}");
+
+    result = await Dio().post("${BaseUrl}api/v1/getCustomerDue",
+        data: {"customerId": "$customerId"},
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${GetStorage().read("token")}",
+        }));
+
+    var data = jsonDecode(result?.data);
+
+    if(data!=null){
+      print("responses result========> ${data[0]['dueAmount']}");
+      setState(() {
+        _previousDueController.text = "${data[0]['dueAmount']}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final All_Employee = Provider.of<AllProductProvider>(context)
         .By_all_employee_ModelClass_List;
     final All_Customer =
-        Provider.of<AllProductProvider>(context).by_all_customer_list;
+        Provider.of<CustomerListByCustomerTypeProvider>(context).provideCustomerListByCustomerType;
     final All_Category = Provider.of<CategoryWiseStockProvider>(context)
         .provideCategoryWiseStockList;
 
@@ -159,7 +187,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                 ),
               ),
               Container(
-                height: 110.0,
+                height: 120.0,
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.only(left: 6.0, right: 6.0),
@@ -227,7 +255,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                         ),
                                         controller: empluyeeNameController,
                                         decoration: InputDecoration(
-                                          hintText: 'Select Customer',
+                                          hintText: 'Select Employee',
                                           suffix: employeeSlNo == '' ? null : GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -331,8 +359,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           children: [
                             Text(
                               firstPickedDate == null
-                                  ? Jiffy(DateTime.now())
-                                      .format("dd - MMM - yyyy")
+                                  ? Utils.formatDate(DateTime.now())
                                   : firstPickedDate!,
                             ),
                             const Icon(Icons.calendar_month)
@@ -384,6 +411,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     setState(() {
                                       level = value.toString();
                                       print(level);
+                                      Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
                                     });
                                   }),
                             ),
@@ -405,6 +433,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     setState(() {
                                       level = value.toString();
                                       print(level);
+                                      Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
                                     });
                                   }),
                             ),
@@ -437,136 +466,259 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context)
-                                  .Fatch_By_all_Customer(context),
-                              builder: (context,
-                                  AsyncSnapshot<List<By_all_Customer>>
-                                      snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                          onChanged: (newValue) {
-                                                print("On change Value is $newValue");
-                                                if (newValue == '') {
-                                                  _selectedCustomer = '';
-                                                }
-                                              },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: customerController,
-                                            decoration: InputDecoration(
-                                                hintText: 'Select Customer',
-                                              suffix: _selectedCustomer == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    customerController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            ),
-                                        ),
-                                    suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element
-                                              .displayName!
-                                              .toLowerCase()
-                                              .contains(pattern
-                                                  .toString()
-                                                  .toLowerCase()))
-                                          .take(All_Customer.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(
-                                            child: Text(
+                             child: TypeAheadFormField(
+                                textFieldConfiguration:
+                                TextFieldConfiguration(
+                                  onChanged: (newValue) {
+                                    print("On change Value is $newValue");
+                                    if (newValue == '') {
+                                      _selectedCustomer = '';
+                                    }
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  controller: customerController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Customer',
+                                    suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          customerController.text = '';
+                                        });
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 3),
+                                        child: Icon(Icons.close,size: 14,),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  return All_Customer
+                                      .where((element) => element
+                                      .displayName!
+                                      .toLowerCase()
+                                      .contains(pattern
+                                      .toString()
+                                      .toLowerCase()))
+                                      .take(All_Customer.length)
+                                      .toList();
+                                  // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: SizedBox(
+                                        child: Text(
                                           "${suggestion.displayName}",
                                           style: const TextStyle(fontSize: 12),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         )),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (By_all_Customer suggestion) {
-                                      customerController.text =
-                                          suggestion.displayName!;
-                                      setState(() {
-                                        _selectedCustomer =
-                                            suggestion.customerSlNo.toString();
-                                        print("customer selected ======> ${_selectedCustomer}");
-
-                                        if (_selectedCustomer == 'null') {
-                                          print("No has not $_selectedCustomer");
-
-                                          isVisible = true;
-                                          isEnabled = true;
-                                          _nameController.text = '';
-                                          _mobileNumberController.text = '';
-                                          _addressController.text = '';
-                                        } else {
-                                           print("Yes has $_selectedCustomer");
-
-                                          isEnabled = false;
-                                          isVisible = false;
-
-                                           final results = [
-                                             All_Customer.where((m) => m
-                                                 .customerSlNo.toString()
-                                                 .contains(
-                                                 '${suggestion.customerSlNo}')) // or Testing 123
-                                                 .toList(),
-                                           ];
-                                           results.forEach((element) {
-                                             element.add(element.first);
-                                             print("dfhsghdfkhgkh");
-                                             print(
-                                                 "productSlNo===> ${element[0].displayName}");
-                                             print(
-                                                 "productCategoryName===> ${element[0].customerName}");
-                                             customerMobile =
-                                             "${element[0].customerMobile}";
-                                             _mobileNumberController.text =
-                                             "${element[0].customerMobile}";
-                                             print(
-                                                 "customerMobile===> ${element[0].customerMobile}");
-                                             customerAddress =
-                                             "${element[0].customerAddress}";
-                                             _addressController.text =
-                                             "${element[0].customerAddress}";
-                                             print(
-                                                 "customerAddress===> ${element[0].customerAddress}");
-                                             previousDue =
-                                             "${element[0].previousDue}";
-                                             _previousDueController.text =
-                                             "${element[0].previousDue}";
-                                             print("previousDue===> ${element[0].previousDue}");
-                                           });
-                                        }
-                                        //  print(_selectedCustomer);
-                                        print('isVisible $isVisible');
-
-
-                                      });
-                                    },
-                                    onSaved: (value) {},
                                   );
-                                }
-                                return const SizedBox();
-                              },
-                            ),
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected:
+                                    (CustomerListModel suggestion) {
+                                  customerController.text =
+                                  suggestion.displayName!;
+                                  setState(() {
+                                    _selectedCustomer = suggestion.customerSlNo.toString();
+                                    customerSlNo = suggestion.customerSlNo.toString();
+
+                                    print("customer selected ======> ${_selectedCustomer}");
+
+                                    if (_selectedCustomer == 'null') {
+
+                                      print("No has not $_selectedCustomer");
+
+                                      isVisible = true;
+                                      isEnabled = true;
+                                      _nameController.text = '';
+                                      _mobileNumberController.text = '';
+                                      _addressController.text = '';
+                                    } else {
+                                      print("Yes has $_selectedCustomer");
+
+                                      isEnabled = false;
+                                      isVisible = false;
+                                      final results = [
+
+                                        All_Customer.where((m) => m.customerSlNo
+                                            .toString()
+                                            .contains(
+                                            '${suggestion.customerSlNo}')) // or Testing 123
+                                            .toList(),
+                                      ];
+                                      results.forEach((element) {
+                                        element.add(element.first);
+                                        print("dfhsghdfkhgkh");
+                                        print(
+                                            "productSlNo===> ${element[0].displayName}");
+                                        print(
+                                            "productCategoryName===> ${element[0].customerName}");
+                                        customerMobile =
+                                        "${element[0].customerMobile}";
+                                        _mobileNumberController.text =
+                                        "${element[0].customerMobile}";
+                                        print(
+                                            "customerMobile===> ${element[0].customerMobile}");
+                                        customerAddress =
+                                        "${element[0].customerAddress}";
+                                        _addressController.text =
+                                        "${element[0].customerAddress}";
+                                        print(
+                                            "customerAddress===> ${element[0].customerAddress}");
+                                        dueReport(customerSlNo);
+                                        // previousDue = "${element[0].previousDue}";
+                                        // _previousDueController.text =
+                                        // "${element[0].previousDue}";
+                                        print(
+                                            "previousDue===> ${element[0].previousDue}");
+                                      });
+                                    }
+                                    //  print(_selectedCustomer);
+                                    print('isVisible $isVisible');
+
+
+                                  });
+                                },
+                                onSaved: (value) {},
+                              ),
+                            // child: FutureBuilder(
+                            //   future: Provider.of<CustomerListByCustomerTypeProvider>(context).getCustomerListByCustomerTypeData(context,customerType: level.toString()),
+                            //   builder: (context,
+                            //       AsyncSnapshot<List<CustomerListModel>>
+                            //           snapshot) {
+                            //     if (snapshot.hasData) {
+                            //       return TypeAheadFormField(
+                            //         textFieldConfiguration:
+                            //             TextFieldConfiguration(
+                            //               onChanged: (newValue) {
+                            //                     print("On change Value is $newValue");
+                            //                     if (newValue == '') {
+                            //                       _selectedCustomer = '';
+                            //                     }
+                            //                   },
+                            //                 style: const TextStyle(
+                            //                   fontSize: 15,
+                            //                 ),
+                            //                 controller: customerController,
+                            //                 decoration: InputDecoration(
+                            //                     hintText: 'Select Customer',
+                            //                   suffix: _selectedCustomer == '' ? null : GestureDetector(
+                            //                     onTap: () {
+                            //                       setState(() {
+                            //                         customerController.text = '';
+                            //                       });
+                            //                     },
+                            //                     child: const Padding(
+                            //                       padding: EdgeInsets.symmetric(horizontal: 3),
+                            //                       child: Icon(Icons.close,size: 14,),
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //             ),
+                            //         suggestionsCallback: (pattern) {
+                            //           return snapshot.data!
+                            //               .where((element) => element
+                            //                   .displayName!
+                            //                   .toLowerCase()
+                            //                   .contains(pattern
+                            //                       .toString()
+                            //                       .toLowerCase()))
+                            //               .take(All_Customer.length)
+                            //               .toList();
+                            //           // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                            //         },
+                            //         itemBuilder: (context, suggestion) {
+                            //           return ListTile(
+                            //             title: SizedBox(
+                            //                 child: Text(
+                            //               "${suggestion.displayName}",
+                            //               style: const TextStyle(fontSize: 12),
+                            //               maxLines: 1,
+                            //               overflow: TextOverflow.ellipsis,
+                            //             )),
+                            //           );
+                            //         },
+                            //         transitionBuilder:
+                            //             (context, suggestionsBox, controller) {
+                            //           return suggestionsBox;
+                            //         },
+                            //         onSuggestionSelected:
+                            //             (CustomerListModel suggestion) {
+                            //           customerController.text =
+                            //               suggestion.displayName!;
+                            //           setState(() {
+                            //             _selectedCustomer = suggestion.customerSlNo.toString();
+                            //             customerSlNo = suggestion.customerSlNo.toString();
+                            //
+                            //             print("customer selected ======> ${_selectedCustomer}");
+                            //
+                            //             if (_selectedCustomer == 'null') {
+                            //
+                            //               print("No has not $_selectedCustomer");
+                            //
+                            //               isVisible = true;
+                            //               isEnabled = true;
+                            //               _nameController.text = '';
+                            //               _mobileNumberController.text = '';
+                            //               _addressController.text = '';
+                            //             } else {
+                            //                print("Yes has $_selectedCustomer");
+                            //
+                            //               isEnabled = false;
+                            //               isVisible = false;
+                            //                final results = [
+                            //
+                            //                  All_Customer.where((m) => m.customerSlNo
+                            //                      .toString()
+                            //                      .contains(
+                            //                      '${suggestion.customerSlNo}')) // or Testing 123
+                            //                      .toList(),
+                            //                ];
+                            //                results.forEach((element) {
+                            //                  element.add(element.first);
+                            //                  print("dfhsghdfkhgkh");
+                            //                  print(
+                            //                      "productSlNo===> ${element[0].displayName}");
+                            //                  print(
+                            //                      "productCategoryName===> ${element[0].customerName}");
+                            //                  customerMobile =
+                            //                  "${element[0].customerMobile}";
+                            //                  _mobileNumberController.text =
+                            //                  "${element[0].customerMobile}";
+                            //                  print(
+                            //                      "customerMobile===> ${element[0].customerMobile}");
+                            //                  customerAddress =
+                            //                  "${element[0].customerAddress}";
+                            //                  _addressController.text =
+                            //                  "${element[0].customerAddress}";
+                            //                  print(
+                            //                      "customerAddress===> ${element[0].customerAddress}");
+                            //                  previousDue = "${element[0].previousDue}";
+                            //                  _previousDueController.text =
+                            //                  "${element[0].previousDue}";
+                            //                  print(
+                            //                      "previousDue===> ${element[0].previousDue}");
+                            //                });
+                            //             }
+                            //             //  print(_selectedCustomer);
+                            //             print('isVisible $isVisible');
+                            //
+                            //
+                            //           });
+                            //         },
+                            //         onSaved: (value) {},
+                            //       );
+                            //     }
+                            //     return const SizedBox();
+                            //   },
+                            // ),
                             // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(
                             //     isExpanded: true,
@@ -2160,7 +2312,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
 
         print("Firstdateee $firstPickedDate");
       });

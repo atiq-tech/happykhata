@@ -13,6 +13,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_tran
 
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class BankTransactionReportPage extends StatefulWidget {
@@ -38,6 +39,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   final TextEditingController _Date2Controller = TextEditingController();
   final TextEditingController accountController = TextEditingController();
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -47,7 +49,13 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -62,7 +70,13 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -74,8 +88,8 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   @override
   void initState() {
     // TODO: implement initState
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     //bank ACCOUNTS
     ApiAllBankAccounts apiAllBankAccounts;
     Provider.of<CounterProvider>(context, listen: false)
@@ -101,14 +115,14 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: Container(
                 height: 170.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -116,7 +130,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Accounts",
@@ -124,16 +138,16 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
                             height: 38.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -238,10 +252,10 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Transaction Type",
@@ -249,29 +263,29 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'All',
                                   style: TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
+                                dropdownColor: const Color.fromARGB(255, 231, 251,
                                     255), // Not necessary for Option 1
                                 value: _selectedType,
                                 onChanged: (newValue) {
@@ -292,7 +306,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                   return DropdownMenuItem(
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
@@ -305,11 +319,11 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Date :",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
@@ -326,20 +340,17 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 10),
+                                      const EdgeInsets.only(top: 10, left: 10),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: firstPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -353,7 +364,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                           ),
                         ),
                         Container(
-                          child: Text("to"),
+                          child: const Text("to"),
                         ),
                         Expanded(
                           flex: 1,
@@ -367,20 +378,17 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 10),
+                                      const EdgeInsets.only(top: 10, left: 10),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : secondPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: secondPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -395,7 +403,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
@@ -419,7 +427,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                               "secondPickedDate +CashTransactions+++++=====::${secondPickedDate}");
                           print(
                               "CashTransactions selectedType::${paymentType}");
-                          Future.delayed(Duration(seconds: 3), () {
+                          Future.delayed(const Duration(seconds: 3), () {
                             setState(() {
                               isLoading = false;
                             });
@@ -430,12 +438,12 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                           width: 85.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -450,13 +458,13 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -470,32 +478,32 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('SI')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Description')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label:
                                       Center(child: Text('Transaction Date')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Account Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Account Number')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Bank Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Note')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Deposit')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Withdraw')),
                                 )
                               ],
@@ -543,7 +551,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                                   "deposit"
                                               ? Text(
                                                   '${allBankTransactionData[index].amount}')
-                                              : Text(" ")),
+                                              : const Text(" ")),
                                     ),
                                     DataCell(
                                       Center(
@@ -552,7 +560,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                                   "withdraw"
                                               ? Text(
                                                   '${allBankTransactionData[index].amount}')
-                                              : Text(" ")),
+                                              : const Text(" ")),
                                     ),
                                   ],
                                 ),

@@ -10,6 +10,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_s
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../Api_Integration/Api_All_implement/Atik/Api_all_products/api_all_products.dart';
@@ -30,13 +31,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
   bool isUserWiseClicked = false;
 
   //sub dropdowns logic
-  bool isWithoutDetailsClicked = false;
+  bool isWithoutDetailsClicked = true;
   bool isWithDetailsClicked = false;
 
   // dropdown value
   String? userFullName;
   String? _selectedSearchTypes = "All";
-  String? _selectedRecordTypes;
+  String? _selectedRecordTypes = "Without Details";
   String? _selectedCustomerTypes;
   String? _selectedQuantityProductTypes;
   String? _selectedQuantitySupplierTypes;
@@ -60,6 +61,8 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
   ];
 
   String? firstPickedDate;
+  var toDay = DateTime.now();
+
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -68,7 +71,14 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -86,7 +96,14 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        secondPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $secondPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        secondPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $secondPickedDate");
       });
     }
   }
@@ -99,8 +116,8 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
     Provider.of<AllProductProvider>(context, listen: false)
         .Purchases_All_Provider(context);
     //firstPickedDate = "2000-03-23";
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     // TODO: implement initState
     super.initState();
   }
@@ -146,14 +163,14 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Search Type:",
@@ -165,20 +182,20 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint: Text(
+                                hint: const Text(
                                   'All',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -212,7 +229,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                   return DropdownMenuItem(
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
@@ -262,6 +279,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               ), // Not necessary for Option 1
                               value: _selectedRecordTypes,
                               onChanged: (newValue) {
+                                print('Seletcted value ${_selectedRecordTypes}');
                                 setState(() {
                                   _selectedRecordTypes = newValue!;
                                   _selectedRecordTypes ==
@@ -297,7 +315,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Category:",
@@ -309,13 +327,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 38,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -432,7 +450,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Supplier:",
@@ -444,13 +462,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 38,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -560,7 +578,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Product:",
@@ -572,13 +590,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 38,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -693,7 +711,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "User:",
@@ -705,13 +723,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 5, bottom: 5),
+                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
                                   height: 30,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Color.fromARGB(255, 7, 125, 180),
+                                      color: const Color.fromARGB(255, 7, 125, 180),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -719,7 +737,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      hint: Text(
+                                      hint: const Text(
                                         'Please select a User',
                                         style: TextStyle(
                                           fontSize: 14,
@@ -750,7 +768,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                         return DropdownMenuItem(
                                           child: Text(
                                             "${location.fullName}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
@@ -765,7 +783,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           ),
                           Row(
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text(
                                   "Record Type:",
@@ -777,20 +795,20 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
                                     height: 30,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    padding: const EdgeInsets.only(left: 5, right: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                        color: Color.fromARGB(255, 7, 125, 180),
+                                        color: const Color.fromARGB(255, 7, 125, 180),
                                         width: 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
-                                        hint: Text(
+                                        hint: const Text(
                                           'Please select a record type',
                                           style: TextStyle(
                                             fontSize: 14,
@@ -815,7 +833,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           return DropdownMenuItem(
                                             child: Text(
                                               location,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -839,13 +857,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -858,24 +876,21 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 // fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: firstPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : firstPickedDate,
-                                hintStyle: TextStyle(
+                                hintText: firstPickedDate,
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -889,18 +904,18 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                         ),
                       ),
                       Container(
-                        child: Text("To"),
+                        child: const Text("To"),
                       ),
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                           height: 30,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color.fromARGB(255, 7, 125, 180),
+                              color: const Color.fromARGB(255, 7, 125, 180),
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(10.0),
@@ -913,24 +928,21 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.only(top: 10, left: 5),
+                                    const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 //fillColor: Colors.blue[50],
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(left: 25),
+                                suffixIcon: const Padding(
+                                  padding: EdgeInsets.only(left: 25),
                                   child: Icon(
                                     Icons.calendar_month,
                                     color: Color.fromARGB(221, 22, 51, 95),
                                     size: 18,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: secondPickedDate == null
-                                    ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                    : secondPickedDate,
-                                hintStyle: TextStyle(
+                                hintText: secondPickedDate,
+                                hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
                               validator: (value) {
@@ -949,8 +961,8 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    color: Color.fromARGB(255, 3, 91, 150),
-                    padding: EdgeInsets.all(1.0),
+                    color: const Color.fromARGB(255, 3, 91, 150),
+                    padding: const EdgeInsets.all(1.0),
                     child: InkWell(
                       onTap: () {
                         setState(() {
@@ -959,8 +971,12 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
 
                         setState(() {
                           // AllType
+                          print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
+
                           if (isAllTypeClicked && isWithoutDetailsClicked) {
+                            print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
                             data = 'showAllWithoutDetails';
+                            print("date 1st $firstPickedDate");
                             Provider.of<CounterProvider>(context,listen: false)
                                 .getPurchasess(
                                 context,
@@ -1023,7 +1039,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             );
                           }
                         });
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -1033,10 +1049,10 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                         height: 30.0,
                         width: 120.0,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 4, 113, 185),
+                          color: const Color.fromARGB(255, 4, 113, 185),
                           borderRadius: BorderRadius.circular(3.0),
                         ),
-                        child: Center(
+                        child: const Center(
                             child: Text(
                           "Show Report",
                           style: TextStyle(color: Colors.white),
@@ -1048,13 +1064,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
           data == 'showAllWithoutDetails'
               ? Expanded(
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : Container(
                           width: double.infinity,
                           height: double.infinity,
@@ -1073,33 +1089,33 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                       border: TableBorder.all(
                                           color: Colors.black54, width: 1),
                                       columns: [
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Invoice No')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Date')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label:
                                               Center(child: Text('Supplier Name')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Sub Total')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Discount')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label:
                                               Center(child: Text('Transport Cost')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Total')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Paid')),
                                         ),
-                                        DataColumn(
+                                        const DataColumn(
                                           label: Center(child: Text('Due')),
                                         ),
 
@@ -1348,7 +1364,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                 )
           :data == 'showAllWithDetails' ? Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Container(
               width: double.infinity,
               height: double.infinity,
@@ -1364,34 +1380,34 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                       border: TableBorder.all(
                           color: Colors.black54, width: 1),
                       columns: [
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child:
                               Text('Invoice No')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child: Text('Date')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child: Text(
                                   'Supplier Name')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child:
                               Text('Product Name')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child: Text('Price')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child: Text('Quantity')),
                         ),
-                        DataColumn(
+                        const DataColumn(
                           label: Center(
                               child: Text('Total')),
                         ),
@@ -1573,7 +1589,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
               : data == 'showByCategoryDetails'
                   ? Expanded(
                       child: isLoading
-                          ? Center(child: CircularProgressIndicator())
+                          ? const Center(child: CircularProgressIndicator())
                           : Container(
                               width: double.infinity,
                               height: double.infinity,
@@ -1589,26 +1605,26 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           border: TableBorder.all(
                                               color: Colors.black54, width: 1),
                                           columns: [
-                                            DataColumn(
+                                            const DataColumn(
                                               label:
                                                   Center(child: Text('Invoice No')),
                                             ),
-                                            DataColumn(
+                                            const DataColumn(
                                               label: Center(child: Text('Date')),
                                             ),
-                                            DataColumn(
+                                            const DataColumn(
                                               label: Center(
                                                   child: Text('Supplier Name')),
                                             ),
-                                            DataColumn(
+                                            const DataColumn(
                                               label: Center(
                                                   child: Text('Product Name')),
                                             ),
-                                            DataColumn(
+                                            const DataColumn(
                                               label: Center(
                                                   child: Text('Purchases  Rate')),
                                             ),
-                                            DataColumn(
+                                            const DataColumn(
                                               label:
                                                   Center(child: Text('Quantity')),
                                             ),
@@ -1691,7 +1707,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                   : data == 'showByQuantityDetails'
                       ? Expanded(
                           child: isLoading
-                              ? Center(child: CircularProgressIndicator())
+                              ? const Center(child: CircularProgressIndicator())
                               : Container(
                                   width: double.infinity,
                                   height: double.infinity,
@@ -1707,28 +1723,28 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                               border: TableBorder.all(
                                                   color: Colors.black54, width: 1),
                                               columns: [
-                                                DataColumn(
+                                                const DataColumn(
                                                   label: Center(
                                                       child: Text('Invoice No')),
                                                 ),
-                                                DataColumn(
+                                                const DataColumn(
                                                   label:
                                                       Center(child: Text('Date')),
                                                 ),
-                                                DataColumn(
+                                                const DataColumn(
                                                   label: Center(
                                                       child: Text('Supplier Name')),
                                                 ),
-                                                DataColumn(
+                                                const DataColumn(
                                                   label: Center(
                                                       child: Text('Product Name')),
                                                 ),
-                                                DataColumn(
+                                                const DataColumn(
                                                   label: Center(
                                                       child:
                                                           Text('Purchases Rate')),
                                                 ),
-                                                DataColumn(
+                                                const DataColumn(
                                                   label: Center(
                                                       child: Text('Quantity')),
                                                 ),
@@ -1808,7 +1824,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                       : data == 'showByUserWithoutDetails'
                           ? Expanded(
                               child: isLoading
-                                  ? Center(child: CircularProgressIndicator())
+                                  ? const Center(child: CircularProgressIndicator())
                                   : Container(
                                       width: double.infinity,
                                       height: double.infinity,
@@ -1826,44 +1842,44 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                       color: Colors.black54,
                                                       width: 1),
                                                   columns: [
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Invoice No')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Date')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Supplier Name')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Sub Total')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child:
                                                               Text('Discount')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Transport Cost')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Total')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Paid')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Due')),
                                                     ),
@@ -2111,7 +2127,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           : data == 'showByUserWithDetails'
                               ? Expanded(
                                   child: isLoading
-                                      ? Center(
+                                      ? const Center(
                                           child: CircularProgressIndicator())
                                       : Container(
                                           width: double.infinity,
@@ -2127,35 +2143,35 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                       color: Colors.black54,
                                                       width: 1),
                                                   columns: [
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Invoice No')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Date')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Supplier Name')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Product Name')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Price')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child:
                                                               Text('Quantity')),
                                                     ),
-                                                    DataColumn(
+                                                    const DataColumn(
                                                       label: Center(
                                                           child: Text('Total')),
                                                     ),

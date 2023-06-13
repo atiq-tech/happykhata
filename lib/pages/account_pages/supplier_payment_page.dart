@@ -12,6 +12,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_acco
 import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class SupplierPaymentPage extends StatefulWidget {
@@ -34,6 +35,8 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
   final TextEditingController supplyerController = TextEditingController();
   //
   String? firstPickedDate;
+  var toDay = DateTime.now();
+
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -42,7 +45,14 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -67,7 +77,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
   ApiAllSuppliers? apiAllSuppliers;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
     //bank ACCOUNTS
     ApiAllBankAccounts apiAllBankAccounts;
     Provider.of<CounterProvider>(context, listen: false)
@@ -579,10 +589,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                     ),
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide.none),
-                                    hintText: firstPickedDate == null
-                                        ? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now())
-                                        : firstPickedDate,
+                                    hintText: firstPickedDate,
                                     hintStyle: TextStyle(
                                         fontSize: 14, color: Colors.black87),
                                   ),

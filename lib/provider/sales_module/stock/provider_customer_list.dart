@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class CustomerListProvider extends ChangeNotifier {
   List<CustomerListModel> provideCustomerList = [];
-  getCustomerListData(BuildContext context) async {
+  Future<List<CustomerListModel>>getCustomerListData(BuildContext context) async {
     provideCustomerList = await AllApiImplement.FetchCustomerList(context);
-    notifyListeners();
+    return provideCustomerList;
+    // notifyListeners();
   }
 }

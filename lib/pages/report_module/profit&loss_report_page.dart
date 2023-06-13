@@ -9,6 +9,7 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_profit&loss/
 import 'package:poss/Api_Integration/Api_Modelclass/all_customers_Class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ProfitLossReportPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
   String? firstPickedDate;
+  var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -31,7 +33,13 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -46,7 +54,13 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("Firstdateee $firstPickedDate");
+      });
+    }else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("Firstdateee $firstPickedDate");
       });
     }
   }
@@ -68,8 +82,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
   @override
   void initState() {
     //Customers
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatDate(DateTime.now());
+    secondPickedDate = Utils.formatDate(DateTime.now());
     ApiAllCustomers apiAllCustomers;
     Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
 
@@ -219,10 +233,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                   ),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
+                                  hintText: firstPickedDate,
                                   hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
@@ -260,10 +271,7 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                   ),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : secondPickedDate,
+                                  hintText: secondPickedDate,
                                   hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
@@ -350,7 +358,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
            isLoading? const Center(
              child: CircularProgressIndicator(),
            ):
-           Container(
+           allProfitLossData.isNotEmpty
+               ? Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -618,7 +627,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                         ),
                       ),
                     ),
-                  ),
+                  )
+               : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
           ],
         ),
       ),

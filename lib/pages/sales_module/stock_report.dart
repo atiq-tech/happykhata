@@ -24,7 +24,7 @@ class _StockReportPageState extends State<StockReportPage> {
   double thFontSize = 10.0;
   String data = '';
   List<String> _types = ['Current Stock', 'Total Stock', 'Category Wise Stock', 'Product Wise Stock'];
-  String? _selectedTypes;
+  String _selectedTypes = 'Current Stock';
   String? _selectedCategory;
   String? _selectedProduct;
 
@@ -118,13 +118,13 @@ class _StockReportPageState extends State<StockReportPage> {
                                 },
                                 items: _types.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),

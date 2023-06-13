@@ -45,6 +45,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
     //get Suppliers
     final allSuppliersData =
         Provider.of<CounterProvider>(context).allSupplierslist;
+    allSuppliersData.removeAt(0);
     print(
         "Suppliers Suppliers Suppliers=Lenght is:::::${allSuppliersData.length}");
     return Scaffold(
@@ -355,11 +356,12 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           setState(() {
+                            supplierEntryBtnClk = true;
                             getSupplierCode();
                           });
                           _AddSupply(context);
-                          getSuppliers();
                         },
                         child: Container(
                           height: 35.0,
@@ -371,14 +373,14 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                             color: const Color.fromARGB(255, 75, 90, 131),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: const Center(
-                              child: Text(
-                            "SAVE",
-                            style: TextStyle(
-                                letterSpacing: 1.0,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500),
-                          )),
+                          child: Center(
+                              child: supplierEntryBtnClk ? SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                "SAVE",
+                                style: TextStyle(
+                                    letterSpacing: 1.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              )),
                         ),
                       ),
                     ),
@@ -474,7 +476,7 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
                                 // ),
                               ],
                               rows: List.generate(
-                                allSuppliersData.length,
+                                allSuppliersData.length > 100 ? 100 : allSuppliersData.length,
                                     (int index) => DataRow(
                                   cells: <DataCell>[
                                     DataCell(
@@ -585,17 +587,25 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
       print("success============> ${item["success"]}");
       print("message =================> ${item["message"]}");
       print("supplierCode================>  ${item["supplierCode"]}");
-      if (item["message"] == "Supplier added successfully") {
-        FocusScope.of(context).requestFocus(FocusNode());
-
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Color.fromARGB(255, 4, 108, 156),
-            duration: Duration(seconds: 2),
-            content: Center(child: Text("Supplier added successfull"))));
+      if (item["success"] == true) {
+        emtyMethod();
+        setState(() {
+          supplierEntryBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            duration: const Duration(seconds: 2),
+            content: Center(child: Text("${item["message"]}",style: TextStyle(color: Colors.white)))));
+        Navigator.pop(context);
       } else {
-        const Center(child: Text("Supplier data added not successfull"));
+        setState(() {
+          supplierEntryBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            duration: const Duration(seconds: 2),
+            content: Center(child: Text("${item["message"]}",style: TextStyle(color: Colors.red),))));
       }
-      emtyMethod();
     } catch (e) {
       return e;
     }
@@ -624,4 +634,6 @@ class _SupplierEntryPageState extends State<SupplierEntryPage> {
       print(e);
     }
   }
+  bool supplierEntryBtnClk = false;
+
 }

@@ -17,22 +17,20 @@ class Customer_Due_List extends StatefulWidget {
 
 class _Customer_Due_ListState extends State<Customer_Due_List> {
   bool isCustomerListClicked = false;
-  String? _searchType;
+  String _searchType = 'All';
 
   List<String> _searchTypeList = [
-    'By all',
+    'All',
     'By Customer',
   ];
   bool isLoading = false; //loading circularprogress indicator
   String? _selectedCustomer;
   ApiAllCustomers? apiAllCustomers;
+  var aLLCustomerDueList;
+  var data;
   @override
   void initState() {
-
-    //Customers/////////////
-    ApiAllCustomers apiAllCustomers;
     Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
-
     // TODO: implement initState
     super.initState();
   }
@@ -44,13 +42,10 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
   Widget build(BuildContext context) {
     final allGetCustomer =
         Provider.of<CounterProvider>(context).allCustomerslist;
+    aLLCustomerDueList = Provider.of<AllProductProvider>(context).AllCustomerDueListList;
 
-    final aLLCustomerDueList =
-        Provider.of<AllProductProvider>(context).AllCustomerDueListList;
-
-
-    print("get_all_customer======== ${allGetCustomer.length}");
-    print("CustomerDueList============= ${aLLCustomerDueList.length}");
+    // print("get_all_customer======== ${allGetCustomer.length}");
+    // print("CustomerDueList============= ${aLLCustomerDueList.length}");
 
 
     return Scaffold(
@@ -93,7 +88,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                             child: DropdownButton(
                               isExpanded: true,
                               hint: const Text(
-                                'By all',
+                                'All',
                                 style: TextStyle(
                                   fontSize: 14,
                                 ),
@@ -102,10 +97,12 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                               onChanged: (newValue) {
                                 setState(() {
                                   _searchType = newValue!;
-                                  _selectedCustomer=null;
+                                  // _selectedCustomer=null;
                                   if (_searchType== "By Customer") {
                                     isCustomerListClicked = true;
+                                    customerController.text = '';
                                   } else {
+                                    _selectedCustomer = '';
                                     isCustomerListClicked = false;
                                   }
                                 });
@@ -228,8 +225,8 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                                         onSuggestionSelected:
                                             (By_all_Customer suggestion) {
                                           setState(() {
-                                            customerController.text = suggestion.displayName!;
-                                            _selectedCustomer = suggestion.countrySlNo;
+                                            customerController.text = suggestion.displayName.toString();
+                                            _selectedCustomer = suggestion.customerSlNo.toString();
                                           });
                                         },
                                         onSaved: (value) {},
@@ -284,23 +281,31 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                 onTap: () {
                   setState(() {
                     isLoading = true;
+                    _searchType == "By Customer"
+                        ? data = 'by customer'
+                        : _searchType == "All"
+                        ? data = 'all' : '';
+                    print(
+                        "Customer due report======================::${_selectedCustomer}");
                   });
-                 setState(() {
-                   Provider.of<AllProductProvider>(
-                       context,
-                       listen: false)
-                       .FetchAllCustomerDueList(
-                     context,
-                     _selectedCustomer??"",
-                   );
-                   print(
-                       "Customer due report======================::${_selectedCustomer}");
-                 });
-                  Future.delayed(const Duration(seconds: 3), () {
+
+                  Provider.of<AllProductProvider>(
+                      context, listen: false)
+                      .FetchAllCustomerDueList(
+                    context,
+                    customerId: _selectedCustomer??'',
+                  );
+
+                  _selectedCustomer=='' ? Future.delayed( Duration(seconds: 15), () {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }) : Future.delayed( Duration(seconds: 5), () {
                     setState(() {
                       isLoading = false;
                     });
                   });
+
                 },
                 child: Container(
                   height: 30.0,
@@ -324,131 +329,130 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
           const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Expanded(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            children: [
-                              DataTable(
-                                showCheckboxColumn: true,
-                                border: TableBorder.all(
-                                    color: Colors.black54, width: 1),
-                                columns: const [
-                                  DataColumn(
-                                    label: Center(child: Text('Product Id')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Customer Name')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Customer Mobile')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Total Bill')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Total Paid')),
-                                  ),
-                                  DataColumn(
-                                    label:
-                                        Center(child: Text('Paid to Customer')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Sales Returned')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Due Amount')),
-                                  ),
-                                ],
-                                rows: List.generate(
-                                  aLLCustomerDueList.length,
-                                  (int index) => DataRow(
-                                    cells: <DataCell>[
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].customerCode}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].customerName}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].customerMobile}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].billAmount}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                "${aLLCustomerDueList[index].paidAmount}")),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].cashReceived}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].returnedAmount}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text(
-                                                '${aLLCustomerDueList[index].dueAmount}')),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
 
-                              Padding(
-                                padding: const EdgeInsets.only(left: 1000,bottom: 50.0,top: 10.0),
-                                child: Row(
-                                  children: [
-                                    const Text(//77777777
-                                      "Total Due        :  ",
-                                      style: TextStyle(
-                                          fontWeight:
-                                          FontWeight.bold,
-                                          fontSize: 14),
-                                    ),
-                                    aLLCustomerDueList
-                                        .length ==
-                                        0
-                                        ? const Text(
-                                      "0",
-                                      style: TextStyle(
-                                          fontSize: 14),
-                                    )
-                                        : Text(
-                                      "${GetStorage().read("totalDue")}",
-                                      style: const TextStyle(
-                                          fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+          if (data == 'all' || data == 'by customer' )
+         isLoading ? const Center(child: CircularProgressIndicator(),)
+             : Expanded(child: Container(
+           padding: EdgeInsets.all(10),
+             child: SingleChildScrollView(
+               scrollDirection: Axis.vertical,
+               child: SingleChildScrollView(
+                 scrollDirection: Axis.horizontal,
+                 child: Column(
+                   children: [
+                     DataTable(
+                       showCheckboxColumn: true,
+                       border: TableBorder.all(
+                           color: Colors.black54, width: 1),
+                       columns: const [
+                         DataColumn(
+                           label: Center(child: Text('Product Id')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Customer Name')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Customer Mobile')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Total Bill')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Total Paid')),
+                         ),
+                         DataColumn(
+                           label:
+                           Center(child: Text('Paid to Customer')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Sales Returned')),
+                         ),
+                         DataColumn(
+                           label: Center(child: Text('Due Amount')),
+                         ),
+                       ],
+                       rows: List.generate(
+                         aLLCustomerDueList.length,
+                             (int index) => DataRow(
+                           cells: <DataCell>[
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].customerCode}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].customerName}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].customerMobile}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].billAmount}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       "${aLLCustomerDueList[index].paidAmount}")),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].cashReceived}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].returnedAmount}')),
+                             ),
+                             DataCell(
+                               Center(
+                                   child: Text(
+                                       '${aLLCustomerDueList[index].dueAmount}')),
+                             ),
+                           ],
+                         ),
+                       ),
+                     ),
+
+                     Padding(
+                       padding: const EdgeInsets.only(left: 1000,bottom: 50.0,top: 10.0),
+                       child: Row(
+                         children: [
+                           const Text(//77777777
+                             "Total Due        :  ",
+                             style: TextStyle(
+                                 fontWeight:
+                                 FontWeight.bold,
+                                 fontSize: 14),
+                           ),
+                           aLLCustomerDueList
+                               .length ==
+                               0
+                               ? const Text(
+                             "0",
+                             style: TextStyle(
+                                 fontSize: 14),
+                           )
+                               : Text(
+                             "${GetStorage().read("totalDue")}",
+                             style: const TextStyle(
+                                 fontSize: 14),
+                           ),
+                         ],
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
+             ),
+           ),
+         ),
         ],
       ),
     );

@@ -27,20 +27,22 @@ class _ReorderListState extends State<ReorderList> {
 
   @override
   Widget build(BuildContext context) {
+
     provideStockList = Provider.of<TotalStockProvider>(context).provideTotalStockList;
 
-    void updateFilteredData() {
-      setState(() {
-        filteredData = provideStockList
-            .where((row) =>
-        row.productName.toString().contains(searchQuery))
-            .toList();
-      });
-    }
+    // void updateFilteredData() {
+    //   setState(() {
+    //     filteredData = provideStockList
+    //         .where((row) =>
+    //     row.productName.toString().contains(searchQuery))
+    //         .toList();
+    //   });
+    // }
 
     return Scaffold(
         appBar: CustomAppBar(title: "Reorder List"),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Container(
             //   height: 40.0,
@@ -74,73 +76,86 @@ class _ReorderListState extends State<ReorderList> {
             //     ),
             //   ),
             // ),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: DataTable(
-                      showCheckboxColumn: true,
-                      border: TableBorder.all(color: Colors.black54, width: 1),
-                      columns: const [
-                        DataColumn(
-                          label: Center(child: Text('Product Id')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Product Name')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Category Name')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Re Order Level')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Current Stock')),
-                        ),
-                      ],
-                      rows: List.generate(
-                        provideStockList.length,
 
-                        (int index) {
-                          // if (provideStockList[index].productName.toString().toLowerCase().contains(search)) {
-                            return DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(child: Text(provideStockList[index].productCode!)),
-                                ),
-                                DataCell(
-                                  Center(child: Text(provideStockList[index].productName!)),
-                                ),
-                                DataCell(
-                                  Center(child: Text(provideStockList[index].productCategoryName!)),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${provideStockList[index]
-                                              .productReOrederLevel!} ${provideStockList[index]
-                                              .unitName!}")),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${provideStockList[index]
-                                              .currentQuantity!} ${provideStockList[index]
-                                              .unitName!}")),
-                                ),
-                              ],
-                            );
-                          // }
-                        }
+            FutureBuilder(
+              future: Provider.of<TotalStockProvider>(context, listen: false).getAllTotalStockData(context),
+              builder: (context, snapshot) {
+              if(snapshot.hasData){
+                return Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: DataTable(
+                          showCheckboxColumn: true,
+                          border: TableBorder.all(color: Colors.black54, width: 1),
+                          columns: const [
+                            DataColumn(
+                              label: Center(child: Text('Product Id')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Product Name')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Category Name')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Re Order Level')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Current Stock')),
+                            ),
+                          ],
+                          rows: List.generate(
+                              provideStockList.length,
+
+                                  (int index) {
+                                // if (provideStockList[index].productName.toString().toLowerCase().contains(search)) {
+                                return DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Center(child: Text(provideStockList[index].productCode!)),
+                                    ),
+                                    DataCell(
+                                      Center(child: Text(provideStockList[index].productName!)),
+                                    ),
+                                    DataCell(
+                                      Center(child: Text(provideStockList[index].productCategoryName!)),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              "${provideStockList[index]
+                                                  .productReOrederLevel!} ${provideStockList[index]
+                                                  .unitName!}")),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              "${provideStockList[index]
+                                                  .currentQuantity!} ${provideStockList[index]
+                                                  .unitName!}")),
+                                    ),
+                                  ],
+                                );
+                                // }
+                              }
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
+                );
+              }
+              else if(snapshot.connectionState == ConnectionState.waiting){
+                return  Center(child: CircularProgressIndicator(),);
+              }
+              else{
+                return SizedBox();
+              }
+            },)
           ],
         ));
   }

@@ -13,6 +13,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/salse_record_model_class.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
 import 'package:poss/provider/sales_module/stock/provider_category_wise_stock.dart';
+import 'package:poss/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../common_widget/custom_appbar.dart';
 import '../../provider/sales_module/sales_record/provider_sales_data.dart';
@@ -25,6 +26,7 @@ class SalesRecordPage extends StatefulWidget {
 
 class _SalesRecordPageState extends State<SalesRecordPage> {
   String? firstPickedDate;
+  var toDay = DateTime.now();
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -33,7 +35,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        firstPickedDate = Utils.formatDate(selectedDate);
+        print("First Selected date $firstPickedDate");
+      });
+    }
+    else{
+      setState(() {
+        firstPickedDate = Utils.formatDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
@@ -47,7 +56,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        secondPickedDate = Utils.formatDate(selectedDate);
+        print("First Selected date $secondPickedDate");
+      });
+    }else{
+      setState(() {
+        secondPickedDate = Utils.formatDate(toDay);
+        print("First Selected date $secondPickedDate");
       });
     }
   }
@@ -62,13 +77,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   bool isUserWiseClicked = false;
 
   //sub dropdowns logic
-  bool isWithoutDetailsClicked = false;
+  bool isWithoutDetailsClicked = true;
   bool isWithDetailsClicked = false;
   bool isCategorySelect = false;
   bool isQuantitySelect = false;
 
   // dropdown value
-  String? _selectedRecordTypes;
+  String? _selectedRecordTypes = 'Without Details';
   String? _selectedCustomerTypes;
   String? _selectedProductType;
   String? _selectedEmployeeTypes;
@@ -116,8 +131,13 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         .getAllSalesRecordData(context, firstPickedDate, secondPickedDate,
             customerId, employeeId, productId, userFullName);
     Provider.of<AllProductProvider>(context, listen: false)
-        .Fatch_By_all_Employee(context, dateFrom: firstPickedDate,dateTo:  secondPickedDate,
-          customerId:   customerId,employeeId:  employeeId, productId: productId,userFullName:  userFullName);
+        .Fatch_By_all_Employee(context,
+            dateFrom: firstPickedDate,
+            dateTo: secondPickedDate,
+            customerId: customerId,
+            employeeId: employeeId,
+            productId: productId,
+            userFullName: userFullName);
     Provider.of<AllProductProvider>(context, listen: false)
         .getAllSalesRecordbyemployeeData(context, firstPickedDate,
             secondPickedDate, customerId, employeeId, productId, userFullName);
@@ -276,979 +296,1600 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
 
                 isAllTypeClicked == true
                     ? Row(
-                        children: [
-                          const Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Record Type:",
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "Record Type:",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
+                          height: 30,
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 7, 125, 180),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              isExpanded: true,
+                              hint: const Text(
+                                'Please select a record type',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ), // Not necessary for Option 1
+                              value: _selectedRecordTypes,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _selectedRecordTypes = newValue!;
+                                  _selectedRecordTypes ==
+                                      "Without Details"
+                                      ? isWithoutDetailsClicked = true
+                                      : isWithoutDetailsClicked = false;
+                                  _selectedRecordTypes == "With Details"
+                                      ? isWithDetailsClicked = true
+                                      : isWithDetailsClicked = false;
+                                });
+                              },
+                              items: _recordType.map((location) {
+                                return DropdownMenuItem(
+                                  value: location,
+                                  child: Text(
+                                    location,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          )),
+                    ),
+                  ],
+                )
+                    : Container(),
+
+                isCustomerWiseClicked == true
+                    ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Customer:",
+                            style: TextStyle(
+                              fontSize: 14,
                             ),
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                                margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                height: 30,
-                                padding: const EdgeInsets.only(left: 5, right: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: const Color.fromARGB(255, 7, 125, 180),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    hint: const Text(
-                                      'Please select a record type',
-                                      style: TextStyle(
-                                        fontSize: 14,
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 38,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context)
+                                  .Fatch_By_all_Customer(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<By_all_Customer>>
+                                  snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                      onChanged: (newValue) {
+                                        print("On change Value is $newValue");
+                                        // if (newValue == '') {
+                                        //   customerSlNo = '';
+                                        // }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
                                       ),
-                                    ), // Not necessary for Option 1
-                                    value: _selectedRecordTypes,
-                                    onChanged: (newValue) {
+                                      controller: customerController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Customer',
+                                        suffix: customerId == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              customerController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element
+                                          .displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(get_all_customer.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(
+                                            child: Text(
+                                              "${suggestion.displayName}",
+                                              style: const TextStyle(fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (By_all_Customer suggestion) {
                                       setState(() {
-                                        _selectedRecordTypes = newValue!;
-                                        _selectedRecordTypes ==
-                                                "Without Details"
-                                            ? isWithoutDetailsClicked = true
-                                            : isWithoutDetailsClicked = false;
-                                        _selectedRecordTypes == "With Details"
-                                            ? isWithDetailsClicked = true
-                                            : isWithDetailsClicked = false;
+                                        customerController.text = suggestion.displayName!;
+
+                                        print(
+                                            "Customerttttttttttttttttttttttttttt ${suggestion.customerSlNo}");
+                                        _selectedCustomerTypes =
+                                            suggestion.customerSlNo.toString();
+                                        customerId = "${suggestion.customerSlNo}";
+                                        Provider.of<CounterProvider>(context,
+                                            listen: false)
+                                            .getCustomer_products(
+                                          context,
+                                          customerId,
+                                        );
+                                      });
+
+                                    },
+                                    onSaved: (value) {},
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Please select a customer',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedCustomerTypes,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         print(
+                            //             "Customerttttttttttttttttttttttttttt $newValue");
+                            //         _selectedCustomerTypes =
+                            //             newValue.toString();
+                            //         customerId = "$newValue";
+                            //         Provider.of<CounterProvider>(context,
+                            //                 listen: false)
+                            //             .getCustomer_products(
+                            //           context,
+                            //           customerId,
+                            //         );
+                            //         // Provider.of<AllProductProvider>(
+                            //         //         context,
+                            //         //         listen: false)
+                            //         //     .getAllSalesRecordData(
+                            //         //         context,
+                            //         //         firstPickedDate,
+                            //         //         secondPickedDate,
+                            //         //         customerId,
+                            //         //         employeeId,
+                            //         //         productId,
+                            //         //         userFullName);
+                            //         print(
+                            //             "Customerttttttttttttttttttttttttttt $newValue");
+                            //         // for (int i = 0;
+                            //         //     i <=
+                            //         //         provideSalesRecordList.length;
+                            //         //     i++) {
+                            //         //   print(
+                            //         //       "provideSaccccccccclesRecordList  ${provideSalesRecordList[i].customerName}");
+                            //         //   for (int j = 0;
+                            //         //       j <=
+                            //         //           provideSalesRecordList[i]
+                            //         //               .saleDetails!
+                            //         //               .length;
+                            //         //       j++) {
+                            //         //     provideSalesdetailsRecordListt
+                            //         //         .add(provideSalesRecordList[i]
+                            //         //             .saleDetails![j]);
+                            //         //   }
+                            //         // }
+                            //       });
+                            //     },
+                            //     items: get_all_customer.map((location) {
+                            //       return DropdownMenuItem(
+                            //         value: location.customerSlNo,
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                          ),
+                        )
+                      ],
+                    ), //Customer
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Product:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 38,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: FutureBuilder(
+                              future: Provider.of<CounterProvider>(context)
+                                  .getCustomer_products(context, customerId),
+                              builder: (context,
+                                  AsyncSnapshot<List<GetCustomerProductsMclass>>
+                                  snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                      onChanged: (newValue) {
+                                        print("On change Value is $newValue");
+                                        // if (newValue == '') {
+                                        //   customerSlNo = '';
+                                        // }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                      controller: productController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Product',
+                                        suffix: _selectedProductType == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              productController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element
+                                          .displayText!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(get_all_customer.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(
+                                            child: Text(
+                                              "${suggestion.displayText}",
+                                              style: const TextStyle(fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (GetCustomerProductsMclass suggestion) {
+                                      setState(() {
+                                        productController.text = suggestion.displayText!;
+
+                                        print(
+                                            "Customerttttttttttttttttttttttttttt ${suggestion.productSlNo}");
+                                        _selectedProductType = suggestion.productSlNo.toString();
                                       });
                                     },
-                                    items: _recordType.map((location) {
+                                    onSaved: (value) {},
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       "Please select a product",
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //     value: _selectedProductType,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedProductType = newValue.toString();
+                            //         print("Produccccccccccccccccccccccc $newValue");
+                            //
+                            //       });
+                            //     },
+                            //     items: Allcustomer_productsbyProduct.map(
+                            //         (location) {
+                            //       return DropdownMenuItem(
+                            //         value: location.productSlNo,
+                            //         child: Text(
+                            //           "${location.productName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //           overflow: TextOverflow.visible,
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                          ),
+                        )
+                      ],
+                    ), //Product
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Record Type:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                              margin: const EdgeInsets.only(top: 5, bottom: 5),
+                              height: 30,
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: const Color.fromARGB(255, 7, 125, 180),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  isExpanded: true,
+                                  hint: const Text(
+                                    'Please select a record type',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ), // Not necessary for Option 1
+                                  value: _selectedRecordTypes,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedRecordTypes = newValue!;
+                                      _selectedRecordTypes ==
+                                          "Without Details"
+                                          ? isWithoutDetailsClicked = true
+                                          : isWithoutDetailsClicked =
+                                      false;
+                                      _selectedRecordTypes ==
+                                          "With Details"
+                                          ? isWithDetailsClicked = true
+                                          : isWithDetailsClicked = false;
+                                      Provider.of<AllProductProvider>(
+                                          context,
+                                          listen: false)
+                                          .getAllSalesRecordData(
+                                          context,
+                                          firstPickedDate,
+                                          secondPickedDate,
+                                          customerId,
+                                          employeeId,
+                                          productId,
+                                          userFullName);
+                                    });
+                                  },
+                                  items: _recordType.map((location) {
+                                    return DropdownMenuItem(
+                                      value: location,
+                                      child: Text(
+                                        location,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ), //Record Type
+                  ],
+                )
+                    : Container(),
+
+                isEmployeeWiseClicked == true
+                    ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Employee:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 38,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context)
+                                  .Fatch_By_all_Employee(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<By_all_employee_ModelClass>>
+                                  snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                      onChanged: (newValue) {
+                                        print("On change Value is $newValue");
+                                        // if (newValue == '') {
+                                        //   customerSlNo = '';
+                                        // }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                      controller: employeeController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Employee',
+                                        suffix: customerId == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              employeeController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element
+                                          .displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(get_all_customer.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(
+                                            child: Text(
+                                              "${suggestion.employeeName}",
+                                              style: const TextStyle(fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (By_all_employee_ModelClass suggestion) {
+                                      setState(() {
+                                        employeeController.text = suggestion.employeeName!;
+
+                                        print(
+                                            "Customerttttttttttttttttttttttttttt ${suggestion.employeeSlNo}");
+                                        _selectedEmployeeTypes =
+                                            suggestion.employeeSlNo.toString();
+                                        employeeId = "${suggestion.employeeSlNo}";
+                                      });
+                                    },
+                                    onSaved: (value) {},
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    // Employee
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Record Type:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                              margin: const EdgeInsets.only(top: 5, bottom: 5),
+                              height: 30,
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: const Color.fromARGB(255, 7, 125, 180),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  isExpanded: true,
+                                  hint: const Text(
+                                    'Please select a record type',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ), // Not necessary for Option 1
+                                  value: _selectedRecordTypes,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedRecordTypes = newValue!;
+                                      _selectedRecordTypes ==
+                                          "Without Details"
+                                          ? isWithoutDetailsClicked = true
+                                          : isWithoutDetailsClicked =
+                                      false;
+                                      _selectedRecordTypes ==
+                                          "With Details"
+                                          ? isWithDetailsClicked = true
+                                          : isWithDetailsClicked = false;
+                                    });
+                                  },
+                                  items: _recordType.map((location) {
+                                    return DropdownMenuItem(
+                                      value: location,
+                                      child: Text(
+                                        location,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ), // Record Type
+                  ],
+                )
+                    : Container(),
+
+                isCategoryWiseClicked == true
+                    ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Customer:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context)
+                                  .Fatch_By_all_Customer(context),
+                              builder: (context,
+                                  AsyncSnapshot<List<By_all_Customer>>
+                                  snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                      onChanged: (newValue) {
+                                        print("On change Value is $newValue");
+                                        // if (newValue == '') {
+                                        //   customerSlNo = '';
+                                        // }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                      controller: customerController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Customer',
+                                        suffix: customerId == '' ? null : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              customerController.text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 3),
+                                            child: Icon(Icons.close,size: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element
+                                          .displayName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(get_all_customer.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(
+                                            child: Text(
+                                              "${suggestion.displayName}",
+                                              style: const TextStyle(fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (By_all_Customer suggestion) {
+                                      setState(() {
+                                        customerController.text = suggestion.displayName!;
+
+                                        _selectedCustomerTypes = suggestion.customerSlNo.toString();
+                                        print(
+                                            "Customer wise Id : =  ${suggestion.customerSlNo}");
+                                        customerId = "${suggestion.customerSlNo}";
+                                        Provider.of<AllProductProvider>(
+                                            context,
+                                            listen: false)
+                                            .FetchCustomerCategoriesSaleProduct(
+                                            context,
+                                            customerId,
+                                            dateFrom: firstPickedDate,
+                                            dateTo: secondPickedDate);
+                                      });
+                                    },
+                                    onSaved: (value) {},
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Please select a Customer',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedCustomerTypes,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedCustomerTypes =
+                            //             newValue.toString();
+                            //         print(
+                            //             "Customer wise Id : =  $newValue");
+                            //         customerId = "${newValue}";
+                            //         Provider.of<AllProductProvider>(
+                            //                 context,
+                            //                 listen: false)
+                            //             .FetchCustomerCategoriesSaleProduct(
+                            //                 context,
+                            //                 customerId,
+                            //                 firstPickedDate,
+                            //                 secondPickedDate);
+                            //       });
+                            //     },
+                            //     items: get_all_customer.map((location) {
+                            //       return DropdownMenuItem(
+                            //         value: location.customerSlNo,
+                            //         child: Text(
+                            //           "${location.customerName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                          ),
+                        )
+                      ],
+                    ), // Employee
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Category:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 40,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: FutureBuilder(
+                              future: Provider.of<AllProductProvider>(context).FetchCustomerCategoriesSaleProduct(context, customerId),
+                              builder: (context,
+                                  AsyncSnapshot<List<CustomerCategories>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            categoryId = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: categoryController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Category',
+                                          suffix: categoryId == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                categoryController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return snapshot.data!
+                                          .where((element) => element.productCategoryName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(FetchCustomerwiseCategory.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                    },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (CustomerCategories suggestion) {
+                                      categoryController.text = suggestion.productCategoryName!;
+                                      setState(() {
+                                        _selectedCategoryTypes =
+                                            suggestion.productCategorySlNo.toString();
+                                        print(
+                                            "Customer Wise Category ID ========== > ${suggestion.productCategorySlNo} ");
+                                        categoryId = "$_selectedCategoryTypes";
+                                      });
+                                    },
+                                    onSaved: (value) {},
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+                            // child: DropdownButtonHideUnderline(
+                            //   child: DropdownButton(
+                            //     isExpanded: true,
+                            //     hint: const Text(
+                            //       'Please select a Category',
+                            //       style: TextStyle(
+                            //         fontSize: 14,
+                            //       ),
+                            //     ), // Not necessary for Option 1
+                            //     value: _selectedCategoryTypes,
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         _selectedCategoryTypes =
+                            //             newValue.toString();
+                            //         print(
+                            //             "Customer Wise Category ID ========== > $newValue ");
+                            //         categoryId =
+                            //             "$_selectedCategoryTypes";
+                            //       });
+                            //     },
+                            //     items: FetchCustomerwiseCategory.map(
+                            //         (location) {
+                            //       return DropdownMenuItem(
+                            //         value: location.productCategorySlNo,
+                            //         child: Text(
+                            //           "${location.productCategoryName}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //   ),
+                            // ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                )
+                    : Container(),
+
+                isQuantityWiseClicked == true
+                    ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "Product:",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 5, bottom: 5),
+                        height: 40,
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 7, 125, 180),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: FutureBuilder(
+                          future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                          builder: (context,
+                              AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                            if (snapshot.hasData) {
+                              return TypeAheadFormField(
+                                textFieldConfiguration:
+                                TextFieldConfiguration(
+                                    onChanged: (value){
+                                      if (value == '') {
+                                        _selectedQuantityTypes = '';
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    controller: productAllController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Select Product',
+                                      suffix: _selectedQuantityTypes == '' ? null : GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            productAllController.text = '';
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 3),
+                                          child: Icon(Icons.close,size: 14,),
+                                        ),
+                                      ),
+                                    )
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  return snapshot.data!
+                                      .where((element) => element.productName!
+                                      .toLowerCase()
+                                      .contains(pattern
+                                      .toString()
+                                      .toLowerCase()))
+                                      .take(FetchAllProductList.length)
+                                      .toList();
+                                  // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected:
+                                    (AllProductModelClass suggestion) {
+                                  productAllController.text = suggestion.productName!;
+                                  setState(() {
+                                    _selectedQuantityTypes =
+                                        suggestion.productSlNo.toString();
+
+                                  });
+                                },
+                                onSaved: (value) {},
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+
+                        // child: DropdownButtonHideUnderline(
+                        //   child: DropdownButton(
+                        //     isExpanded: true,
+                        //     hint: const Text(
+                        //       'Please select a Product',
+                        //       style: TextStyle(
+                        //         fontSize: 14,
+                        //       ),
+                        //     ), // Not necessary for Option 1
+                        //     value: _selectedQuantityTypes,
+                        //     onChanged: (newValue) {
+                        //       setState(() {
+                        //         _selectedQuantityTypes =
+                        //             newValue.toString();
+                        //         print(
+                        //             "ProductID============>by quantity?  ${_selectedQuantityTypes}");
+                        //         print(
+                        //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                        //         print(
+                        //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                        //         print(
+                        //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
+                        //       });
+                        //     },
+                        //     items: FetchAllProductList.map((location) {
+                        //       return DropdownMenuItem(
+                        //         value: location.productSlNo,
+                        //         child: Text(
+                        //           "${location.productName}",
+                        //           style: const TextStyle(
+                        //             fontSize: 14,
+                        //           ),
+                        //         ),
+                        //       );
+                        //     }).toList(),
+                        //   ),
+                        // ),
+                      ),
+                    )
+                  ],
+                )
+                    : Container(),
+
+                isSummaryWiseClicked == true
+                    ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "Product:",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 5, bottom: 5),
+                        height: 40,
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 7, 125, 180),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: FutureBuilder(
+                          future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                          builder: (context,
+                              AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                            if (snapshot.hasData) {
+                              return TypeAheadFormField(
+                                textFieldConfiguration:
+                                TextFieldConfiguration(
+                                    onChanged: (value){
+                                      if (value == '') {
+                                        _selectedSummaryTypes = '';
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    controller: productAllController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Select Product',
+                                      suffix: _selectedSummaryTypes == '' ? null : GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            productAllController.text = '';
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 3),
+                                          child: Icon(Icons.close,size: 14,),
+                                        ),
+                                      ),
+                                    )
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  return snapshot.data!
+                                      .where((element) => element.productName!
+                                      .toLowerCase()
+                                      .contains(pattern
+                                      .toString()
+                                      .toLowerCase()))
+                                      .take(FetchAllProductList.length)
+                                      .toList();
+                                  // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected:
+                                    (AllProductModelClass suggestion) {
+                                  productAllController.text = suggestion.productName!;
+                                  setState(() {
+                                    _selectedSummaryTypes = suggestion.productSlNo.toString();
+                                    productId = "$_selectedSummaryTypes";
+
+                                  });
+                                },
+                                onSaved: (value) {},
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+
+                        // child: DropdownButtonHideUnderline(
+                        //   child: DropdownButton(
+                        //     isExpanded: true,
+                        //     hint: const Text(
+                        //       'Please select a Product',
+                        //       style: TextStyle(
+                        //         fontSize: 14,
+                        //       ),
+                        //     ), // Not necessary for Option 1
+                        //     value: _selectedSummaryTypes,
+                        //     onChanged: (newValue) {
+                        //       setState(() {
+                        //         _selectedSummaryTypes =
+                        //             newValue.toString();
+                        //         productId = "${_selectedSummaryTypes}";
+                        //       });
+                        //     },
+                        //
+                        //     items: FetchAllProductList.map((location) {
+                        //       return DropdownMenuItem(
+                        //         value: location.productSlNo,
+                        //         child: Text(
+                        //           "${location.productName}",
+                        //           style: const TextStyle(
+                        //             fontSize: 14,
+                        //           ),
+                        //         ),
+                        //       );
+                        //     }).toList(),
+                        //   ),
+                        // ),
+                      ),
+                    )
+                  ],
+                )
+                    : Container(),
+                isUserWiseClicked == true
+                    ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "User:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
+                            height: 30,
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                isExpanded: true,
+                                hint: const Text(
+                                  'Please select a User',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ), // Not necessary for Option 1
+                                value: _selectedUserTypes,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _selectedUserTypes =
+                                        newValue.toString();
+                                    userFullName =
+                                    "$_selectedUserTypes";
+
+                                    print(
+                                        "Usser sNo==============> $newValue");
+                                    print(
+                                        "Usser sNo=====_selectedUserTypes=========> $userFullName");
+                                    final results = [
+                                      FetchUserBySummaryProductlist.where(
+                                              (m) => m.userSlNo!.contains(
+                                              '$newValue')) // or Testing 123
+                                          .toList(),
+                                    ];
+                                    results.forEach((element) async {
+                                      element.add(element.first);
+                                      print(
+                                          "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+                                      byUserId = "${element[0].userSlNo}";
+                                      print(
+                                          "byUserId=========> ${element[0].userSlNo}");
+                                      byUserFullname =
+                                      "${element[0].fullName}";
+                                      print(
+                                          "byUserFullname===> ${element[0].fullName}");
+                                    });
+                                  });
+                                },
+                                items: FetchUserBySummaryProductlist.map(
+                                        (location) {
                                       return DropdownMenuItem(
-                                        value: location,
+                                        value: location.userSlNo,
                                         child: Text(
-                                          location,
+                                          "${location.fullName}",
                                           style: const TextStyle(
                                             fontSize: 14,
                                           ),
                                         ),
                                       );
                                     }).toList(),
-                                  ),
-                                )),
-                          ),
-                        ],
-                      )
-                    : Container(),
-
-                isCustomerWiseClicked == true
-                    ? Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Customer:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 38,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<AllProductProvider>(context)
-                                        .Fatch_By_all_Customer(context),
-                                    builder: (context,
-                                        AsyncSnapshot<List<By_all_Customer>>
-                                        snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                            onChanged: (newValue) {
-                                              print("On change Value is $newValue");
-                                              // if (newValue == '') {
-                                              //   customerSlNo = '';
-                                              // }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: customerController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Customer',
-                                              suffix: customerId == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    customerController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element
-                                                .displayName!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(get_all_customer.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(
-                                                  child: Text(
-                                                    "${suggestion.displayName}",
-                                                    style: const TextStyle(fontSize: 12),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  )),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (By_all_Customer suggestion) {
-                                            setState(() {
-                                              customerController.text = suggestion.displayName!;
-
-                                              print(
-                                                  "Customerttttttttttttttttttttttttttt ${suggestion.customerSlNo}");
-                                              _selectedCustomerTypes =
-                                                  suggestion.customerSlNo.toString();
-                                              customerId = "${suggestion.customerSlNo}";
-                                              Provider.of<CounterProvider>(context,
-                                                  listen: false)
-                                                  .getCustomer_products(
-                                                context,
-                                                customerId,
-                                              );
-                                            });
-
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
-                                    },
-                                  ),
-
-                                  // child: DropdownButtonHideUnderline(
-                                  //   child: DropdownButton(
-                                  //     isExpanded: true,
-                                  //     hint: const Text(
-                                  //       'Please select a customer',
-                                  //       style: TextStyle(
-                                  //         fontSize: 14,
-                                  //       ),
-                                  //     ), // Not necessary for Option 1
-                                  //     value: _selectedCustomerTypes,
-                                  //     onChanged: (newValue) {
-                                  //       setState(() {
-                                  //         print(
-                                  //             "Customerttttttttttttttttttttttttttt $newValue");
-                                  //         _selectedCustomerTypes =
-                                  //             newValue.toString();
-                                  //         customerId = "$newValue";
-                                  //         Provider.of<CounterProvider>(context,
-                                  //                 listen: false)
-                                  //             .getCustomer_products(
-                                  //           context,
-                                  //           customerId,
-                                  //         );
-                                  //         // Provider.of<AllProductProvider>(
-                                  //         //         context,
-                                  //         //         listen: false)
-                                  //         //     .getAllSalesRecordData(
-                                  //         //         context,
-                                  //         //         firstPickedDate,
-                                  //         //         secondPickedDate,
-                                  //         //         customerId,
-                                  //         //         employeeId,
-                                  //         //         productId,
-                                  //         //         userFullName);
-                                  //         print(
-                                  //             "Customerttttttttttttttttttttttttttt $newValue");
-                                  //         // for (int i = 0;
-                                  //         //     i <=
-                                  //         //         provideSalesRecordList.length;
-                                  //         //     i++) {
-                                  //         //   print(
-                                  //         //       "provideSaccccccccclesRecordList  ${provideSalesRecordList[i].customerName}");
-                                  //         //   for (int j = 0;
-                                  //         //       j <=
-                                  //         //           provideSalesRecordList[i]
-                                  //         //               .saleDetails!
-                                  //         //               .length;
-                                  //         //       j++) {
-                                  //         //     provideSalesdetailsRecordListt
-                                  //         //         .add(provideSalesRecordList[i]
-                                  //         //             .saleDetails![j]);
-                                  //         //   }
-                                  //         // }
-                                  //       });
-                                  //     },
-                                  //     items: get_all_customer.map((location) {
-                                  //       return DropdownMenuItem(
-                                  //         value: location.customerSlNo,
-                                  //         child: Text(
-                                  //           "${location.customerName}",
-                                  //           style: const TextStyle(
-                                  //             fontSize: 14,
-                                  //           ),
-                                  //         ),
-                                  //       );
-                                  //     }).toList(),
-                                  //   ),
-                                  // ),
-                                ),
-                              )
-                            ],
-                          ), //Customer
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Product:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 38,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<CounterProvider>(context)
-                                        .getCustomer_products(context, customerId),
-                                    builder: (context,
-                                        AsyncSnapshot<List<GetCustomerProductsMclass>>
-                                        snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                            onChanged: (newValue) {
-                                              print("On change Value is $newValue");
-                                              // if (newValue == '') {
-                                              //   customerSlNo = '';
-                                              // }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: productController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Product',
-                                              suffix: _selectedProductType == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    productController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element
-                                                .displayText!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(get_all_customer.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(
-                                                  child: Text(
-                                                    "${suggestion.displayText}",
-                                                    style: const TextStyle(fontSize: 12),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  )),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (GetCustomerProductsMclass suggestion) {
-                                            setState(() {
-                                              productController.text = suggestion.displayText!;
-
-                                              print(
-                                                  "Customerttttttttttttttttttttttttttt ${suggestion.productSlNo}");
-                                              _selectedProductType = suggestion.productSlNo.toString();
-                                            });
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
-                                    },
-                                  ),
-
-                                  // child: DropdownButtonHideUnderline(
-                                  //   child: DropdownButton(
-                                  //     isExpanded: true,
-                                  //     hint: const Text(
-                                  //       "Please select a product",
-                                  //       style: TextStyle(
-                                  //         fontSize: 14,
-                                  //       ),
-                                  //     ),
-                                  //     value: _selectedProductType,
-                                  //     onChanged: (newValue) {
-                                  //       setState(() {
-                                  //         _selectedProductType = newValue.toString();
-                                  //         print("Produccccccccccccccccccccccc $newValue");
-                                  //
-                                  //       });
-                                  //     },
-                                  //     items: Allcustomer_productsbyProduct.map(
-                                  //         (location) {
-                                  //       return DropdownMenuItem(
-                                  //         value: location.productSlNo,
-                                  //         child: Text(
-                                  //           "${location.productName}",
-                                  //           style: const TextStyle(
-                                  //             fontSize: 14,
-                                  //           ),
-                                  //           overflow: TextOverflow.visible,
-                                  //         ),
-                                  //       );
-                                  //     }).toList(),
-                                  //   ),
-                                  // ),
-                                ),
-                              )
-                            ],
-                          ), //Product
-                          Row(
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Record Type:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                    height: 30,
-                                    padding: const EdgeInsets.only(left: 5, right: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: const Color.fromARGB(255, 7, 125, 180),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        hint: const Text(
-                                          'Please select a record type',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ), // Not necessary for Option 1
-                                        value: _selectedRecordTypes,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            _selectedRecordTypes = newValue!;
-                                            _selectedRecordTypes ==
-                                                    "Without Details"
-                                                ? isWithoutDetailsClicked = true
-                                                : isWithoutDetailsClicked =
-                                                    false;
-                                            _selectedRecordTypes ==
-                                                    "With Details"
-                                                ? isWithDetailsClicked = true
-                                                : isWithDetailsClicked = false;
-                                            Provider.of<AllProductProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getAllSalesRecordData(
-                                                    context,
-                                                    firstPickedDate,
-                                                    secondPickedDate,
-                                                    customerId,
-                                                    employeeId,
-                                                    productId,
-                                                    userFullName);
-                                          });
-                                        },
-                                        items: _recordType.map((location) {
-                                          return DropdownMenuItem(
-                                            value: location,
-                                            child: Text(
-                                              location,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ), //Record Type
-                        ],
-                      )
-                    : Container(),
-
-                isEmployeeWiseClicked == true
-                    ? Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Employee:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 38,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<AllProductProvider>(context)
-                                        .Fatch_By_all_Employee(context),
-                                    builder: (context,
-                                        AsyncSnapshot<List<By_all_employee_ModelClass>>
-                                        snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                            onChanged: (newValue) {
-                                              print("On change Value is $newValue");
-                                              // if (newValue == '') {
-                                              //   customerSlNo = '';
-                                              // }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: employeeController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Employee',
-                                              suffix: customerId == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    employeeController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element
-                                                .displayName!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(get_all_customer.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(
-                                                  child: Text(
-                                                    "${suggestion.employeeName}",
-                                                    style: const TextStyle(fontSize: 12),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  )),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (By_all_employee_ModelClass suggestion) {
-                                            setState(() {
-                                              employeeController.text = suggestion.employeeName!;
-
-                                              print(
-                                                  "Customerttttttttttttttttttttttttttt ${suggestion.employeeSlNo}");
-                                              _selectedEmployeeTypes =
-                                                  suggestion.employeeSlNo.toString();
-                                              employeeId = "${suggestion.employeeSlNo}";
-                                            });
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          // Employee
-                          Row(
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Record Type:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                    height: 30,
-                                    padding: const EdgeInsets.only(left: 5, right: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: const Color.fromARGB(255, 7, 125, 180),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        hint: const Text(
-                                          'Please select a record type',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ), // Not necessary for Option 1
-                                        value: _selectedRecordTypes,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            _selectedRecordTypes = newValue!;
-                                            _selectedRecordTypes ==
-                                                    "Without Details"
-                                                ? isWithoutDetailsClicked = true
-                                                : isWithoutDetailsClicked =
-                                                    false;
-                                            _selectedRecordTypes ==
-                                                    "With Details"
-                                                ? isWithDetailsClicked = true
-                                                : isWithDetailsClicked = false;
-                                          });
-                                        },
-                                        items: _recordType.map((location) {
-                                          return DropdownMenuItem(
-                                            value: location,
-                                            child: Text(
-                                              location,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ), // Record Type
-                        ],
-                      )
-                    : Container(),
-
-                isCategoryWiseClicked == true
-                    ? Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Customer:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 40,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<AllProductProvider>(context)
-                                        .Fatch_By_all_Customer(context),
-                                    builder: (context,
-                                        AsyncSnapshot<List<By_all_Customer>>
-                                        snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                            onChanged: (newValue) {
-                                              print("On change Value is $newValue");
-                                              // if (newValue == '') {
-                                              //   customerSlNo = '';
-                                              // }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: customerController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Customer',
-                                              suffix: customerId == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    customerController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element
-                                                .displayName!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(get_all_customer.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(
-                                                  child: Text(
-                                                    "${suggestion.displayName}",
-                                                    style: const TextStyle(fontSize: 12),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  )),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (By_all_Customer suggestion) {
-                                            setState(() {
-                                              customerController.text = suggestion.displayName!;
-
-                                              _selectedCustomerTypes = suggestion.customerSlNo.toString();
-                                                      print(
-                                                          "Customer wise Id : =  ${suggestion.customerSlNo}");
-                                                      customerId = "${suggestion.customerSlNo}";
-                                                      Provider.of<AllProductProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .FetchCustomerCategoriesSaleProduct(
-                                                              context,
-                                                              customerId,
-                                                              dateFrom: firstPickedDate,
-                                                              dateTo: secondPickedDate);
-                                            });
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
-                                    },
-                                  ),
-
-                                  // child: DropdownButtonHideUnderline(
-                                  //   child: DropdownButton(
-                                  //     isExpanded: true,
-                                  //     hint: const Text(
-                                  //       'Please select a Customer',
-                                  //       style: TextStyle(
-                                  //         fontSize: 14,
-                                  //       ),
-                                  //     ), // Not necessary for Option 1
-                                  //     value: _selectedCustomerTypes,
-                                  //     onChanged: (newValue) {
-                                  //       setState(() {
-                                  //         _selectedCustomerTypes =
-                                  //             newValue.toString();
-                                  //         print(
-                                  //             "Customer wise Id : =  $newValue");
-                                  //         customerId = "${newValue}";
-                                  //         Provider.of<AllProductProvider>(
-                                  //                 context,
-                                  //                 listen: false)
-                                  //             .FetchCustomerCategoriesSaleProduct(
-                                  //                 context,
-                                  //                 customerId,
-                                  //                 firstPickedDate,
-                                  //                 secondPickedDate);
-                                  //       });
-                                  //     },
-                                  //     items: get_all_customer.map((location) {
-                                  //       return DropdownMenuItem(
-                                  //         value: location.customerSlNo,
-                                  //         child: Text(
-                                  //           "${location.customerName}",
-                                  //           style: const TextStyle(
-                                  //             fontSize: 14,
-                                  //           ),
-                                  //         ),
-                                  //       );
-                                  //     }).toList(),
-                                  //   ),
-                                  // ),
-                                ),
-                              )
-                            ],
-                          ), // Employee
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Category:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 40,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<AllProductProvider>(context).FetchCustomerCategoriesSaleProduct(context, customerId),
-                                    builder: (context,
-                                        AsyncSnapshot<List<CustomerCategories>> snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                              onChanged: (value){
-                                                if (value == '') {
-                                                  categoryId = '';
-                                                }
-                                              },
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                              ),
-                                              controller: categoryController,
-                                              decoration: InputDecoration(
-                                                hintText: 'Select Category',
-                                                suffix: categoryId == '' ? null : GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      categoryController.text = '';
-                                                    });
-                                                  },
-                                                  child: const Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 3),
-                                                    child: Icon(Icons.close,size: 14,),
-                                                  ),
-                                                ),
-                                              )
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element.productCategoryName!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(FetchCustomerwiseCategory.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (CustomerCategories suggestion) {
-                                            categoryController.text = suggestion.productCategoryName!;
-                                            setState(() {
-                                              _selectedCategoryTypes =
-                                                  suggestion.productCategorySlNo.toString();
-                                                      print(
-                                                          "Customer Wise Category ID ========== > ${suggestion.productCategorySlNo} ");
-                                                      categoryId = "$_selectedCategoryTypes";
-                                            });
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
-                                    },
-                                  ),
-                                  // child: DropdownButtonHideUnderline(
-                                  //   child: DropdownButton(
-                                  //     isExpanded: true,
-                                  //     hint: const Text(
-                                  //       'Please select a Category',
-                                  //       style: TextStyle(
-                                  //         fontSize: 14,
-                                  //       ),
-                                  //     ), // Not necessary for Option 1
-                                  //     value: _selectedCategoryTypes,
-                                  //     onChanged: (newValue) {
-                                  //       setState(() {
-                                  //         _selectedCategoryTypes =
-                                  //             newValue.toString();
-                                  //         print(
-                                  //             "Customer Wise Category ID ========== > $newValue ");
-                                  //         categoryId =
-                                  //             "$_selectedCategoryTypes";
-                                  //       });
-                                  //     },
-                                  //     items: FetchCustomerwiseCategory.map(
-                                  //         (location) {
-                                  //       return DropdownMenuItem(
-                                  //         value: location.productCategorySlNo,
-                                  //         child: Text(
-                                  //           "${location.productCategoryName}",
-                                  //           style: const TextStyle(
-                                  //             fontSize: 14,
-                                  //           ),
-                                  //         ),
-                                  //       );
-                                  //     }).toList(),
-                                  //   ),
-                                  // ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                    : Container(),
-
-                isQuantityWiseClicked == true
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Product:",
-                              style: TextStyle(
-                                fontSize: 14,
                               ),
                             ),
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: Container(
+                        )
+                      ],
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Expanded(
+                    //       flex: 1,
+                    //       child: Text(
+                    //         "Type:",
+                    //         style: TextStyle(
+                    //           fontSize: 14,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       flex: 3,
+                    //       child: Container(
+                    //         margin: EdgeInsets.only(top: 5, bottom: 5),
+                    //         height: 30,
+                    //         padding: EdgeInsets.only(left: 5, right: 5),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.white,
+                    //           border: Border.all(
+                    //             color: Color.fromARGB(255, 7, 125, 180),
+                    //             width: 1.0,
+                    //           ),
+                    //           borderRadius: BorderRadius.circular(10.0),
+                    //         ),
+                    //         child: DropdownButtonHideUnderline(
+                    //           child: DropdownButton(
+                    //             isExpanded: true,
+                    //             hint: Text(
+                    //               'By Category',
+                    //               style: TextStyle(
+                    //                 fontSize: 14,
+                    //               ),
+                    //             ), // Not necessary for Option 1
+                    //             value: _selectedCategoryyTypes,
+                    //             onChanged: (newValue) {
+                    //               setState(() {
+                    //                 _selectedCategoryyTypes =
+                    //                     newValue.toString();
+                    //                 if ("${newValue}" == "By Category") {
+                    //                   iscategoryslect = true;
+                    //                 } else {
+                    //                   iscategoryslect = false;
+                    //                 }
+                    //               });
+                    //             },
+                    //             items: Typelist.map((location) {
+                    //               return DropdownMenuItem(
+                    //                 child: Text(
+                    //                   location,
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                   ),
+                    //                 ),
+                    //                 value: location,
+                    //               );
+                    //             }).toList(),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
+                    // iscategoryslect == true
+                    //     ? Row(
+                    //         mainAxisAlignment:
+                    //             MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Expanded(
+                    //             flex: 1,
+                    //             child: Text(
+                    //               "Category:",
+                    //               style: TextStyle(
+                    //                 fontSize: 14,
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           Expanded(
+                    //             flex: 3,
+                    //             child: Container(
+                    //               margin:
+                    //                   EdgeInsets.only(top: 5, bottom: 5),
+                    //               height: 30,
+                    //               padding:
+                    //                   EdgeInsets.only(left: 5, right: 5),
+                    //               decoration: BoxDecoration(
+                    //                 color: Colors.white,
+                    //                 border: Border.all(
+                    //                   color: Color.fromARGB(
+                    //                       255, 7, 125, 180),
+                    //                   width: 1.0,
+                    //                 ),
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(10.0),
+                    //               ),
+                    //               child: DropdownButtonHideUnderline(
+                    //                 child: DropdownButton(
+                    //                   isExpanded: true,
+                    //                   hint: Text(
+                    //                     'Please select a Category',
+                    //                     style: TextStyle(
+                    //                       fontSize: 14,
+                    //                     ),
+                    //                   ), // Not necessary for Option 1
+                    //                   value: _selectedCategoryTypes,
+                    //                   onChanged: (newValue) {
+                    //                     setState(() {
+                    //                       _selectedCategoryTypes =
+                    //                           newValue.toString();
+
+                    //                       print(
+                    //                           "Proguct Category SI No========== ${newValue}");
+                    //                     });
+                    //                   },
+                    //                   items:
+                    //                       AllCategoryList.map((location) {
+                    //                     return DropdownMenuItem(
+                    //                       child: Text(
+                    //                         "${location.productCategoryName}",
+                    //                         style: TextStyle(
+                    //                           fontSize: 14,
+                    //                         ),
+                    //                       ),
+                    //                       value: location
+                    //                           .productCategorySlNo,
+                    //                     );
+                    //                   }).toList(),
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           )
+                    //         ],
+                    //       )
+                    //     : Row(
+                    //         mainAxisAlignment:
+                    //             MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Expanded(
+                    //             flex: 1,
+                    //             child: Text(
+                    //               "Quantity:",
+                    //               style: TextStyle(
+                    //                 fontSize: 14,
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           Expanded(
+                    //             flex: 3,
+                    //             child: Container(
+                    //               margin:
+                    //                   EdgeInsets.only(top: 5, bottom: 5),
+                    //               height: 30,
+                    //               padding:
+                    //                   EdgeInsets.only(left: 5, right: 5),
+                    //               decoration: BoxDecoration(
+                    //                 color: Colors.white,
+                    //                 border: Border.all(
+                    //                   color: Color.fromARGB(
+                    //                       255, 7, 125, 180),
+                    //                   width: 1.0,
+                    //                 ),
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(10.0),
+                    //               ),
+                    //               child: DropdownButtonHideUnderline(
+                    //                 child: DropdownButton(
+                    //                   isExpanded: true,
+                    //                   hint: Text(
+                    //                     'Please select a Quantity',
+                    //                     style: TextStyle(
+                    //                       fontSize: 14,
+                    //                     ),
+                    //                   ), // Not necessary for Option 1
+                    //                   value: _selectedCategoryyyTypes,
+                    //                   onChanged: (newValue) {
+                    //                     setState(() {
+                    //                       _selectedCategoryyyTypes =
+                    //                           newValue.toString();
+
+                    //                       print(
+                    //                           "Quantity SI No========== ${newValue}");
+                    //                     });
+                    //                   },
+                    //                   items: FetchAllProductList.map(
+                    //                       (location) {
+                    //                     return DropdownMenuItem(
+                    //                       child: Text(
+                    //                         "${location.productSlNo}",
+                    //                         style: TextStyle(
+                    //                           fontSize: 14,
+                    //                         ),
+                    //                       ),
+                    //                       value: location.productSlNo,
+                    //                     );
+                    //                   }).toList(),
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Expanded(
+                    //       flex: 1,
+                    //       child: Text(
+                    //         "Product:",
+                    //         style: TextStyle(
+                    //           fontSize: 14,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       flex: 3,
+                    //       child: Container(
+                    //         margin: EdgeInsets.only(top: 5, bottom: 5),
+                    //         height: 30,
+                    //         padding: EdgeInsets.only(left: 5, right: 5),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.white,
+                    //           border: Border.all(
+                    //             color: Color.fromARGB(255, 7, 125, 180),
+                    //             width: 1.0,
+                    //           ),
+                    //           borderRadius: BorderRadius.circular(10.0),
+                    //         ),
+                    //         child: DropdownButtonHideUnderline(
+                    //           child: DropdownButton(
+                    //             isExpanded: true,
+                    //             hint: Text(
+                    //               'Please select a Product',
+                    //               style: TextStyle(
+                    //                 fontSize: 14,
+                    //               ),
+                    //             ), // Not necessary for Option 1
+                    //             value: _selectedQuantityTypes,
+                    //             onChanged: (newValue) {
+                    //               setState(() {
+                    //                 _selectedQuantityTypes =
+                    //                     newValue.toString();
+
+                    //                 print(
+                    //                     "Product Srial No =========== > ${newValue}");
+                    //               });
+                    //             },
+                    //             items:
+                    //                 FetchAllProductList.map((location) {
+                    //               return DropdownMenuItem(
+                    //                 child: Text(
+                    //                   "${location.productName}",
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                   ),
+                    //                 ),
+                    //                 value: location.productSlNo,
+                    //               );
+                    //             }).toList(),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
+
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Record Type:",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
                               margin: const EdgeInsets.only(top: 5, bottom: 5),
-                              height: 40,
+                              height: 30,
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -1258,669 +1899,48 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: FutureBuilder(
-                                future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
-                                builder: (context,
-                                    AsyncSnapshot<List<AllProductModelClass>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return TypeAheadFormField(
-                                      textFieldConfiguration:
-                                      TextFieldConfiguration(
-                                          onChanged: (value){
-                                            if (value == '') {
-                                              _selectedQuantityTypes = '';
-                                            }
-                                          },
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                          controller: productAllController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Select Product',
-                                            suffix: _selectedQuantityTypes == '' ? null : GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  productAllController.text = '';
-                                                });
-                                              },
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                                child: Icon(Icons.close,size: 14,),
-                                              ),
-                                            ),
-                                          )
-                                      ),
-                                      suggestionsCallback: (pattern) {
-                                        return snapshot.data!
-                                            .where((element) => element.productName!
-                                            .toLowerCase()
-                                            .contains(pattern
-                                            .toString()
-                                            .toLowerCase()))
-                                            .take(FetchAllProductList.length)
-                                            .toList();
-                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                      },
-                                      itemBuilder: (context, suggestion) {
-                                        return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                        );
-                                      },
-                                      transitionBuilder:
-                                          (context, suggestionsBox, controller) {
-                                        return suggestionsBox;
-                                      },
-                                      onSuggestionSelected:
-                                          (AllProductModelClass suggestion) {
-                                            productAllController.text = suggestion.productName!;
-                                        setState(() {
-                                          _selectedQuantityTypes =
-                                              suggestion.productSlNo.toString();
-
-                                        });
-                                      },
-                                      onSaved: (value) {},
-                                    );
-                                  }
-                                  return const SizedBox();
-                                },
-                              ),
-
-                              // child: DropdownButtonHideUnderline(
-                              //   child: DropdownButton(
-                              //     isExpanded: true,
-                              //     hint: const Text(
-                              //       'Please select a Product',
-                              //       style: TextStyle(
-                              //         fontSize: 14,
-                              //       ),
-                              //     ), // Not necessary for Option 1
-                              //     value: _selectedQuantityTypes,
-                              //     onChanged: (newValue) {
-                              //       setState(() {
-                              //         _selectedQuantityTypes =
-                              //             newValue.toString();
-                              //         print(
-                              //             "ProductID============>by quantity?  ${_selectedQuantityTypes}");
-                              //         print(
-                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                              //         print(
-                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                              //         print(
-                              //             "ProductID============>SINO?  ${_selectedQuantityTypes}");
-                              //       });
-                              //     },
-                              //     items: FetchAllProductList.map((location) {
-                              //       return DropdownMenuItem(
-                              //         value: location.productSlNo,
-                              //         child: Text(
-                              //           "${location.productName}",
-                              //           style: const TextStyle(
-                              //             fontSize: 14,
-                              //           ),
-                              //         ),
-                              //       );
-                              //     }).toList(),
-                              //   ),
-                              // ),
-                            ),
-                          )
-                        ],
-                      )
-                    : Container(),
-
-                isSummaryWiseClicked == true
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Product:",
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 5, bottom: 5),
-                              height: 40,
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: const Color.fromARGB(255, 7, 125, 180),
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: FutureBuilder(
-                                future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
-                                builder: (context,
-                                    AsyncSnapshot<List<AllProductModelClass>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return TypeAheadFormField(
-                                      textFieldConfiguration:
-                                      TextFieldConfiguration(
-                                          onChanged: (value){
-                                            if (value == '') {
-                                              _selectedSummaryTypes = '';
-                                            }
-                                          },
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                          controller: productAllController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Select Product',
-                                            suffix: _selectedSummaryTypes == '' ? null : GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  productAllController.text = '';
-                                                });
-                                              },
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                                child: Icon(Icons.close,size: 14,),
-                                              ),
-                                            ),
-                                          )
-                                      ),
-                                      suggestionsCallback: (pattern) {
-                                        return snapshot.data!
-                                            .where((element) => element.productName!
-                                            .toLowerCase()
-                                            .contains(pattern
-                                            .toString()
-                                            .toLowerCase()))
-                                            .take(FetchAllProductList.length)
-                                            .toList();
-                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                      },
-                                      itemBuilder: (context, suggestion) {
-                                        return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.productName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                        );
-                                      },
-                                      transitionBuilder:
-                                          (context, suggestionsBox, controller) {
-                                        return suggestionsBox;
-                                      },
-                                      onSuggestionSelected:
-                                          (AllProductModelClass suggestion) {
-                                        productAllController.text = suggestion.productName!;
-                                        setState(() {
-                                          _selectedSummaryTypes = suggestion.productSlNo.toString();
-                                          productId = "$_selectedSummaryTypes";
-
-                                        });
-                                      },
-                                      onSaved: (value) {},
-                                    );
-                                  }
-                                  return const SizedBox();
-                                },
-                              ),
-
-                              // child: DropdownButtonHideUnderline(
-                              //   child: DropdownButton(
-                              //     isExpanded: true,
-                              //     hint: const Text(
-                              //       'Please select a Product',
-                              //       style: TextStyle(
-                              //         fontSize: 14,
-                              //       ),
-                              //     ), // Not necessary for Option 1
-                              //     value: _selectedSummaryTypes,
-                              //     onChanged: (newValue) {
-                              //       setState(() {
-                              //         _selectedSummaryTypes =
-                              //             newValue.toString();
-                              //         productId = "${_selectedSummaryTypes}";
-                              //       });
-                              //     },
-                              //
-                              //     items: FetchAllProductList.map((location) {
-                              //       return DropdownMenuItem(
-                              //         value: location.productSlNo,
-                              //         child: Text(
-                              //           "${location.productName}",
-                              //           style: const TextStyle(
-                              //             fontSize: 14,
-                              //           ),
-                              //         ),
-                              //       );
-                              //     }).toList(),
-                              //   ),
-                              // ),
-                            ),
-                          )
-                        ],
-                      )
-                    : Container(),
-                isUserWiseClicked == true
-                    ? Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "User:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                  height: 30,
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromARGB(255, 7, 125, 180),
-                                      width: 1.0,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  isExpanded: true,
+                                  hint: const Text(
+                                    'Please select a record type',
+                                    style: TextStyle(
+                                      fontSize: 14,
                                     ),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Please select a User',
-                                        style: TextStyle(
+                                  ), // Not necessary for Option 1
+                                  value: _selectedRecordTypes,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedRecordTypes = newValue!;
+                                      _selectedRecordTypes ==
+                                          "Without Details"
+                                          ? isWithoutDetailsClicked = true
+                                          : isWithoutDetailsClicked =
+                                      false;
+                                      _selectedRecordTypes ==
+                                          "With Details"
+                                          ? isWithDetailsClicked = true
+                                          : isWithDetailsClicked = false;
+                                    });
+                                  },
+                                  items: _recordType.map((location) {
+                                    return DropdownMenuItem(
+                                      value: location,
+                                      child: Text(
+                                        location,
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
-                                      ), // Not necessary for Option 1
-                                      value: _selectedUserTypes,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _selectedUserTypes =
-                                              newValue.toString();
-                                          userFullName =
-                                              "$_selectedUserTypes";
-
-                                          print(
-                                              "Usser sNo==============> $newValue");
-                                          print(
-                                              "Usser sNo=====_selectedUserTypes=========> $userFullName");
-                                          final results = [
-                                            FetchUserBySummaryProductlist.where(
-                                                    (m) => m.userSlNo!.contains(
-                                                        '$newValue')) // or Testing 123
-                                                .toList(),
-                                          ];
-                                          results.forEach((element) async {
-                                            element.add(element.first);
-                                            print(
-                                                "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
-                                            byUserId = "${element[0].userSlNo}";
-                                            print(
-                                                "byUserId=========> ${element[0].userSlNo}");
-                                            byUserFullname =
-                                                "${element[0].fullName}";
-                                            print(
-                                                "byUserFullname===> ${element[0].fullName}");
-                                          });
-                                        });
-                                      },
-                                      items: FetchUserBySummaryProductlist.map(
-                                          (location) {
-                                        return DropdownMenuItem(
-                                          value: location.userSlNo,
-                                          child: Text(
-                                            "${location.fullName}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Expanded(
-                          //       flex: 1,
-                          //       child: Text(
-                          //         "Type:",
-                          //         style: TextStyle(
-                          //           fontSize: 14,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     Expanded(
-                          //       flex: 3,
-                          //       child: Container(
-                          //         margin: EdgeInsets.only(top: 5, bottom: 5),
-                          //         height: 30,
-                          //         padding: EdgeInsets.only(left: 5, right: 5),
-                          //         decoration: BoxDecoration(
-                          //           color: Colors.white,
-                          //           border: Border.all(
-                          //             color: Color.fromARGB(255, 7, 125, 180),
-                          //             width: 1.0,
-                          //           ),
-                          //           borderRadius: BorderRadius.circular(10.0),
-                          //         ),
-                          //         child: DropdownButtonHideUnderline(
-                          //           child: DropdownButton(
-                          //             isExpanded: true,
-                          //             hint: Text(
-                          //               'By Category',
-                          //               style: TextStyle(
-                          //                 fontSize: 14,
-                          //               ),
-                          //             ), // Not necessary for Option 1
-                          //             value: _selectedCategoryyTypes,
-                          //             onChanged: (newValue) {
-                          //               setState(() {
-                          //                 _selectedCategoryyTypes =
-                          //                     newValue.toString();
-                          //                 if ("${newValue}" == "By Category") {
-                          //                   iscategoryslect = true;
-                          //                 } else {
-                          //                   iscategoryslect = false;
-                          //                 }
-                          //               });
-                          //             },
-                          //             items: Typelist.map((location) {
-                          //               return DropdownMenuItem(
-                          //                 child: Text(
-                          //                   location,
-                          //                   style: TextStyle(
-                          //                     fontSize: 14,
-                          //                   ),
-                          //                 ),
-                          //                 value: location,
-                          //               );
-                          //             }).toList(),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     )
-                          //   ],
-                          // ),
-                          // iscategoryslect == true
-                          //     ? Row(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Expanded(
-                          //             flex: 1,
-                          //             child: Text(
-                          //               "Category:",
-                          //               style: TextStyle(
-                          //                 fontSize: 14,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //           Expanded(
-                          //             flex: 3,
-                          //             child: Container(
-                          //               margin:
-                          //                   EdgeInsets.only(top: 5, bottom: 5),
-                          //               height: 30,
-                          //               padding:
-                          //                   EdgeInsets.only(left: 5, right: 5),
-                          //               decoration: BoxDecoration(
-                          //                 color: Colors.white,
-                          //                 border: Border.all(
-                          //                   color: Color.fromARGB(
-                          //                       255, 7, 125, 180),
-                          //                   width: 1.0,
-                          //                 ),
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(10.0),
-                          //               ),
-                          //               child: DropdownButtonHideUnderline(
-                          //                 child: DropdownButton(
-                          //                   isExpanded: true,
-                          //                   hint: Text(
-                          //                     'Please select a Category',
-                          //                     style: TextStyle(
-                          //                       fontSize: 14,
-                          //                     ),
-                          //                   ), // Not necessary for Option 1
-                          //                   value: _selectedCategoryTypes,
-                          //                   onChanged: (newValue) {
-                          //                     setState(() {
-                          //                       _selectedCategoryTypes =
-                          //                           newValue.toString();
-
-                          //                       print(
-                          //                           "Proguct Category SI No========== ${newValue}");
-                          //                     });
-                          //                   },
-                          //                   items:
-                          //                       AllCategoryList.map((location) {
-                          //                     return DropdownMenuItem(
-                          //                       child: Text(
-                          //                         "${location.productCategoryName}",
-                          //                         style: TextStyle(
-                          //                           fontSize: 14,
-                          //                         ),
-                          //                       ),
-                          //                       value: location
-                          //                           .productCategorySlNo,
-                          //                     );
-                          //                   }).toList(),
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           )
-                          //         ],
-                          //       )
-                          //     : Row(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Expanded(
-                          //             flex: 1,
-                          //             child: Text(
-                          //               "Quantity:",
-                          //               style: TextStyle(
-                          //                 fontSize: 14,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //           Expanded(
-                          //             flex: 3,
-                          //             child: Container(
-                          //               margin:
-                          //                   EdgeInsets.only(top: 5, bottom: 5),
-                          //               height: 30,
-                          //               padding:
-                          //                   EdgeInsets.only(left: 5, right: 5),
-                          //               decoration: BoxDecoration(
-                          //                 color: Colors.white,
-                          //                 border: Border.all(
-                          //                   color: Color.fromARGB(
-                          //                       255, 7, 125, 180),
-                          //                   width: 1.0,
-                          //                 ),
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(10.0),
-                          //               ),
-                          //               child: DropdownButtonHideUnderline(
-                          //                 child: DropdownButton(
-                          //                   isExpanded: true,
-                          //                   hint: Text(
-                          //                     'Please select a Quantity',
-                          //                     style: TextStyle(
-                          //                       fontSize: 14,
-                          //                     ),
-                          //                   ), // Not necessary for Option 1
-                          //                   value: _selectedCategoryyyTypes,
-                          //                   onChanged: (newValue) {
-                          //                     setState(() {
-                          //                       _selectedCategoryyyTypes =
-                          //                           newValue.toString();
-
-                          //                       print(
-                          //                           "Quantity SI No========== ${newValue}");
-                          //                     });
-                          //                   },
-                          //                   items: FetchAllProductList.map(
-                          //                       (location) {
-                          //                     return DropdownMenuItem(
-                          //                       child: Text(
-                          //                         "${location.productSlNo}",
-                          //                         style: TextStyle(
-                          //                           fontSize: 14,
-                          //                         ),
-                          //                       ),
-                          //                       value: location.productSlNo,
-                          //                     );
-                          //                   }).toList(),
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           )
-                          //         ],
-                          //       ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Expanded(
-                          //       flex: 1,
-                          //       child: Text(
-                          //         "Product:",
-                          //         style: TextStyle(
-                          //           fontSize: 14,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     Expanded(
-                          //       flex: 3,
-                          //       child: Container(
-                          //         margin: EdgeInsets.only(top: 5, bottom: 5),
-                          //         height: 30,
-                          //         padding: EdgeInsets.only(left: 5, right: 5),
-                          //         decoration: BoxDecoration(
-                          //           color: Colors.white,
-                          //           border: Border.all(
-                          //             color: Color.fromARGB(255, 7, 125, 180),
-                          //             width: 1.0,
-                          //           ),
-                          //           borderRadius: BorderRadius.circular(10.0),
-                          //         ),
-                          //         child: DropdownButtonHideUnderline(
-                          //           child: DropdownButton(
-                          //             isExpanded: true,
-                          //             hint: Text(
-                          //               'Please select a Product',
-                          //               style: TextStyle(
-                          //                 fontSize: 14,
-                          //               ),
-                          //             ), // Not necessary for Option 1
-                          //             value: _selectedQuantityTypes,
-                          //             onChanged: (newValue) {
-                          //               setState(() {
-                          //                 _selectedQuantityTypes =
-                          //                     newValue.toString();
-
-                          //                 print(
-                          //                     "Product Srial No =========== > ${newValue}");
-                          //               });
-                          //             },
-                          //             items:
-                          //                 FetchAllProductList.map((location) {
-                          //               return DropdownMenuItem(
-                          //                 child: Text(
-                          //                   "${location.productName}",
-                          //                   style: TextStyle(
-                          //                     fontSize: 14,
-                          //                   ),
-                          //                 ),
-                          //                 value: location.productSlNo,
-                          //               );
-                          //             }).toList(),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     )
-                          //   ],
-                          // ),
-
-                          Row(
-                            children: [
-                              const Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Record Type:",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                    margin: const EdgeInsets.only(top: 5, bottom: 5),
-                                    height: 30,
-                                    padding: const EdgeInsets.only(left: 5, right: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: const Color.fromARGB(255, 7, 125, 180),
-                                        width: 1.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        hint: const Text(
-                                          'Please select a record type',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ), // Not necessary for Option 1
-                                        value: _selectedRecordTypes,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            _selectedRecordTypes = newValue!;
-                                            _selectedRecordTypes ==
-                                                    "Without Details"
-                                                ? isWithoutDetailsClicked = true
-                                                : isWithoutDetailsClicked =
-                                                    false;
-                                            _selectedRecordTypes ==
-                                                    "With Details"
-                                                ? isWithDetailsClicked = true
-                                                : isWithDetailsClicked = false;
-                                          });
-                                        },
-                                        items: _recordType.map((location) {
-                                          return DropdownMenuItem(
-                                            value: location,
-                                            child: Text(
-                                              location,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
+                                    );
+                                  }).toList(),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
                     : Container(),
                 SizedBox(
                   height: 40,
@@ -1950,7 +1970,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    const EdgeInsets.only(top: 10, left: 5),
+                                const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 // fillColor: Colors.blue[50],
                                 suffixIcon: const Padding(
@@ -1963,8 +1983,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 ),
                                 border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: firstPickedDate ?? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now()),
+                                hintText: firstPickedDate ,
                                 hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
@@ -2003,7 +2022,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               enabled: false,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    const EdgeInsets.only(top: 10, left: 5),
+                                const EdgeInsets.only(top: 10, left: 5),
                                 filled: true,
                                 //fillColor: Colors.blue[50],
                                 suffixIcon: const Padding(
@@ -2016,8 +2035,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 ),
                                 border: const OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: secondPickedDate ?? DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.now()),
+                                hintText: secondPickedDate,
                                 hintStyle: const TextStyle(
                                     fontSize: 14, color: Colors.black87),
                               ),
@@ -2229,9 +2247,9 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                         ),
                         child: const Center(
                             child: Text(
-                          "Show Report",
-                          style: TextStyle(color: Colors.white),
-                        )),
+                              "Show Report",
+                              style: TextStyle(color: Colors.white),
+                            )),
                       ),
                     ),
                   ),
@@ -2244,1904 +2262,1904 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           ),
           data == 'showAllWithoutDetails'
               ? Expanded(
-                  child: isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : SizedBox(
-                          width: double.infinity,
-                          height: double.infinity,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    // color: Colors.red,
-                                    // padding:EdgeInsets.only(bottom: 16.0),
-                                    child: DataTable(
-                                      showCheckboxColumn: true,
-                                      border: TableBorder.all(
-                                          color: Colors.black54, width: 1),
-                                      columns: const [
-                                        DataColumn(
-                                          label: Center(child: Text('Invoice No')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Date')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Customer Name')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                          Center(child: Text('Employee Name')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Saved By')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Sub Total')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Vat')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Discount')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Transport Cost')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Total')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Paid')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Due')),
-                                        ),
-                                      ],
-                                      rows: List.generate(
-                                        allGetSalesData.length,
-                                        (int index) => DataRow(
-                                          cells: <DataCell>[
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      "${allGetSalesData[index].saleMasterInvoiceNo}")),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterSaleDate}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].customerName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].employeeName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].addBy}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      "${allGetSalesData[index].saleMasterSubTotalAmount}")),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterTaxAmount}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterFreight}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterPaidAmount}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesData[index].saleMasterDueAmount}')),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(//111111
-                                              "Sub Total              :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalSalesSubtotal")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(//2222
-                                              "Total Vat               :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalVat")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(//3333333333
-                                              "Total Discount     :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalDiscount")}",
-                                              style: TextStyle(
-                                                  fontSize:14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(//4444444
-                                              "Total Trans.Cost  :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalTransCost")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(//5555555
-                                              "Total                      :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalTotal")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(//6666666
-                                              "Total Paid             :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalPaid")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-
-                                          children: [
-                                            Text(//77777777
-                                              "Total Due              :  ",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            allGetSalesData
-                                                .length ==
-                                                0
-                                                ? Text(
-                                              "0",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            )
-                                                : Text(
-                                              "${GetStorage().read("totalDue")}",
-                                              style: TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-
-                                ],
-                              ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        // color: Colors.red,
+                        // padding:EdgeInsets.only(bottom: 16.0),
+                        child: DataTable(
+                          showCheckboxColumn: true,
+                          border: TableBorder.all(
+                              color: Colors.black54, width: 1),
+                          columns: const [
+                            DataColumn(
+                              label: Center(child: Text('Invoice No')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Date')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Customer Name')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Employee Name')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Saved By')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Sub Total')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Vat')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Discount')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Transport Cost')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Total')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Paid')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Due')),
+                            ),
+                          ],
+                          rows: List.generate(
+                            allGetSalesData.length,
+                                (int index) => DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].employeeName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].addBy}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterTaxAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterFreight}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterDueAmount}')),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                )
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(//111111
+                                  "Sub Total              :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalSalesSubtotal")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//2222
+                                  "Total Vat               :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalVat")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//3333333333
+                                  "Total Discount     :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalDiscount")}",
+                                  style: TextStyle(
+                                      fontSize:14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//4444444
+                                  "Total Trans.Cost  :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalTransCost")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//5555555
+                                  "Total                      :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalTotal")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//6666666
+                                  "Total Paid             :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalPaid")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+
+                              children: [
+                                Text(//77777777
+                                  "Total Due              :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalDue")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
               : data == 'showAllWithDetails'
-                  ? Expanded(
-                      child: isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : SizedBox(
-                              width: double.infinity,
-                              height: double.infinity,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    // color: Colors.red,
-                                    // padding:EdgeInsets.only(bottom: 16.0),
-                                    child: DataTable(
-                                      showCheckboxColumn: true,
-                                      border: TableBorder.all(
-                                          color: Colors.black54, width: 1),
-                                      columns: const [
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Invoice No')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Date')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Customer Name')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Employee Name')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Saved By')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(
-                                              child: Text('Product Name')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Price')),
-                                        ),
-                                        DataColumn(
-                                          label:
-                                              Center(child: Text('Quantity')),
-                                        ),
-                                        DataColumn(
-                                          label: Center(child: Text('Total')),
-                                        ),
-                                      ],
-                                      rows: List.generate(
-                                        allGetSalesRecordData.length,
-                                        (int index) => DataRow(
-                                          cells: <DataCell>[
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesRecordData[index].saleMasterSaleDate}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesRecordData[index].customerName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesRecordData[index].employeeName}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: Text(
-                                                      '${allGetSalesRecordData[index].addBy}')),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: SizedBox(
-                                                // color: Colors.green,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount:
-                                                      allGetSalesRecordData[
-                                                              index]
-                                                          .saleDetails!
-                                                          .length,
-                                                  itemBuilder: (context, j) {
-                                                    return Center(
-                                                      child: Text(
-                                                          "${allGetSalesRecordData[index].saleDetails![j].productName}"),
-                                                    );
-                                                  },
-                                                ),
-                                              )),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                child: SizedBox(
-                                                  // color: Colors.green,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.5,
-                                                  child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    itemCount:
-                                                        allGetSalesRecordData[
-                                                                index]
-                                                            .saleDetails!
-                                                            .length,
-                                                    itemBuilder: (context, j) {
-                                                      return Center(
-                                                        child: Text(
-                                                            "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: SizedBox(
-                                                // color: Colors.green,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount:
-                                                      allGetSalesRecordData[
-                                                              index]
-                                                          .saleDetails!
-                                                          .length,
-                                                  itemBuilder: (context, j) {
-                                                    return Center(
-                                                      child: Text(
-                                                          "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
-                                                    );
-                                                  },
-                                                ),
-                                              )),
-                                            ),
-                                            DataCell(
-                                              Center(
-                                                  child: SizedBox(
-                                                // color: Colors.green,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount:
-                                                      allGetSalesRecordData[
-                                                              index]
-                                                          .saleDetails!
-                                                          .length,
-                                                  itemBuilder: (context, j) {
-                                                    return Center(
-                                                      child: Text(
-                                                          "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
-                                                    );
-                                                  },
-                                                ),
-                                              )),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+              ? Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn: true,
+                      border: TableBorder.all(
+                          color: Colors.black54, width: 1),
+                      columns: const [
+                        DataColumn(
+                          label:
+                          Center(child: Text('Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Employee Name')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Saved By')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Price')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Total')),
+                        ),
+                      ],
+                      rows: List.generate(
+                        allGetSalesRecordData.length,
+                            (int index) => DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleMasterSaleDate}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].customerName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].employeeName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].addBy}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allGetSalesRecordData[
+                                      index]
+                                          .saleDetails!
+                                          .length,
+                                      itemBuilder: (context, j) {
+                                        return Center(
+                                          child: Text(
+                                              "${allGetSalesRecordData[index].saleDetails![j].productName}"),
+                                        );
+                                      },
                                     ),
+                                  )),
+                            ),
+                            DataCell(
+                              Center(
+                                child: SizedBox(
+                                  // color: Colors.green,
+                                  width: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.5,
+                                  child: ListView.builder(
+                                    scrollDirection:
+                                    Axis.vertical,
+                                    itemCount:
+                                    allGetSalesRecordData[
+                                    index]
+                                        .saleDetails!
+                                        .length,
+                                    itemBuilder: (context, j) {
+                                      return Center(
+                                        child: Text(
+                                            "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
                             ),
-                    )
-                  : data == 'showByCustomerWithoutDetails'
-                      ? Expanded(
-                          child: isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : SizedBox(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            child: DataTable(
-                                              showCheckboxColumn: true,
-                                              border: TableBorder.all(
-                                                  color: Colors.black54, width: 1),
-                                              columns: const [
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Invoice No')),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Center(child: Text('Date')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Customer Name')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Employee Name')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Saved By')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Sub Total')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(child: Text('Vat')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Discount')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child:
-                                                          Text('Transport Cost')),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Center(child: Text('Total')),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Center(child: Text('Paid')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(child: Text('Due')),
-                                                ),
-                                              ],
-                                              rows: List.generate(
-                                                allGetSalesData.length,
-                                                (int index) => DataRow(
-                                                  cells: <DataCell>[
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesData[index].saleMasterInvoiceNo}")),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].saleMasterSaleDate}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].customerName}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].employeeName}' == null ? '' : '${allGetSalesData[index].employeeName}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].addBy}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesData[index].saleMasterSubTotalAmount}")),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesData[index].saleMasterTaxAmount}")),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesData[index].saleMasterFreight}")),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].saleMasterPaidAmount}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesData[index].saleMasterDueAmount}')),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 10.0),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(//111111
-                                                      "Sub Total              :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalSalesSubtotal")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(//2222
-                                                      "Total Vat               :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalVat")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(//3333333333
-                                                      "Total Discount     :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalDiscount")}",
-                                                      style: TextStyle(
-                                                          fontSize:14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(//4444444
-                                                      "Total Trans.Cost  :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalTransCost")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(//5555555
-                                                      "Total                      :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalTotal")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(//6666666
-                                                      "Total Paid             :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalPaid")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-
-                                                  children: [
-                                                    Text(//77777777
-                                                      "Total Due              :  ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    allGetSalesData
-                                                        .length ==
-                                                        0
-                                                        ? Text(
-                                                      "0",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    )
-                                                        : Text(
-                                                      "${GetStorage().read("totalDue")}",
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allGetSalesRecordData[
+                                      index]
+                                          .saleDetails!
+                                          .length,
+                                      itemBuilder: (context, j) {
+                                        return Center(
+                                          child: Text(
+                                              "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
+                                        );
+                                      },
                                     ),
-                                  ),
+                                  )),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: SizedBox(
+                                    // color: Colors.green,
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width *
+                                        0.5,
+                                    child: ListView.builder(
+                                      scrollDirection:
+                                      Axis.vertical,
+                                      itemCount:
+                                      allGetSalesRecordData[
+                                      index]
+                                          .saleDetails!
+                                          .length,
+                                      itemBuilder: (context, j) {
+                                        return Center(
+                                          child: Text(
+                                              "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
+                                        );
+                                      },
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByCustomerWithoutDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: DataTable(
+                          showCheckboxColumn: true,
+                          border: TableBorder.all(
+                              color: Colors.black54, width: 1),
+                          columns: const [
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Invoice No')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Date')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Customer Name')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Employee Name')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Saved By')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Sub Total')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Vat')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child: Text('Discount')),
+                            ),
+                            DataColumn(
+                              label: Center(
+                                  child:
+                                  Text('Transport Cost')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Total')),
+                            ),
+                            DataColumn(
+                              label:
+                              Center(child: Text('Paid')),
+                            ),
+                            DataColumn(
+                              label: Center(child: Text('Due')),
+                            ),
+                          ],
+                          rows: List.generate(
+                            allGetSalesData.length,
+                                (int index) => DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterInvoiceNo}")),
                                 ),
-                        )
-                      : data == 'showByCustomerWithDetails'
-                          ? Expanded(
-                              child: isLoading
-                                  ? const Center(child: CircularProgressIndicator())
-                                  : SizedBox(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.vertical,
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            child: DataTable(
-                                              showCheckboxColumn: true,
-                                              border: TableBorder.all(
-                                                  color: Colors.black54,
-                                                  width: 1),
-                                              columns: const [
-                                                DataColumn(
-                                                  label: Center(
-                                                      child:
-                                                          Text('Invoice No')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Date')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text(
-                                                          'Customer Name')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text(
-                                                          'Employee Name')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Saved By')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child:
-                                                          Text('Product Name')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Price')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Quantity')),
-                                                ),
-                                                DataColumn(
-                                                  label: Center(
-                                                      child: Text('Total')),
-                                                ),
-                                              ],
-                                              rows: List.generate(
-                                                  allGetSalesRecordData.length,
-                                                  (int index) {
-                                                return DataRow(
-                                                  cells: <DataCell>[
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesRecordData[index].saleMasterSaleDate}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesRecordData[index].customerName}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              "${allGetSalesRecordData[index].employeeName}" ?? '')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: Text(
-                                                              '${allGetSalesRecordData[index].addBy}')),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: SizedBox(
-                                                        // color: Colors.green,
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.5,
-                                                        child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          itemCount:
-                                                              allGetSalesRecordData[
-                                                                      index]
-                                                                  .saleDetails!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (context, j) {
-                                                            return Container(
-                                                              decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      width:
-                                                                          0.1,
-                                                                      color: Colors
-                                                                          .black)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                    "${allGetSalesRecordData[index].saleDetails![j].productName}"),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      )),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.5,
-                                                        child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          itemCount:
-                                                              allGetSalesRecordData[
-                                                                      index]
-                                                                  .saleDetails!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (context, j) {
-                                                            return Container(
-                                                              decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      width:
-                                                                          0.1,
-                                                                      color: Colors
-                                                                          .black)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      )),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: SizedBox(
-                                                        //color: Colors.green,
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.2,
-                                                        child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          itemCount:
-                                                              allGetSalesRecordData[
-                                                                      index]
-                                                                  .saleDetails!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (context, j) {
-                                                            return Container(
-                                                              decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      width:
-                                                                          0.1,
-                                                                      color: Colors
-                                                                          .black)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      )),
-                                                    ),
-                                                    DataCell(
-                                                      Center(
-                                                          child: SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.2,
-                                                        child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          itemCount:
-                                                              allGetSalesRecordData[
-                                                                      index]
-                                                                  .saleDetails!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (context, j) {
-                                                            return Container(
-                                                              decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      width:
-                                                                          0.1,
-                                                                      color: Colors
-                                                                          .black)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ],
-                                                );
-                                              }),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                            )
-                          : data == 'showByEmployeeWithoutDetails'
-                              ? Expanded(
-                                  child: isLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator())
-                                      : SizedBox(
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.vertical,
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                // color: Colors.red,
-                                                // padding:EdgeInsets.only(bottom: 16.0),
-                                                child: DataTable(
-                                                  showCheckboxColumn: true,
-                                                  border: TableBorder.all(
-                                                      color: Colors.black54,
-                                                      width: 1),
-                                                  columns: const [
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text(
-                                                              'Invoice No')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text('Date')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text(
-                                                              'Customer Name')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text(
-                                                              'Employee Name')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child:
-                                                              Text('Saved By')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text(
-                                                              'Sub Total')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text('Vat')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child:
-                                                              Text('Discount')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text(
-                                                              'Transport Cost')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text('Total')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text('Paid')),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Center(
-                                                          child: Text('Due')),
-                                                    ),
-                                                  ],
-                                                  rows: List.generate(
-                                                    allGetSalesData.length,
-                                                    (int index) => DataRow(
-                                                      cells: <DataCell>[
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterInvoiceNo}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterSaleDate}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].customerName}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].employeeName}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].addBy}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterSubTotalAmount}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterTaxAmount}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterFreight}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterPaidAmount}')),
-                                                        ),
-                                                        DataCell(
-                                                          Center(
-                                                              child: Text(
-                                                                  '${allGetSalesData[index].saleMasterDueAmount}')),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].employeeName}' == null ? '' : '${allGetSalesData[index].employeeName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].addBy}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterTaxAmount}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesData[index].saleMasterFreight}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterPaidAmount}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesData[index].saleMasterDueAmount}')),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(//111111
+                                  "Sub Total              :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
                                 )
-                              : data == 'showByEmployeeWithDetails'
-                                  ? Expanded(
-                                      child: isLoading
-                                          ? const Center(
-                                              child:
-                                                  CircularProgressIndicator())
-                                          : SizedBox(
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              child: SingleChildScrollView(
-                                                scrollDirection: Axis.vertical,
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Container(
-                                                    // color: Colors.red,
-                                                    // padding:EdgeInsets.only(bottom: 16.0),
-                                                    child: DataTable(
-                                                      showCheckboxColumn: true,
-                                                      border: TableBorder.all(
-                                                          color: Colors.black54,
-                                                          width: 1),
-                                                      columns: const [
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Invoice No')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child:
-                                                                  Text('Date')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Customer Name')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Employee Name')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Saved By')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Product Name')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Price')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Quantity')),
-                                                        ),
-                                                        DataColumn(
-                                                          label: Center(
-                                                              child: Text(
-                                                                  'Total')),
-                                                        ),
-                                                      ],
-                                                      rows: List.generate(
-                                                        allGetSalesRecordData
-                                                            .length,
-                                                        (int index) => DataRow(
-                                                          cells: <DataCell>[
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].saleMasterSaleDate}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].customerName}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].employeeName}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].addBy}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].saleDetails![0].productName}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsRate}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsTotalQuantity}')),
-                                                            ),
-                                                            DataCell(
-                                                              Center(
-                                                                  child: Text(
-                                                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsTotalAmount}')),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                    : Text(
+                                  "${GetStorage().read("totalSalesSubtotal")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//2222
+                                  "Total Vat               :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalVat")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//3333333333
+                                  "Total Discount     :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalDiscount")}",
+                                  style: TextStyle(
+                                      fontSize:14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//4444444
+                                  "Total Trans.Cost  :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalTransCost")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//5555555
+                                  "Total                      :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalTotal")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(//6666666
+                                  "Total Paid             :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalPaid")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Row(
+
+                              children: [
+                                Text(//77777777
+                                  "Total Due              :  ",
+                                  style: TextStyle(
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                allGetSalesData
+                                    .length ==
+                                    0
+                                    ? Text(
+                                  "0",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                )
+                                    : Text(
+                                  "${GetStorage().read("totalDue")}",
+                                  style: TextStyle(
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByCustomerWithDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    child: DataTable(
+                      showCheckboxColumn: true,
+                      border: TableBorder.all(
+                          color: Colors.black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Employee Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Saved By')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Price')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Total')),
+                        ),
+                      ],
+                      rows: List.generate(
+                          allGetSalesRecordData.length,
+                              (int index) {
+                            return DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesRecordData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesRecordData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          "${allGetSalesRecordData[index].employeeName}" ?? '')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSalesRecordData[index].addBy}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: SizedBox(
+                                        // color: Colors.green,
+                                        width: MediaQuery.of(
+                                            context)
+                                            .size
+                                            .width *
+                                            0.5,
+                                        child: ListView.builder(
+                                          scrollDirection:
+                                          Axis.vertical,
+                                          itemCount:
+                                          allGetSalesRecordData[
+                                          index]
+                                              .saleDetails!
+                                              .length,
+                                          itemBuilder:
+                                              (context, j) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width:
+                                                      0.1,
+                                                      color: Colors
+                                                          .black)),
+                                              child: Center(
+                                                child: Text(
+                                                    "${allGetSalesRecordData[index].saleDetails![j].productName}"),
                                               ),
-                                            ),
-                                    )
-                                  : data == 'showByCategoryDetails'
-                                      ? Expanded(
-                                          child: isLoading
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : SizedBox(
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                  child: SingleChildScrollView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      child: Container(
-                                                        // color: Colors.red,
-                                                        // padding:EdgeInsets.only(bottom: 16.0),
-                                                        child: DataTable(
-                                                          showCheckboxColumn:
-                                                              true,
-                                                          border:
-                                                              TableBorder.all(
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  width: 1),
-                                                          columns: const [
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Invoice No')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Date')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Customer Name')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Product Name')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Sales Rate')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Quantity')),
-                                                            ),
-                                                            DataColumn(
-                                                              label: Center(
-                                                                  child: Text(
-                                                                      'Total')),
-                                                            ),
-                                                          ],
-                                                          rows: List.generate(
-                                                            allGetSaleDetailsData
-                                                                .length,
-                                                            (int index) =>
-                                                                DataRow(
-                                                              cells: <DataCell>[
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].saleMasterInvoiceNo}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].saleMasterSaleDate}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].customerName}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].productName}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].saleDetailsRate}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].saleDetailsTotalQuantity}')),
-                                                                ),
-                                                                DataCell(
-                                                                  Center(
-                                                                      child: Text(
-                                                                          '${allGetSaleDetailsData[index].saleDetailsTotalAmount}')),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                        )
-                                      : data == 'showByQuantityDetails'
-                                          ? Expanded(
-                                              child: isLoading
-                                                  ? const Center(
-                                                      child:
-                                                          CircularProgressIndicator())
-                                                  : SizedBox(
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.vertical,
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          child: Container(
-                                                            // color: Colors.red,
-                                                            // padding:EdgeInsets.only(bottom: 16.0),
-                                                            child: DataTable(
-                                                              showCheckboxColumn:
-                                                                  true,
-                                                              border: TableBorder.all(
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  width: 1),
-                                                              columns: const [
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Invoice No')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Date')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Customer Name')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Product Name')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Sales Rate')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Quantity')),
-                                                                ),
-                                                                DataColumn(
-                                                                  label: Center(
-                                                                      child: Text(
-                                                                          'Total')),
-                                                                ),
-                                                              ],
-                                                              rows:
-                                                                  List.generate(
-                                                                allGetSaleDetailsData
-                                                                    .length,
-                                                                (int index) =>
-                                                                    DataRow(
-                                                                  cells: <DataCell>[
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].saleMasterInvoiceNo}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].saleMasterSaleDate}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].customerName}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].productName}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].saleDetailsRate}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].saleDetailsTotalQuantity}')),
-                                                                    ),
-                                                                    DataCell(
-                                                                      Center(
-                                                                          child:
-                                                                              Text('${allGetSaleDetailsData[index].saleDetailsTotalAmount}')),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                            )
-                                          : data == 'showBySummaryDetails'
-                                              ? Expanded(
-                                                  child: isLoading
-                                                      ? const Center(
-                                                          child:
-                                                              CircularProgressIndicator())
-                                                      : SizedBox(
-                                                          width:
-                                                              double.infinity,
-                                                          height:
-                                                              double.infinity,
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.vertical,
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              scrollDirection:
-                                                                  Axis.horizontal,
-                                                              child: Container(
-                                                                child:
-                                                                    DataTable(
-                                                                  showCheckboxColumn:
-                                                                      true,
-                                                                  border: TableBorder.all(
-                                                                      color: Colors
-                                                                          .black54,
-                                                                      width: 1),
-                                                                  columns: const [
-                                                                    DataColumn(
-                                                                      label: Center(
-                                                                          child:
-                                                                              Text('Product Code')),
-                                                                    ),
-                                                                    DataColumn(
-                                                                      label: Center(
-                                                                          child:
-                                                                              Text('Product Name')),
-                                                                    ),
-                                                                    DataColumn(
-                                                                      label: Center(
-                                                                          child:
-                                                                              Text('Total Quantity')),
-                                                                    ),
-                                                                    DataColumn(
-                                                                      label: Center(
-                                                                          child:
-                                                                              Text('Total Amount')),
-                                                                    ),
-                                                                  ],
-                                                                  rows: List
-                                                                      .generate(
-                                                                    allGetSaleSummaryData
-                                                                        .length,
-                                                                    (int index) =>
-                                                                        DataRow(
-                                                                      cells: <DataCell>[
-                                                                        DataCell(
-                                                                          Center(
-                                                                              child: Text('${allGetSaleSummaryData[index].productCode}')),
-                                                                        ),
-                                                                        DataCell(
-                                                                          Center(
-                                                                              child: Text('${allGetSaleSummaryData[index].productName}')),
-                                                                        ),
-                                                                        DataCell(
-                                                                          Center(
-                                                                              child: Text('${allGetSaleSummaryData[index].totalSaleQty}')),
-                                                                        ),
-                                                                        DataCell(
-                                                                          Center(
-                                                                              child: Text('${allGetSaleSummaryData[index].totalSaleAmount}')),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                )
-                                              : data ==
-                                                      'showByUserWithoutDetails'
-                                                  ? Expanded(
-                                                      child: isLoading
-                                                          ? const Center(
-                                                              child:
-                                                                  CircularProgressIndicator())
-                                                          : SizedBox(
-                                                              width: double
-                                                                  .infinity,
-                                                              height: double
-                                                                  .infinity,
-                                                              child:
-                                                                  SingleChildScrollView(
-                                                                scrollDirection:
-                                                                    Axis.vertical,
-                                                                child:
-                                                                    SingleChildScrollView(
-                                                                  scrollDirection:
-                                                                      Axis.horizontal,
-                                                                  child:
-                                                                      Container(
-                                                                    // color: Colors.red,
-                                                                    // padding:EdgeInsets.only(bottom: 16.0),
-                                                                    child:
-                                                                        DataTable(
-                                                                      showCheckboxColumn:
-                                                                          true,
-                                                                      border: TableBorder.all(
-                                                                          color: Colors
-                                                                              .black54,
-                                                                          width:
-                                                                              1),
-                                                                      columns: const [
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Invoice No')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Date')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Customer Name')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Employee Name')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Saved By')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Sub Total')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Vat')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Discount')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Transport Cost')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Total')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Paid')),
-                                                                        ),
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Center(child: Text('Due')),
-                                                                        ),
-                                                                      ],
-                                                                      rows: List
-                                                                          .generate(
-                                                                        allGetSalesData
-                                                                            .length,
-                                                                        (int index) =>
-                                                                            DataRow(
-                                                                          cells: <DataCell>[
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterInvoiceNo}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterSaleDate}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].customerName}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].employeeName}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].addBy}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterSubTotalAmount}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterTaxAmount}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterFreight}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterTotalSaleAmount}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterPaidAmount}')),
-                                                                            ),
-                                                                            DataCell(
-                                                                              Center(child: Text('${allGetSalesData[index].saleMasterDueAmount}')),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                    )
-                                                  : data ==
-                                                          'showByUserWithDetails'
-                                                      ? Expanded(
-                                                          child: isLoading
-                                                              ? const Center(
-                                                                  child:
-                                                                      CircularProgressIndicator())
-                                                              : SizedBox(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: double
-                                                                      .infinity,
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    scrollDirection:
-                                                                        Axis.vertical,
-                                                                    child:
-                                                                        SingleChildScrollView(
-                                                                      scrollDirection:
-                                                                          Axis.horizontal,
-                                                                      child:
-                                                                          Container(
-                                                                        // color: Colors.red,
-                                                                        // padding:EdgeInsets.only(bottom: 16.0),
-                                                                        child:
-                                                                            DataTable(
-                                                                          showCheckboxColumn:
-                                                                              true,
-                                                                          border: TableBorder.all(
-                                                                              color: Colors.black54,
-                                                                              width: 1),
-                                                                          columns: const [
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Invoice No')),
-                                                                            ),
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Date')),
-                                                                            ),
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Customer Name')),
-                                                                            ),
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Employee Name')),
-                                                                            ),
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Saved By')),
-                                                                            ),
-                                                                            // DataColumn(
-                                                                            //   label: Center(child: Text('Product Name')),
-                                                                            // ),
-                                                                            // DataColumn(
-                                                                            //   label: Center(child: Text('Price')),
-                                                                            // ),
-                                                                            // DataColumn(
-                                                                            //   label: Center(child: Text('Quantity')),
-                                                                            // ),
-                                                                            // DataColumn(
-                                                                            //   label: Center(child: Text('Total')),
-                                                                            // ),
-                                                                            DataColumn(
-                                                                              label: Center(child: Text('Total')),
-                                                                            ),
-                                                                          ],
-                                                                          rows:
-                                                                              List.generate(
-                                                                            allGetSalesRecordData.length,
-                                                                            (int index) =>
-                                                                                DataRow(
-                                                                              cells: <DataCell>[
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterInvoiceNo}')),
-                                                                                ),
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterSaleDate}')),
-                                                                                ),
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].customerName}')),
-                                                                                ),
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].employeeName}')),
-                                                                                ),
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].addBy}')),
-                                                                                ),
-                                                                                // DataCell(
-                                                                                //   Center(child: Text('Row $index')),
-                                                                                // ),
-                                                                                // DataCell(
-                                                                                //   Center(child: Text('Row $index')),
-                                                                                // ),
-                                                                                // DataCell(
-                                                                                //   Center(child: Text('Row $index')),
-                                                                                // ),
-                                                                                // DataCell(
-                                                                                //   Center(child: Text('Row $index')),
-                                                                                // ),
-                                                                                DataCell(
-                                                                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterTotalSaleAmount}')),
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                        )
-                                                      : Container()
+                                            );
+                                          },
+                                        ),
+                                      )),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: SizedBox(
+                                        width: MediaQuery.of(
+                                            context)
+                                            .size
+                                            .width *
+                                            0.5,
+                                        child: ListView.builder(
+                                          scrollDirection:
+                                          Axis.vertical,
+                                          itemCount:
+                                          allGetSalesRecordData[
+                                          index]
+                                              .saleDetails!
+                                              .length,
+                                          itemBuilder:
+                                              (context, j) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width:
+                                                      0.1,
+                                                      color: Colors
+                                                          .black)),
+                                              child: Center(
+                                                child: Text(
+                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: SizedBox(
+                                        //color: Colors.green,
+                                        width: MediaQuery.of(
+                                            context)
+                                            .size
+                                            .width *
+                                            0.2,
+                                        child: ListView.builder(
+                                          scrollDirection:
+                                          Axis.vertical,
+                                          itemCount:
+                                          allGetSalesRecordData[
+                                          index]
+                                              .saleDetails!
+                                              .length,
+                                          itemBuilder:
+                                              (context, j) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width:
+                                                      0.1,
+                                                      color: Colors
+                                                          .black)),
+                                              child: Center(
+                                                child: Text(
+                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: SizedBox(
+                                        width: MediaQuery.of(
+                                            context)
+                                            .size
+                                            .width *
+                                            0.2,
+                                        child: ListView.builder(
+                                          scrollDirection:
+                                          Axis.vertical,
+                                          itemCount:
+                                          allGetSalesRecordData[
+                                          index]
+                                              .saleDetails!
+                                              .length,
+                                          itemBuilder:
+                                              (context, j) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width:
+                                                      0.1,
+                                                      color: Colors
+                                                          .black)),
+                                              child: Center(
+                                                child: Text(
+                                                    "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByEmployeeWithoutDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child: CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn: true,
+                      border: TableBorder.all(
+                          color: Colors.black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Employee Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Saved By')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Sub Total')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Vat')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Discount')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Transport Cost')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Total')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Paid')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text('Due')),
+                        ),
+                      ],
+                      rows: List.generate(
+                        allGetSalesData.length,
+                            (int index) => DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterInvoiceNo}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterSaleDate}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].customerName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].employeeName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].addBy}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterSubTotalAmount}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterTaxAmount}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterFreight}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterPaidAmount}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesData[index].saleMasterDueAmount}')),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByEmployeeWithDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn: true,
+                      border: TableBorder.all(
+                          color: Colors.black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Employee Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Saved By')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Price')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Total')),
+                        ),
+                      ],
+                      rows: List.generate(
+                        allGetSalesRecordData
+                            .length,
+                            (int index) => DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleMasterSaleDate}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].customerName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].employeeName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].addBy}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleDetails![0].productName}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsRate}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsTotalQuantity}')),
+                            ),
+                            DataCell(
+                              Center(
+                                  child: Text(
+                                      '${allGetSalesRecordData[index].saleDetails![0].saleDetailsTotalAmount}')),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByCategoryDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection:
+                Axis.vertical,
+                child:
+                SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn:
+                      true,
+                      border:
+                      TableBorder.all(
+                          color: Colors
+                              .black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Sales Rate')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Total')),
+                        ),
+                      ],
+                      rows: List.generate(
+                        allGetSaleDetailsData
+                            .length,
+                            (int index) =>
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].saleMasterInvoiceNo}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].productName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].saleDetailsRate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].saleDetailsTotalQuantity}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text(
+                                          '${allGetSaleDetailsData[index].saleDetailsTotalAmount}')),
+                                ),
+                              ],
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showByQuantityDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child:
+              SingleChildScrollView(
+                scrollDirection:
+                Axis.vertical,
+                child:
+                SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child: Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child: DataTable(
+                      showCheckboxColumn:
+                      true,
+                      border: TableBorder.all(
+                          color: Colors
+                              .black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Date')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Sales Rate')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child: Text(
+                                  'Total')),
+                        ),
+                      ],
+                      rows:
+                      List.generate(
+                        allGetSaleDetailsData
+                            .length,
+                            (int index) =>
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].saleMasterInvoiceNo}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].productName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].saleDetailsRate}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].saleDetailsTotalQuantity}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child:
+                                      Text('${allGetSaleDetailsData[index].saleDetailsTotalAmount}')),
+                                ),
+                              ],
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data == 'showBySummaryDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width:
+              double.infinity,
+              height:
+              double.infinity,
+              child:
+              SingleChildScrollView(
+                scrollDirection:
+                Axis.vertical,
+                child:
+                SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child: Container(
+                    child:
+                    DataTable(
+                      showCheckboxColumn:
+                      true,
+                      border: TableBorder.all(
+                          color: Colors
+                              .black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Product Code')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Product Name')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Total Quantity')),
+                        ),
+                        DataColumn(
+                          label: Center(
+                              child:
+                              Text('Total Amount')),
+                        ),
+                      ],
+                      rows: List
+                          .generate(
+                        allGetSaleSummaryData
+                            .length,
+                            (int index) =>
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(
+                                      child: Text('${allGetSaleSummaryData[index].productCode}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text('${allGetSaleSummaryData[index].productName}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text('${allGetSaleSummaryData[index].totalSaleQty}')),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: Text('${allGetSaleSummaryData[index].totalSaleAmount}')),
+                                ),
+                              ],
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data ==
+              'showByUserWithoutDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width: double
+                  .infinity,
+              height: double
+                  .infinity,
+              child:
+              SingleChildScrollView(
+                scrollDirection:
+                Axis.vertical,
+                child:
+                SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child:
+                  Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child:
+                    DataTable(
+                      showCheckboxColumn:
+                      true,
+                      border: TableBorder.all(
+                          color: Colors
+                              .black54,
+                          width:
+                          1),
+                      columns: const [
+                        DataColumn(
+                          label:
+                          Center(child: Text('Invoice No')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Customer Name')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Employee Name')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Saved By')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Sub Total')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Vat')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Discount')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Transport Cost')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Total')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Paid')),
+                        ),
+                        DataColumn(
+                          label:
+                          Center(child: Text('Due')),
+                        ),
+                      ],
+                      rows: List
+                          .generate(
+                        allGetSalesData
+                            .length,
+                            (int index) =>
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterInvoiceNo}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].employeeName}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].addBy}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterSubTotalAmount}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterTaxAmount}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterFreight}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterPaidAmount}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesData[index].saleMasterDueAmount}')),
+                                ),
+                              ],
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : data ==
+              'showByUserWithDetails'
+              ? Expanded(
+            child: isLoading
+                ? const Center(
+                child:
+                CircularProgressIndicator())
+                : SizedBox(
+              width: double
+                  .infinity,
+              height: double
+                  .infinity,
+              child:
+              SingleChildScrollView(
+                scrollDirection:
+                Axis.vertical,
+                child:
+                SingleChildScrollView(
+                  scrollDirection:
+                  Axis.horizontal,
+                  child:
+                  Container(
+                    // color: Colors.red,
+                    // padding:EdgeInsets.only(bottom: 16.0),
+                    child:
+                    DataTable(
+                      showCheckboxColumn:
+                      true,
+                      border: TableBorder.all(
+                          color: Colors.black54,
+                          width: 1),
+                      columns: const [
+                        DataColumn(
+                          label: Center(child: Text('Invoice No')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Date')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Customer Name')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Employee Name')),
+                        ),
+                        DataColumn(
+                          label: Center(child: Text('Saved By')),
+                        ),
+                        // DataColumn(
+                        //   label: Center(child: Text('Product Name')),
+                        // ),
+                        // DataColumn(
+                        //   label: Center(child: Text('Price')),
+                        // ),
+                        // DataColumn(
+                        //   label: Center(child: Text('Quantity')),
+                        // ),
+                        // DataColumn(
+                        //   label: Center(child: Text('Total')),
+                        // ),
+                        DataColumn(
+                          label: Center(child: Text('Total')),
+                        ),
+                      ],
+                      rows:
+                      List.generate(
+                        allGetSalesRecordData.length,
+                            (int index) =>
+                            DataRow(
+                              cells: <DataCell>[
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterInvoiceNo}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterSaleDate}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].customerName}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].employeeName}')),
+                                ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].addBy}')),
+                                ),
+                                // DataCell(
+                                //   Center(child: Text('Row $index')),
+                                // ),
+                                // DataCell(
+                                //   Center(child: Text('Row $index')),
+                                // ),
+                                // DataCell(
+                                //   Center(child: Text('Row $index')),
+                                // ),
+                                // DataCell(
+                                //   Center(child: Text('Row $index')),
+                                // ),
+                                DataCell(
+                                  Center(child: Text('${allGetSalesRecordData[index].saleMasterTotalSaleAmount}')),
+                                )
+                              ],
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+              : Container()
         ],
       ),
     );

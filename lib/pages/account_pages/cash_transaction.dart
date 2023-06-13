@@ -52,13 +52,13 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -69,7 +69,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
   ApiAllGetCashTransactions? apiAllGetCashTransactions;
   @override
   void initState() {
-    firstPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
     // ACCOUNTS
     ApiAllAccounts apiAllAccounts;
     Provider.of<CounterProvider>(context, listen: false).getAccounts(context);

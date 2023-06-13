@@ -52,6 +52,8 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
   String paymentType = "";
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -62,13 +64,15 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $firstPickedDate");
       });
     }
@@ -83,13 +87,15 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $secondPickedDate");
       });
     }
@@ -100,8 +106,10 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
   void initState() {
     Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: _selectedCustomerType);
     getCustomerPaymentData();
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     super.initState();
   }
 
@@ -111,8 +119,8 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
         .getCustomerPaymentData(
       context,
       customerId,
-      firstPickedDate,
-      secondPickedDate,
+      backEndFirstDate,
+      backEndSecondDate,
     );
   }
 
@@ -537,10 +545,10 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                           isLoading = true;
                         });
                         getCustomerPaymentData();
-                        print("datessss ${firstPickedDate}");
-                        print("datessss ${secondPickedDate}");
+                        print("datessss ${backEndFirstDate}");
+                        print("datessss ${backEndSecondDate}");
                         print("datessss ${customerId}");
-                        Future.delayed(const Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 5), () {
                           setState(() {
                             isLoading = false;
                           });
@@ -571,8 +579,8 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
           ),
           isLoading
               ? const Center(child: CircularProgressIndicator())
-              : provideCustomerPaymentReportList.isNotEmpty
-              ? Expanded(
+              // : provideCustomerPaymentReportList.isNotEmpty
+              : Expanded(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height / 1.31,
                     width: double.infinity,
@@ -684,7 +692,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                     ),
                   ),
                 )
-                    : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
+                    // : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
 
 
     ],

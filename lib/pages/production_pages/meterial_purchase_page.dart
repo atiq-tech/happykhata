@@ -96,6 +96,8 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   bool isEnabled = false;
 
   String? firstPickedDate;
+  var backEndFirstDate;
+
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -106,13 +108,15 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -122,23 +126,46 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
   final TextEditingController _DateController = TextEditingController();
 
   String? _selectedPurchase;
-  List<String> _selectedPurchaseList = [
+  final List<String> _selectedPurchaseList = [
     'Happy Product',
-    'Selected Product',
   ];
   String? _selectedAccount;
   ApiAllGetMaterial? apiAllGetMaterial;
   @override
   void initState() {
+    _selectedPurchase = _selectedPurchaseList[0];
      _quantityController.text = "1";
      supplyerController.text = '';
-    firstPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     // get materials
     ApiAllGetMaterial apiAllGetMaterial;
     Provider.of<CounterProvider>(context, listen: false).getMaterials(context);
     // TODO: implement initState
      getMaterialInvoice();
     super.initState();
+  }
+
+  Response? result;
+  void dueReport(String? supplierId) async {
+    print("Call Api $supplierId");
+
+    result = await Dio().post("${BaseUrl}api/v1/getSupplierDue",
+        data: {"supplierId": "$supplierId"},
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${GetStorage().read("token")}",
+        }));
+    var data = jsonDecode(result?.data);
+
+    if(data!=null){
+      print("responses result========> ${data[0]['Supplier_Name']}");
+      print("responses result========> ${data[0]['due']}");
+      setState(() {
+        _previousDueController.text = "${data[0]['due']}";
+        _nameController.text = "${data[0]['Supplier_Name']}";
+      });
+    }
   }
 
   @override
@@ -254,18 +281,18 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     _selectedPurchase = newValue!;
-                                    getMaterialInvoice();
+                                    // getMaterialInvoice();
                                   });
                                 },
                                 items: _selectedPurchaseList.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),
@@ -447,12 +474,14 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
 
                                         else{
                                             print("Yes has $_selectedSupplier");
+                                            SupplierSlNo = _selectedSupplier.toString();
+                                            // print("srgtsrygtsert $SupplierSlNo");
 
                                             isEnabled = false;
                                             isVisible = false;
                                             print(isVisible);
                                             final results = [
-                                              All_Supplier.where((m) => m.supplierSlNo!
+                                              All_Supplier.where((m) => m.supplierSlNo.toString()
                                                   .contains(
                                                   '${suggestion.supplierSlNo}')) // or Testing 123
                                                   .toList(),
@@ -476,11 +505,12 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                               "${element[0].supplierAddress}";
                                               print(
                                                   "supplierAddress===> ${element[0].supplierAddress}");
-                                              previousDue = "${element[0].previousDue}";
-                                              _previousDueController.text =
-                                              "${element[0].previousDue}";
-                                              print(
-                                                  "previousDue===> ${element[0].previousDue}");
+                                              dueReport(_selectedSupplier);
+                                              // previousDue = "${element[0].previousDue}";
+                                              // _previousDueController.text =
+                                              // "${element[0].previousDue}";
+                                              // print(
+                                              //     "previousDue===> ${element[0].previousDue}");
                                             });
 
                                           }
@@ -1323,9 +1353,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                 Mate_productId: "$M_materialId",
                                 categoryName: "$M_name",
                                 name: "$ccategoryName",
-                                purchaseRate: "${_purcasheRateController.text}",
-                                vat: "${_VatController.text}",
-                                quantity: "${_quantityController.text}",
+                                purchaseRate: _purcasheRateController.text,
+                                vat: _VatController.text,
+                                quantity: _quantityController.text,
                                 total: "$Total",
                                 //purchaseRate: "$cpurchaseRate"
                               ));
@@ -1721,6 +1751,7 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                               style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
                               controller: _transportController,
+                              keyboardType: TextInputType.number,
                               onChanged: (value) {
                                 setState(() {
                                   TransportTotal = AfteraddVatTotal +
@@ -1995,43 +2026,23 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
                                     const SnackBar(
                                         content: Text("Please Add to Cart")));
                               } else {
-                                getMaterialInvoice();
-                                AddMaterialPurchase();
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text("Sales Successfull"),
-                                      actions: [
-                                        ActionChip(
-                                          label: const Text("Back"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        ActionChip(
-                                          label: const Text("Home"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        name: "",
-                                                      ),
-                                                ));
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                MaterialPurchaseCartList.clear();
-                                DiccountTotal = 0;
+                                setState(() {
+                                  isPurchaseBtnClk = true;
+                                });
+                                // getMaterialInvoice();
+                                addMaterialPurchase();
                               }
                             },
-                            child: const Text("Purchase")),
+                          child: Center(
+                              child: isPurchaseBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                "Purchase",
+                                style: TextStyle(
+                                    letterSpacing: 1.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              )),
+
+                        ),
                         const SizedBox(
                           width: 20,
                         ),
@@ -2053,7 +2064,9 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
     );
   }
 
-  AddMaterialPurchase() async {
+  addMaterialPurchase() async {
+    print("srgtsrygtsert $SupplierSlNo");
+
     String link = "${BaseUrl}api/v1/addMaterialPurchase";
     try {
       var materialPurchasemap = MaterialPurchaseCartList.map((e) {
@@ -2071,10 +2084,8 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
           "purchase": {
             "purchase_id": 0,
             "supplier_id": "$SupplierSlNo",
-            "invoice_no": "$materialInvoice",
-            "purchase_date": firstPickedDate == null
-                ? DateFormat('yyyy-MM-dd')
-                .format(DateTime.now()):"${firstPickedDate}",
+            "invoice_no": invoiceNoController.text,
+            "purchase_date": backEndFirstDate,
             "purchase_for": 0,
             "sub_total": "$CartTotal",
             "vat": "$TotalVat",
@@ -2104,25 +2115,56 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
       );
       print(response.data);
       var mpdata = jsonDecode(response.data);
-      print("${mpdata["message"]}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text("${mpdata["message"]}")));
-      _nameController.text = "";
-      _paidController.text = "";
-      _DiscountController.text = "";
-      _mobileNumberController.text = "";
-      _addressController.text = "";
-      _salesRateController.text = "";
-      _VatController.text = "";
-      _quantityController.text = "";
-      _transportController.text = "";
-      DiccountTotal = 0;
-      previousDue = "0";
-      TotalVat = 0;
-      CartTotal = 0;
+      if (mpdata["success"] == true) {
+        setState(() {
+          isPurchaseBtnClk = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            duration: const Duration(seconds: 1),
+            content: Center(child: Text("${mpdata["message"]}",style: const TextStyle(color: Colors.white),))));
+        _nameController.text = "";
+        _paidController.text = "";
+        _DiscountController.text = "";
+        _mobileNumberController.text = "";
+        _addressController.text = "";
+        _salesRateController.text = "";
+        materialController.text = "";
+        _VatController.text = "";
+        _quantityController.text = "";
+        _transportController.text = "";
+        DiccountTotal = 0;
+        previousDue = "0";
+        TotalVat = 0;
+        CartTotal = 0;
+        MaterialPurchaseCartList.clear();
+        DiccountTotal = 0;
+        Navigator.pop(context);
+      }
+      else{
+        setState(() {
+          isPurchaseBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            duration: const Duration(seconds: 1),
+            content: Center(child: Text("${mpdata["message"]}",style: const TextStyle(color: Colors.red),))));
+      }
+      //   print("${mpdata["message"]}");
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     duration: const Duration(seconds: 1),
+      //     content: Text("${mpdata["message"]}")));
+
     } catch (e) {
       print(e);
+      setState(() {
+        isPurchaseBtnClk = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.black,
+          duration: const Duration(seconds: 1),
+          content: Center(child: Text("${e.toString()}",style: const TextStyle(color: Colors.red),))));
     }
   }
 
@@ -2146,4 +2188,5 @@ class _MeterialPurchasePageState extends State<MeterialPurchasePage> {
       print(e);
     }
   }
+  bool isPurchaseBtnClk = false;
 }

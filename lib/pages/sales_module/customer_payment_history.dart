@@ -51,8 +51,10 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
   @override
   void initState() {
    // firstPickedDate = "2000-03-01";
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
 
     Provider.of<CustomerListProvider>(context, listen: false)
         .getCustomerListData(context);
@@ -66,7 +68,7 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
     Provider.of<CustomerPaymentHistoryProvider>(context,
         listen: false)
         .getCustomerPaymentData(context, customerId,
-        firstPickedDate, secondPickedDate, paymentType);
+        backEndFirstDate, backEndSecondDate, paymentType);
   }
 
   @override
@@ -275,7 +277,7 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                                       : _selectedPaymentType == 'All'
                                       ? paymentType = ""
                                       : paymentType = "";
-                                  print("Payment Type: ${paymentType}");
+                                  print("Payment Type: $paymentType");
                                 });
                               },
                               items: _category.map((location) {
@@ -414,9 +416,9 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                       });
                       getCustomerPaymentData();
 
-                      print("datessss ${firstPickedDate}");
-                      print("datessss ${secondPickedDate}");
-                      print("datessss ${customerId}");
+                      print("datessss $backEndFirstDate");
+                      print("datessss $backEndSecondDate");
+                      print("datessss $customerId");
 
                       Future.delayed(const Duration(seconds: 3), () {
                         setState(() {
@@ -541,6 +543,8 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
   }
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -551,13 +555,15 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $firstPickedDate");
       });
     }
@@ -572,13 +578,15 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $secondPickedDate");
       });
     }

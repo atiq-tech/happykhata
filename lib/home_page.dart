@@ -76,8 +76,8 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         elevation: 2.0,
-        backgroundColor: Color.fromARGB(255, 7, 125, 180),
-        title: Text(
+        backgroundColor: const Color.fromARGB(255, 7, 125, 180),
+        title: const Text(
           "POS EXPRESS",
           style: TextStyle(
               fontSize: 20.0, fontWeight: FontWeight.w800, color: Colors.white),
@@ -87,14 +87,14 @@ class _HomePageState extends State<HomePage> {
             children: [
               Column(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 20.0,
                     backgroundImage: NetworkImage(
                         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRw8tnmRAobUlTWwXTzG0yJevfymCAQw00wZw&usqp=CAU'),
                   ),
                   Text(
                     "Welcome,${widget.name}",
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.w600,
                         color: Colors.white),
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                         context: context,
                         builder: (BuildContext context) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 60.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 60.0),
                             child: Dialog(
                               child: Container(
                                 height: 80.0,
@@ -121,28 +121,28 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
+                                    const Padding(
+                                      padding: EdgeInsets.only(
                                           left: 10.0, bottom: 10.0),
                                       child: Text("Profile",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500)),
                                     ),
-                                    Divider(
+                                    const Divider(
                                         thickness: 0.5,
                                         color: Colors.grey,
                                         height: 1.0),
                                     Padding(
                                       padding:
-                                          EdgeInsets.only(left: 10.0, top: 8.0),
+                                          const EdgeInsets.only(left: 10.0, top: 8.0),
                                       child: InkWell(
                                         onTap: () {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      LogInPage()));
+                                                      const LogInPage()));
                                         },
-                                        child: Text("Logout",
+                                        child: const Text("Logout",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500)),
                                       ),
@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                           );
                         });
                   },
-                  icon: Icon(Icons.arrow_drop_down))
+                  icon: const Icon(Icons.arrow_drop_down))
             ],
           ),
         ],
@@ -164,17 +164,17 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Color.fromARGB(255, 7, 125, 180),
+              color: const Color.fromARGB(255, 7, 125, 180),
               height: 100.0,
               width: double.infinity,
               padding:
-                  EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
+                  const EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
               child: Container(
                   height: 50,
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.symmetric(horizontal: 3.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 3.0),
                   child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       mainAxisExtent: 70,
                       mainAxisSpacing: 7,
@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                       return Container(
                         height: 50.0,
                         width: 80,
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                           right: 4,
                         ),
                         child: Column(
@@ -195,31 +195,31 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 "${headTitle[index]['name']}",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color.fromARGB(255, 7, 125, 180),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 5.0),
+                            const SizedBox(height: 5.0),
                             Text(
                               "105k",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.robotoSlab(
                                 fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(255, 0, 0, 0),
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
                           ],
                         ),
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 253, 253, 253),
+                            color: const Color.fromARGB(255, 253, 253, 253),
                             borderRadius: BorderRadius.circular(5.0)),
                       );
                     },
                   )),
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 10,
                 right: 10,
               ),
@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 100,
-                    child: Column(
+                    child: const Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -245,13 +245,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 230,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: salesList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -267,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
@@ -281,11 +281,11 @@ class _HomePageState extends State<HomePage> {
                                     height: 30,
                                     width: 35,
                                   ),
-                                  SizedBox(height: 10.0),
+                                  const SizedBox(height: 10.0),
                                   Text(
                                     "${salesList[index]['name']}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       color: Colors.black,
                                     ),
@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 15,
                 right: 15,
               ),
@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 100,
-                    child: Text(
+                    child: const Text(
                       "Purchase",
                       style: TextStyle(
                           color: Colors.black54,
@@ -320,13 +320,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 230,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: purchaseList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -342,7 +342,7 @@ class _HomePageState extends State<HomePage> {
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
@@ -356,11 +356,11 @@ class _HomePageState extends State<HomePage> {
                                     height: 30,
                                     width: 35,
                                   ),
-                                  SizedBox(height: 10.0),
+                                  const SizedBox(height: 10.0),
                                   Text(
                                     "${purchaseList[index]['name']}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       // color: Color.fromARGB(255, 7, 125, 180),
                                       color: Colors.black,
@@ -375,11 +375,11 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 15,
                 right: 15,
               ),
@@ -388,7 +388,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 100,
-                    child: Text(
+                    child: const Text(
                       "Production",
                       style: TextStyle(
                           color: Colors.black54,
@@ -399,13 +399,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 130,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: ProductionList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -422,7 +422,7 @@ class _HomePageState extends State<HomePage> {
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
@@ -436,11 +436,11 @@ class _HomePageState extends State<HomePage> {
                                     height: 30,
                                     width: 35,
                                   ),
-                                  SizedBox(height: 10.0),
+                                  const SizedBox(height: 10.0),
                                   Text(
                                     "${ProductionList[index]['name']}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       // color: Color.fromARGB(255, 7, 125, 180),
                                       color: Colors.black,
@@ -456,7 +456,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 15,
                 right: 15,
               ),
@@ -465,7 +465,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 100,
-                    child: Text(
+                    child: const Text(
                       "Account",
                       style: TextStyle(
                           color: Colors.black54,
@@ -476,13 +476,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 230,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: accountList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -499,7 +499,7 @@ class _HomePageState extends State<HomePage> {
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
@@ -513,11 +513,11 @@ class _HomePageState extends State<HomePage> {
                                     height: 30,
                                     width: 35,
                                   ),
-                                  SizedBox(height: 10.0),
+                                  const SizedBox(height: 10.0),
                                   Text(
                                     "${accountList[index]['name']}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       // color: Color.fromARGB(255, 7, 125, 180),
                                       color: Colors.black,
@@ -533,7 +533,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 15,
                 right: 15,
               ),
@@ -542,7 +542,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 150,
-                    child: Text(
+                    child: const Text(
                       "Administator",
                       style: TextStyle(
                           color: Colors.black54,
@@ -553,13 +553,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 130,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: Administator.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -576,7 +576,7 @@ class _HomePageState extends State<HomePage> {
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
@@ -590,11 +590,11 @@ class _HomePageState extends State<HomePage> {
                                     height: 30,
                                     width: 35,
                                   ),
-                                  SizedBox(height: 10.0),
+                                  const SizedBox(height: 10.0),
                                   Text(
                                     "${Administator[index]['name']}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       // color: Color.fromARGB(255, 7, 125, 180),
                                       color: Colors.black,
@@ -610,7 +610,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 15,
                 right: 15,
               ),
@@ -619,7 +619,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: 150,
-                    child: Text(
+                    child: const Text(
                       "Report Module",
                       style: TextStyle(
                           color: Colors.black54,
@@ -630,13 +630,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                     height: 130,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: 1,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           mainAxisSpacing: 2,
                           crossAxisSpacing: 2,
@@ -649,16 +649,16 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ProfitLossReportPage(),
+                                        const ProfitLossReportPage(),
                                   ));
                             },
                             child: Card(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               color: Colors.blue[50],
                               elevation: 9.00,
-                              child: Column(
+                              child: const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image(
@@ -692,7 +692,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   TextStyle textStyle() {
-    return TextStyle(
+    return const TextStyle(
         color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900);
   }
 
@@ -744,26 +744,26 @@ class _HomePageState extends State<HomePage> {
   //   BankTransactionPage(),
   // ];
   List accountListPage = [
-    CashTransactionPage(),
-    BankTransactionPage(),
-    CustomerPaymentPage(),
-    SupplierPaymentPage(),
-    CashViewPage(),
-    CashTransactionReportPage(),
-    BankTransactionReportPage(),
-    CashStatementPage(),
+    const CashTransactionPage(),
+    const BankTransactionPage(),
+    const CustomerPaymentPage(),
+    const SupplierPaymentPage(),
+    const CashViewPage(),
+    const CashTransactionReportPage(),
+    const BankTransactionReportPage(),
+    const CashStatementPage(),
   ];
   List _ProductionListPages = [
-    ProductionEntryPage(),
-    ProductionRecordPage(),
-    MeterialPurchasePage(),
-    MeterialPurchaseRecord(),
+    const ProductionEntryPage(),
+    const ProductionRecordPage(),
+    const MeterialPurchasePage(),
+    const MeterialPurchaseRecord(),
   ];
   List _administatorPages = [
-    ProductEntryPage(),
-    ProductLedgerPage(),
-    CustomerEntryPage2(),
-    SupplierEntryPage(),
+    const ProductEntryPage(),
+    const ProductLedgerPage(),
+    const CustomerEntryPage2(),
+    const SupplierEntryPage(),
   ];
   List Administator = [
     {"name": "Product Entry", "image": "all_picture/production_entry.png"},
@@ -780,19 +780,19 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List salesPages = [
-    SalesEntryPage(),
-    SalesRecordPage(),
-    StockReportPage(),
-    Customer_Due_List(),
-    Customer_Payment_Report(),
-    Customer_Payment_History(),
-    Customer_List(),
+    const SalesEntryPage(),
+    const SalesRecordPage(),
+    const StockReportPage(),
+    const Customer_Due_List(),
+    const Customer_Payment_Report(),
+    const Customer_Payment_History(),
+    const Customer_List(),
   ];
   List purchasepage = [
-    PurchaseEntryPage(),
-    PurchaseRecord(),
-    SupplierDueReport(),
-    SupplierPaymentReport(),
-    ReorderList()
+    const PurchaseEntryPage(),
+    const PurchaseRecord(),
+    const SupplierDueReport(),
+    const SupplierPaymentReport(),
+    const ReorderList()
   ];
 }

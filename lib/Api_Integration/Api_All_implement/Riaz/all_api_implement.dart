@@ -372,7 +372,7 @@ class AllApiImplement {
             "Content-Type": "application/json",
             "Authorization": "Bearer ${GetStorage().read("token")}",
           }));
-   print(response.data);
+      print("All supplier payment report${response.data}");
       var data = jsonDecode(response.data);
 
       for (var i in data['payments']) {

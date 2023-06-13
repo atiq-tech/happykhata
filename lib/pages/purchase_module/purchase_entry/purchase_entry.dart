@@ -68,7 +68,8 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
   void initState() {
     super.initState();
     _quantityController.text="1";
-    firstPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
   }
 
   Response? result;
@@ -1531,7 +1532,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
                             ),
                             child: Text(
                               "$Previousdue",
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             ),
                           )),
                     ],
@@ -1574,33 +1575,41 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
                             backgroundColor: Colors.green,
                           ),
                           onPressed: () {
-
+                            setState(() {
+                              isPurchaseBtnClk = true;
+                            });
                             if((Paid + Previousdue) == 0){
                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Add to Cart")));
                             }else{
-                              AddPuschase();
-                              showDialog(context: context, builder: (context) {
-                                return AlertDialog(
-                                  title: const Text("Purchase Successfull"),
-                                  actions: [
-                                    ActionChip(label: const Text("Back"),onPressed: () {
-                                      Navigator.pop(context);
-                                    },),
-
-                                    ActionChip(label: const Text("Home"),onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(name:""),));
-                                    },),
-                                  ],
-                                );
-                              },);
-                              PurchaseCartList.clear();
-                              Paid=0;
-                              Previousdue=0;
+                              addPuschase();
+                              // showDialog(context: context, builder: (context) {
+                              //   return AlertDialog(
+                              //     title: const Text("Purchase Successfull"),
+                              //     actions: [
+                              //       ActionChip(label: const Text("Back"),onPressed: () {
+                              //         Navigator.pop(context);
+                              //       },),
+                              //
+                              //       ActionChip(label: const Text("Home"),onPressed: () {
+                              //         Navigator.pop(context);
+                              //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(name:""),));
+                              //       },),
+                              //     ],
+                              //   );
+                              // },);
                             }
 
                           },
-                          child: const Text("Purchase")),
+                        child: Center(
+                            child: isPurchaseBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                              "Purchase",
+                              style: TextStyle(
+                                  letterSpacing: 1.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            )),
+
+                      ),
                       const SizedBox(
                         width: 20,
                       ),
@@ -1622,6 +1631,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
   }
 
   String? firstPickedDate;
+  String? backEndFirstDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -1629,12 +1639,14 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
         context: context, initialDate: DateTime.now(), firstDate: DateTime(1950), lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -1659,7 +1671,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
 
 
 
-  AddPuschase()async{
+  addPuschase()async{
     String link="${BaseUrl}api/v1/addPurchase";
     try{
       var studentsmap = PurchaseCartList.map((e){
@@ -1680,15 +1692,15 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
           "purchaseId": 0,
           "invoice": "2023000070",
           "purchaseFor": "1",
-          "purchaseDate": "$firstPickedDate",
+          "purchaseDate": "$backEndFirstDate",
           "supplierId": "$supplierId",
           "subTotal": CartTotal,
-          "vat": TotalVat,
-          "discount": "${double.parse(_discountController.text)}",
-          "freight": "${double.parse(_transportController.text)}",
-          "total": Paid,
-          "paid":  "${double.parse(_paidController.text)}",
-          "due": "$TotalAmount",
+          "vat": "${TotalVat}",
+          "discount": _discountController.text.toString().isNotEmpty?"${double.parse(_discountController.text)}":0.0,
+          "freight": _transportController.text.toString().isNotEmpty?"${double.parse(_transportController.text)}":0.0,
+          "total": "${Paid}",
+          "paid":  _paidController.text.toString().isNotEmpty?"${double.parse(_paidController.text)}":0.0,
+          "due": "${TotalAmount}",
           "previousDue": "$Previousdue",
           "note": " "
         },
@@ -1710,10 +1722,27 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
       );
       print(response.data);
       var item=jsonDecode(response.data);
-      print("${item["message"]}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text("${item["message"]}")));
+      if(item["success"] == true){
+        PurchaseCartList.clear();
+        Paid=0;
+        Previousdue=0;
+        setState(() {
+          isPurchaseBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+            content: Text("${item["message"]}",style: const TextStyle(color: Colors.white),)));
+        Navigator.pop(context);
+      }
+      else{
+        setState(() {
+          isPurchaseBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+            content: Text("${item["message"]}",style: const TextStyle(color: Colors.red),)));
+      }
+
       // _nameController.text="";
       // _paidController.text="";
       // _mobileNumberController.text="";
@@ -1729,8 +1758,16 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
       // CartTotal=0;
     }catch(e) {
       print(e);
+
+      setState(() {
+        isPurchaseBtnClk = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+          content: Text(e.toString(),style: const TextStyle(color: Colors.red),)));
     }
   }
 
+  bool isPurchaseBtnClk = false;
 
 }

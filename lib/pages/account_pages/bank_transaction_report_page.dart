@@ -49,12 +49,12 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -70,12 +70,12 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -88,8 +88,8 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   @override
   void initState() {
     // TODO: implement initState
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     //bank ACCOUNTS
     ApiAllBankAccounts apiAllBankAccounts;
     Provider.of<CounterProvider>(context, listen: false)

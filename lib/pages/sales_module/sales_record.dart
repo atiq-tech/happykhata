@@ -26,6 +26,9 @@ class SalesRecordPage extends StatefulWidget {
 
 class _SalesRecordPageState extends State<SalesRecordPage> {
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondtDate;
+
   var toDay = DateTime.now();
   void _firstSelectedDate() async {
     final selectedDate = await showDatePicker(
@@ -35,13 +38,15 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $firstPickedDate");
       });
     }
@@ -56,12 +61,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondtDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $secondPickedDate");
       });
     }else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondtDate = Utils.formatBackEndDate(toDay);
         print("First Selected date $secondPickedDate");
       });
     }
@@ -125,8 +132,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   bool isLoading = false;
   @override
   void initState() {
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    secondPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndSecondtDate = Utils.formatBackEndDate(DateTime.now());
     Provider.of<AllProductProvider>(context, listen: false)
         .getAllSalesRecordData(context, firstPickedDate, secondPickedDate,
             customerId, employeeId, productId, userFullName);
@@ -379,7 +388,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           flex: 3,
                           child: Container(
                             margin: const EdgeInsets.only(top: 5, bottom: 5),
-                            height: 38,
+                            height: 40,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -565,7 +574,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           flex: 3,
                           child: Container(
                             margin: const EdgeInsets.only(top: 5, bottom: 5),
-                            height: 38,
+                            height: 40,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -1050,9 +1059,10 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                         customerController.text = suggestion.displayName!;
 
                                         _selectedCustomerTypes = suggestion.customerSlNo.toString();
-                                        print(
-                                            "Customer wise Id : =  ${suggestion.customerSlNo}");
+
                                         customerId = "${suggestion.customerSlNo}";
+                                        print(
+                                            "Customer wise Id : =  ${customerId}");
                                         Provider.of<AllProductProvider>(
                                             context,
                                             listen: false)
@@ -2062,26 +2072,32 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                       onTap: () {
                         print('_selectedRecordTypes ${_selectedRecordTypes}');
                         if(_selectedRecordTypes==null){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select record type',style: TextStyle(color: Colors.red),)));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select record type',style: TextStyle(color: Colors.red),)));
                         }
                         setState(() {
                           isLoading = true;
                         });
                         setState(() {
                           // AllType
+                          print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
+
                           if (isAllTypeClicked && isWithoutDetailsClicked) {
+                            print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
+
                             data = 'showAllWithoutDetails';
                             //get sales api AllType
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSales(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "",
                               "",
                             );
+                            print(" dsafasfasfasdfasdf${backEndFirstDate} && ${backEndSecondtDate}");
+
                           }
                           else if (isAllTypeClicked && isWithDetailsClicked) {
                             data = 'showAllWithDetails';
@@ -2090,8 +2106,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "",
                               "",
@@ -2106,8 +2122,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "$customerId",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "$_selectedProductType",
                               "",
@@ -2121,8 +2137,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "$customerId",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "$_selectedProductType",
                               "",
@@ -2137,8 +2153,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "$_selectedEmployeeTypes",
                               "",
                               "",
@@ -2152,8 +2168,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "$_selectedEmployeeTypes",
                               "",
                               "",
@@ -2168,8 +2184,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               context,
                               "$categoryId",
                               "$customerId",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                             );
                           }
@@ -2182,8 +2198,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               context,
                               "$categoryId",
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "$_selectedQuantityTypes",
                             );
                           }
@@ -2194,8 +2210,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getSaleSummary(
                               context,
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "$productId",
                             );
                           }
@@ -2209,8 +2225,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSales(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "",
                               "$byUserFullname",
@@ -2224,8 +2240,8 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 .getSalesRecord(
                               context,
                               "",
-                              "$firstPickedDate",
-                              "$secondPickedDate",
+                              "$backEndFirstDate",
+                              "$backEndSecondtDate",
                               "",
                               "",
                               "$byUserFullname",
@@ -2391,7 +2407,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
                         child: Column(
@@ -2399,7 +2415,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           children: [
                             Row(
                               children: [
-                                Text(//111111
+                                const Text(//111111
                                   "Sub Total              :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2409,21 +2425,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalSalesSubtotal")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//2222
+                                const Text(//2222
                                   "Total Vat               :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2433,21 +2449,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalVat")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//3333333333
+                                const Text(//3333333333
                                   "Total Discount     :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2457,21 +2473,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalDiscount")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize:14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//4444444
+                                const Text(//4444444
                                   "Total Trans.Cost  :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2481,21 +2497,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalTransCost")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//5555555
+                                const Text(//5555555
                                   "Total                      :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2505,21 +2521,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalTotal")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//6666666
+                                const Text(//6666666
                                   "Total Paid             :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2529,14 +2545,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalPaid")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
@@ -2544,7 +2560,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Row(
 
                               children: [
-                                Text(//77777777
+                                const Text(//77777777
                                   "Total Due              :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2554,14 +2570,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalDue")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
@@ -2906,7 +2922,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0 ,bottom: 10.0),
                         child: Column(
@@ -2914,7 +2930,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           children: [
                             Row(
                               children: [
-                                Text(//111111
+                                const Text(//111111
                                   "Sub Total              :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2924,21 +2940,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalSalesSubtotal")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//2222
+                                const Text(//2222
                                   "Total Vat               :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2948,21 +2964,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalVat")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//3333333333
+                                const Text(//3333333333
                                   "Total Discount     :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2972,21 +2988,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalDiscount")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize:14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//4444444
+                                const Text(//4444444
                                   "Total Trans.Cost  :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -2996,21 +3012,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalTransCost")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//5555555
+                                const Text(//5555555
                                   "Total                      :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -3020,21 +3036,21 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalTotal")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(//6666666
+                                const Text(//6666666
                                   "Total Paid             :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -3044,14 +3060,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalPaid")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],
@@ -3059,7 +3075,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                             Row(
 
                               children: [
-                                Text(//77777777
+                                const Text(//77777777
                                   "Total Due              :  ",
                                   style: TextStyle(
                                       fontWeight:
@@ -3069,14 +3085,14 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                 allGetSalesData
                                     .length ==
                                     0
-                                    ? Text(
+                                    ? const Text(
                                   "0",
                                   style: TextStyle(
                                       fontSize: 14),
                                 )
                                     : Text(
                                   "${GetStorage().read("totalDue")}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14),
                                 ),
                               ],

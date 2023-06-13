@@ -177,6 +177,7 @@ class AllProductProvider extends ChangeNotifier {
   ////////////////////////////////Customer Due List /////////////////////////
 
   List<AllCustomerDueList> AllCustomerDueListList = [];
+  // bool isLoading = false;
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
   FetchAllCustomerDueList(context, {String? customerId}) async {
     AllCustomerDueListList =

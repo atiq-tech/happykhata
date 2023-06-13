@@ -19,6 +19,8 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
   final TextEditingController _Date2Controller = TextEditingController();
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -29,13 +31,15 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -51,13 +55,15 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $secondPickedDate");
       });
     }
@@ -68,10 +74,22 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
   ApiallProductionRecord? apiallProductionRecord;
   @override
   void initState() {
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    // fetchProductionReport(context,backEndFirstDate,backEndSecondDate);
+
     // TODO: implement initState
     super.initState();
+  }
+
+  fetchProductionReport(context, backEndFirstDate, backEndSecondDate){
+    Provider.of<CounterProvider>(context, listen: false)
+        .getProductionRecord(
+        context,
+        "${backEndFirstDate}",
+        "${backEndSecondDate}");
   }
 
   @override
@@ -87,14 +105,14 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               child: Container(
                 height: 140.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -102,7 +120,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Date From",
@@ -110,7 +128,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -123,17 +141,17 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -148,10 +166,10 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6.0),
+                    const SizedBox(height: 6.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: Text(
                             "Date To",
@@ -159,7 +177,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
@@ -172,17 +190,17 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 5),
+                                      const EdgeInsets.only(top: 10, left: 5),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
                                   hintText: secondPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -197,27 +215,21 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
                           setState(() {
                             isLoading = true;
+                            print(
+                                "firstDate ++++ProductionRecord=====::${backEndFirstDate}");
+                            print(
+                                "secondDate ++++ProductionRecord=====::${backEndSecondDate}");
                           });
-                          setState(() {
-                            Provider.of<CounterProvider>(context, listen: false)
-                                .getProductionRecord(
-                                    context,
-                                    "${firstPickedDate}",
-                                    "${secondPickedDate}");
+                          fetchProductionReport(context, backEndFirstDate, backEndSecondDate);
 
-                            print(
-                                "firstDate ++++ProductionRecord=====::${firstPickedDate}");
-                            print(
-                                "secondDate ++++ProductionRecord=====::${secondPickedDate}");
-                          });
-                          Future.delayed(Duration(seconds: 3), () {
+                          Future.delayed(const Duration(seconds: 3), () {
                             setState(() {
                               isLoading = false;
                             });
@@ -228,12 +240,12 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                           width: 85.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -248,13 +260,13 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -270,28 +282,28 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Production Id.')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Date')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Incharge')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Shift')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Total Cost')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Note')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Product Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Quantity')),
                                 ),
                               ],

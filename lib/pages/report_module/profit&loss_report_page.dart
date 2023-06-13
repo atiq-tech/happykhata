@@ -33,12 +33,12 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -54,12 +54,12 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -82,8 +82,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
   @override
   void initState() {
     //Customers
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     ApiAllCustomers apiAllCustomers;
     Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
 

@@ -37,6 +37,8 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   String paymentType = "";
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -47,13 +49,15 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -68,13 +72,15 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $secondPickedDate");
       });
     }
@@ -86,8 +92,10 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   @override
   void initState() {
     // firstPickedDate = "2000-03-01";
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     Provider.of<CounterProvider>(context, listen: false).getSupplier(
       context,
     );
@@ -98,13 +106,14 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
   Widget build(BuildContext context) {
     final allSupplierslist =
         Provider.of<CounterProvider>(context).allSupplierslist;
-    allSupplierslist.removeAt(0);
 
     final provideSupplierPaymentReportList =
         Provider.of<SupplierPaymentReportProvider>(context)
             .provideSupplierPaymentReportList;
     print(
-        "UI: provideCustomerPaymentReportList length=====> ${allSupplierslist.length}");
+        "UI: allSupplierslist length=====> ${allSupplierslist.length}");
+    print(
+        "UI: provideSupplierPaymentReportList length=====> ${provideSupplierPaymentReportList.length}");
 
     return Scaffold(
       appBar: CustomAppBar(title: "Supplier Payment Report"),
@@ -169,6 +178,7 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                 )
                             ),
                             suggestionsCallback: (pattern) {
+                              allSupplierslist.removeAt(0);
                               return allSupplierslist
                                   .where((element) => element.supplierName
                                   .toString()
@@ -193,8 +203,8 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                                 (AllSuppliersClass suggestion) {
                               supplyerController.text = suggestion.supplierName!;
                               setState(() {
-                                _selectedCustomer =
-                                    suggestion.supplierSlNo;
+                                _selectedCustomer = suggestion.supplierSlNo;
+                                supplierId = suggestion.supplierSlNo.toString();
                               });
                             },
                             onSaved: (value) {},
@@ -427,9 +437,11 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                             .getSupplierPaymentData(
                           context,
                           "$supplierId",
-                          firstPickedDate,
-                          secondPickedDate,
+                          backEndFirstDate,
+                          backEndSecondDate,
                         );
+                        print('lkjnfgalksfgak ${backEndFirstDate} sdfgsdg${backEndSecondDate}dfgsd${supplierId}');
+
                         Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
                             isLoading = false;

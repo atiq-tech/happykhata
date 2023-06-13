@@ -61,6 +61,8 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
   ];
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -71,13 +73,15 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -96,13 +100,15 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $secondPickedDate");
       });
     }
@@ -116,8 +122,10 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
     Provider.of<AllProductProvider>(context, listen: false)
         .Purchases_All_Provider(context);
     //firstPickedDate = "2000-03-23";
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     // TODO: implement initState
     super.initState();
   }
@@ -227,13 +235,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 },
                                 items: _searchTypes.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),
@@ -279,7 +287,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                               ), // Not necessary for Option 1
                               value: _selectedRecordTypes,
                               onChanged: (newValue) {
-                                print('Seletcted value ${_selectedRecordTypes}');
+                                print('Seletcted value $_selectedRecordTypes');
                                 setState(() {
                                   _selectedRecordTypes = newValue!;
                                   _selectedRecordTypes ==
@@ -748,31 +756,31 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                         setState(() {
                                           _selectedUserTypes =
                                               newValue.toString();
-                                          userFullName = "${newValue}";
+                                          userFullName = "$newValue";
                                           print(
-                                              "User Full name No =====> ${userFullName}");
+                                              "User Full name No =====> $userFullName");
                                           print(
-                                              "User Full name No =====> ${firstPickedDate}");
+                                              "User Full name No =====> $firstPickedDate");
                                           print(
-                                              "User Full name No =====> ${secondPickedDate}");
+                                              "User Full name No =====> $secondPickedDate");
                                           Provider.of<AllProductProvider>(
                                                   context,
                                                   listen: false)
                                               .GetUserWisePurchase(
                                                   userFullName,
-                                                  firstPickedDate,
-                                                  secondPickedDate);
+                                              backEndFirstDate,
+                                                  backEndSecondDate);
                                         });
                                       },
                                       items: All_User_List.map((location) {
                                         return DropdownMenuItem(
+                                          value: location.fullName,
                                           child: Text(
                                             "${location.fullName}",
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                          value: location.fullName,
                                         );
                                       }).toList(),
                                     ),
@@ -831,13 +839,13 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                         },
                                         items: _recordType.map((location) {
                                           return DropdownMenuItem(
+                                            value: location,
                                             child: Text(
                                               location,
                                               style: const TextStyle(
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            value: location,
                                           );
                                         }).toList(),
                                       ),
@@ -903,9 +911,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                           ),
                         ),
                       ),
-                      Container(
-                        child: const Text("To"),
-                      ),
+                      const Text("To"),
                       Expanded(
                         flex: 1,
                         child: Container(
@@ -971,25 +977,25 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
 
                         setState(() {
                           // AllType
-                          print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
+                          print(" dsafasfasfasdfasdf$isAllTypeClicked && $isWithoutDetailsClicked");
 
                           if (isAllTypeClicked && isWithoutDetailsClicked) {
-                            print(" dsafasfasfasdfasdf${isAllTypeClicked} && ${isWithoutDetailsClicked}");
+                            print(" dsafasfasfasdfasdf$isAllTypeClicked && $isWithoutDetailsClicked");
                             data = 'showAllWithoutDetails';
-                            print("date 1st $firstPickedDate");
+                            print("date 1st $backEndFirstDate");
                             Provider.of<CounterProvider>(context,listen: false)
                                 .getPurchasess(
                                 context,
-                               "$firstPickedDate",
-                                "${secondPickedDate}",
+                               "$backEndFirstDate",
+                                "$backEndSecondDate",
                                 "");
                           } else if (isAllTypeClicked && isWithDetailsClicked) {
                             data = 'showAllWithDetails';
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getPurchaseRecord(
                               context,
-                              "$firstPickedDate",
-                              "${secondPickedDate}",
+                              "$backEndFirstDate",
+                              "$backEndSecondDate",
                               "",
                             );
                           }
@@ -1000,9 +1006,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getPurchaseDetails(
                                     context,
-                                    "${_selectedCustomerTypes}",
-                                    "$firstPickedDate",
-                                    "${secondPickedDate}",
+                                    "$_selectedCustomerTypes",
+                                    "$backEndFirstDate",
+                                    "$backEndSecondDate",
                                     "",
                                     "");
                           }
@@ -1013,8 +1019,8 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                 .getPurchaseDetails(
                                     context,
                                     "",
-                                    "$firstPickedDate",
-                                    "${secondPickedDate}",
+                                    "$backEndFirstDate",
+                                    "$backEndSecondDate",
                                     "$_selectedQuantityProductTypes",
                                     "$_selectedQuantitySupplierTypes");
                           }
@@ -1026,16 +1032,16 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             Provider.of<AllProductProvider>(context,
                                     listen: false)
                                 .GetUserWisePurchase(userFullName,
-                                    firstPickedDate, secondPickedDate);
+                                backEndFirstDate, backEndSecondDate);
                           } else if (isUserWiseClicked &&
                               isWithDetailsClicked) {
                             data = 'showByUserWithDetails';
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getPurchaseRecord(
                               context,
-                              "$firstPickedDate",
-                              "${secondPickedDate}",
-                              "${_selectedUserTypes}",
+                              "$backEndFirstDate",
+                              "$backEndSecondDate",
+                              "$_selectedUserTypes",
                             );
                           }
                         });
@@ -1088,34 +1094,34 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                       showCheckboxColumn: true,
                                       border: TableBorder.all(
                                           color: Colors.black54, width: 1),
-                                      columns: [
-                                        const DataColumn(
+                                      columns: const [
+                                        DataColumn(
                                           label: Center(child: Text('Invoice No')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Date')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label:
                                               Center(child: Text('Supplier Name')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Sub Total')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Discount')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label:
                                               Center(child: Text('Transport Cost')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Total')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Paid')),
                                         ),
-                                        const DataColumn(
+                                        DataColumn(
                                           label: Center(child: Text('Due')),
                                         ),
 
@@ -1379,35 +1385,35 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                       showCheckboxColumn: true,
                       border: TableBorder.all(
                           color: Colors.black54, width: 1),
-                      columns: [
-                        const DataColumn(
+                      columns: const [
+                        DataColumn(
                           label: Center(
                               child:
                               Text('Invoice No')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child: Text('Date')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child: Text(
                                   'Supplier Name')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child:
                               Text('Product Name')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child: Text('Price')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child: Text('Quantity')),
                         ),
-                        const DataColumn(
+                        DataColumn(
                           label: Center(
                               child: Text('Total')),
                         ),
@@ -1604,27 +1610,27 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           showCheckboxColumn: true,
                                           border: TableBorder.all(
                                               color: Colors.black54, width: 1),
-                                          columns: [
-                                            const DataColumn(
+                                          columns: const [
+                                            DataColumn(
                                               label:
                                                   Center(child: Text('Invoice No')),
                                             ),
-                                            const DataColumn(
+                                            DataColumn(
                                               label: Center(child: Text('Date')),
                                             ),
-                                            const DataColumn(
+                                            DataColumn(
                                               label: Center(
                                                   child: Text('Supplier Name')),
                                             ),
-                                            const DataColumn(
+                                            DataColumn(
                                               label: Center(
                                                   child: Text('Product Name')),
                                             ),
-                                            const DataColumn(
+                                            DataColumn(
                                               label: Center(
                                                   child: Text('Purchases  Rate')),
                                             ),
-                                            const DataColumn(
+                                            DataColumn(
                                               label:
                                                   Center(child: Text('Quantity')),
                                             ),
@@ -1722,29 +1728,29 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                               showCheckboxColumn: true,
                                               border: TableBorder.all(
                                                   color: Colors.black54, width: 1),
-                                              columns: [
-                                                const DataColumn(
+                                              columns: const [
+                                                DataColumn(
                                                   label: Center(
                                                       child: Text('Invoice No')),
                                                 ),
-                                                const DataColumn(
+                                                DataColumn(
                                                   label:
                                                       Center(child: Text('Date')),
                                                 ),
-                                                const DataColumn(
+                                                DataColumn(
                                                   label: Center(
                                                       child: Text('Supplier Name')),
                                                 ),
-                                                const DataColumn(
+                                                DataColumn(
                                                   label: Center(
                                                       child: Text('Product Name')),
                                                 ),
-                                                const DataColumn(
+                                                DataColumn(
                                                   label: Center(
                                                       child:
                                                           Text('Purchases Rate')),
                                                 ),
-                                                const DataColumn(
+                                                DataColumn(
                                                   label: Center(
                                                       child: Text('Quantity')),
                                                 ),
@@ -1841,45 +1847,45 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   border: TableBorder.all(
                                                       color: Colors.black54,
                                                       width: 1),
-                                                  columns: [
-                                                    const DataColumn(
+                                                  columns: const [
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Invoice No')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Date')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Supplier Name')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Sub Total')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child:
                                                               Text('Discount')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Transport Cost')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Total')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Paid')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Due')),
                                                     ),
@@ -2142,36 +2148,36 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   border: TableBorder.all(
                                                       color: Colors.black54,
                                                       width: 1),
-                                                  columns: [
-                                                    const DataColumn(
+                                                  columns: const [
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Invoice No')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Date')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Supplier Name')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text(
                                                               'Product Name')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Price')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child:
                                                               Text('Quantity')),
                                                     ),
-                                                    const DataColumn(
+                                                    DataColumn(
                                                       label: Center(
                                                           child: Text('Total')),
                                                     ),

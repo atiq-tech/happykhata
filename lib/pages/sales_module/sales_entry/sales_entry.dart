@@ -53,11 +53,6 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
 
   var customerSlNo;
 
-  List<String> salesByList = ['A', 'B', 'C', 'D'];
-  List<String> customerList = ['General Customer', 'C0123', 'C0456', 'C0789'];
-  List<String> categoryList = ['Paper', 'Khata', 'Printing Paper', 'Tissue'];
-  List<String> productList = ['Drawing Khata', 'Pencil', 'Notebook', 'Pen'];
-
   String? Salling_Rate = "0.0";
   String? customerMobile;
   String? customerAddress;
@@ -105,7 +100,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     super.initState();
     Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
     _quantityController.text = "1";
-    firstPickedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
   }
 
   Response? response;
@@ -125,7 +121,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
 
   Response? result;
   void dueReport(String? customerId) async {
-    print("Call Api ${customerId}");
+    print("Call Api $customerId");
 
     result = await Dio().post("${BaseUrl}api/v1/getCustomerDue",
         data: {"customerId": "$customerId"},
@@ -359,7 +355,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           children: [
                             Text(
                               firstPickedDate == null
-                                  ? Utils.formatDate(DateTime.now())
+                                  ? Utils.formatFrontEndDate(DateTime.now())
                                   : firstPickedDate!,
                             ),
                             const Icon(Icons.calendar_month)
@@ -529,7 +525,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                     _selectedCustomer = suggestion.customerSlNo.toString();
                                     customerSlNo = suggestion.customerSlNo.toString();
 
-                                    print("customer selected ======> ${_selectedCustomer}");
+                                    print("customer selected ======> $_selectedCustomer");
 
                                     if (_selectedCustomer == 'null') {
 
@@ -1510,7 +1506,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 AfteraddVatTotal = CartTotal;
                                 DiccountTotal = AfteraddVatTotal;
                                 TransportTotal = DiccountTotal;
-                                print("CartTotal ----------------- ${CartTotal}");
+                                print("CartTotal ----------------- $CartTotal");
                               });
                               totalStack(cproductId);
                             }else{
@@ -1898,7 +1894,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                       100) * CartTotal;
                                   print("Dis $Diccountper");
                                   _discountPercentController.text =
-                                      "${Diccountper}";
+                                      "$Diccountper";
                                   DiccountTotal =
                                       AfteraddVatTotal - Diccountper;
                                   TransportTotal = DiccountTotal;
@@ -2303,7 +2299,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
   }
 
   String? firstPickedDate;
-
+  var backEndFirstDate;
   void _selectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -2312,8 +2308,8 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
-
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -2344,7 +2340,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             "salesBy": GetStorage().read("name"),
             "salesType": level,
             "salesFrom": "1",
-            "salesDate": "${firstPickedDate}",
+            "salesDate": "$backEndFirstDate",
             "customerId": "$_selectedCustomer",
             "employeeId": "$employeeSlNo",
             "subTotal": "$CartTotal",

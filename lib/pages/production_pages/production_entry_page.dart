@@ -54,6 +54,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
   // String? inChargeName;
   // String? shiftName;
   String? firstPickedDate;
+  var backEndFirstDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -64,13 +65,15 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -90,8 +93,12 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
   ApiAllGetEmployees? apiAllGetEmployees;
   // ApiallGetProductions? apiallGetProduction;
 
+  bool isSaveBtnClk = false;
+
   @override
   void initState() {
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     // get materials
     ApiAllGetMaterial apiAllGetMaterial;
     Provider.of<CounterProvider>(context, listen: false).getMaterials(context);
@@ -394,6 +401,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           setState(() {
                             materiallist.add(ProductionApiModelClass(
                                 name: materialname,
@@ -730,6 +738,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           setState(() {
                             finishproductlist.add(
                               FinishProductionApiModelClass(
@@ -930,7 +939,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                                   ),
                                   border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate??Utils.formatDate(toDay),
+                                  hintText: firstPickedDate,
                                   hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
@@ -1369,8 +1378,11 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                           //         // _totalCostController.text,
                           //         // _transportCostController.text
                           //         );
-                          print("Button click");
-                          _AddProduction(context);
+                          // print("Button click");
+                          setState(() {
+                            isSaveBtnClk = true;
+                          });
+                          addProduction(context);
                         },
                         child: Container(
                           height: 35.0,
@@ -1382,8 +1394,8 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
                             color: const Color.fromARGB(255, 67, 134, 106),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: const Center(
-                              child: Text(
+                          child: Center(
+                              child: isSaveBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
                             "SAVE",
                             style: TextStyle(
                                 letterSpacing: 1.0,
@@ -1493,7 +1505,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
     );
   }
 
-  _AddProduction(context) async {
+  addProduction(context) async {
     String Link = "${BaseUrl}api/v1/addProduction";
     try {
       var response = await Dio().post(Link,
@@ -1501,9 +1513,7 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
             "production": {
               "production_id": "0",
               "production_sl": "PR-3496",
-              "date": firstPickedDate == null
-            ? DateFormat('yyyy-MM-dd')
-                .format(DateTime.now()) : "$firstPickedDate",
+              "date": backEndFirstDate,
               "incharge_id": "$_selectedIncharge",
               "shift": _selectedShift,
               "note": _noteController.text,
@@ -1550,22 +1560,44 @@ class _ProductionEntryPageState extends State<ProductionEntryPage> {
 
       var data = jsonDecode(response.data);
       // Provider.of<CounterProvider>(context, listen: false).getProducts(context);
-      print("AddProduction AddProduction length is ${data}");
-      print("success============> ${data["success"]}");
-      print("message =================> ${data["message"]}");
-      print("productionId ================>  ${data["productionId"]}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-         backgroundColor: const Color.fromARGB(255, 4, 108, 156),
-          duration: const Duration(seconds: 1), content: Center(child: Text("${data["message"]}"))));
-      _noteController.text = "";
-      _LaborCostController.text = "";
-      _transportCostController.text = "";
-      _totalCostController.text = "";
-      _otherCostController.text = "";
-      _selectedIncharge = "";
-      _selectedShift = "";
+      if(data["success"]==true){
+        setState(() {
+          isSaveBtnClk = false;
+        });
+        print("AddProduction AddProduction length is ${data}");
+        print("success============> ${data["success"]}");
+        print("message =================> ${data["message"]}");
+        print("productionId ================>  ${data["productionId"]}");
+
+        _noteController.text = "";
+        _LaborCostController.text = "";
+        _transportCostController.text = "";
+        _totalCostController.text = "";
+        _otherCostController.text = "";
+        _selectedIncharge = "";
+        _selectedShift = null;
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            content: Center(child: Text("${data["message"]}",style: TextStyle(color: Colors.white),))));
+        Navigator.pop(context);
+      }
+      else{
+        setState(() {
+          isSaveBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.black,
+            content: Center(child: Text("${data["message"]}",style: TextStyle(color: Colors.red),))));
+      }
     } catch (e) {
       print("Something is wrong AddProduction=======:$e");
+      setState(() {
+        isSaveBtnClk = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.black,
+          content: Center(child: Text("${e.toString()}",style: TextStyle(color: Colors.red),))));
     }
   }
 }

@@ -35,12 +35,12 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -56,12 +56,12 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -80,8 +80,8 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
   bool isLoading = false;
   @override
   void initState() {
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     //Products
     ApiAllProducts apiAllProducts;
     Provider.of<CounterProvider>(context, listen: false).getProducts(context);

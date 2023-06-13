@@ -28,6 +28,8 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -38,20 +40,21 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
-        firstPickedDate = Utils.formatDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
   String? secondPickedDate;
-
   void _secondSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -60,21 +63,24 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        secondPickedDate = Utils.formatDate(selectedDate);
-        print("Firstdateee $secondPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $secondPickedDate");
       });
     }
     else{
       setState(() {
-        secondPickedDate = Utils.formatDate(toDay);
-        print("Firstdateee $secondPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $secondPickedDate");
       });
     }
   }
+
   var supplyerController = TextEditingController();
 
   bool isSupplierListClicked = false;
-  String? _searchType;
+  String? _searchType = "All";
 
   List<String> _searchTypeList = [
     'All',
@@ -89,8 +95,10 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
   ApiAllMeterialPurchase? apiAllMeterialPurchase;
   @override
   void initState() {
-    firstPickedDate = Utils.formatDate(DateTime.now());
-    secondPickedDate = Utils.formatDate(DateTime.now());
+    firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
+    secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     ApiAllSuppliers apiAllSuppliers;
     Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
     // TODO: implement initState
@@ -440,14 +448,14 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getMeterialPurchase(
                                     context,
-                                    "${firstPickedDate}",
-                                    "${secondPickedDate}",
+                                    "${backEndFirstDate}",
+                                    "${backEndSecondDate}",
                                     _selectedSupplier??''
                                     );
                             print(
-                                "firstDate Meterial purchase Record=====::${firstPickedDate}");
+                                "firstDate Meterial purchase Record=====::${backEndFirstDate}");
                             print(
-                                "secondDate ++++++Meterial purchase Record=====::${secondPickedDate}");
+                                "secondDate ++++++Meterial purchase Record=====::${backEndSecondDate}");
                             print(
                                 "firstDate Meterial purchase Record=====::${_selectedSupplier}");
 
@@ -504,32 +512,32 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                     showCheckboxColumn: true,
                                     border: TableBorder.all(
                                         color: Colors.black54, width: 1),
-                                    columns: [
-                                      const DataColumn(
+                                    columns: const [
+                                      DataColumn(
                                         label: Center(child: Text('Invoice No.')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Date')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Supplier Id')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Supplier Name')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Sub Total')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('VAT')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Total')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Paid')),
                                       ),
-                                      const DataColumn(
+                                      DataColumn(
                                         label: Center(child: Text('Due')),
                                       ),
                                       // DataColumn(

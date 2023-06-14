@@ -25,6 +25,8 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
   final TextEditingController _Date2Controller = TextEditingController();
 
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondtDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -36,11 +38,13 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -57,21 +61,18 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondtDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondtDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
   }
 
-  String? _selectedType;
-  List<String> _selectedTypeList = [
-    'Received',
-    'Payment',
-  ];
   String? _selectedAccount;
 
   ApiAllProducts? apiAllProducts;
@@ -81,7 +82,9 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndSecondtDate = Utils.formatBackEndDate(DateTime.now());
     //Products
     ApiAllProducts apiAllProducts;
     Provider.of<CounterProvider>(context, listen: false).getProducts(context);
@@ -345,13 +348,13 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                 .getProductLedger(
                                     context,
                                     "${_selectedAccount}",
-                                    "${firstPickedDate}",
-                                    "${secondPickedDate}");
+                                    "${backEndFirstDate}",
+                                    "${backEndSecondtDate}");
 
                             print(
-                                "firstDate product ledger=====::${firstPickedDate}");
+                                "firstDate product ledger=====::${backEndFirstDate} dsfasf $_selectedAccount");
                             print(
-                                "secondDate ++++++product ledger=====::${secondPickedDate}");
+                                "secondDate ++++++product ledger=====::${backEndSecondtDate}");
                           });
                           Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
@@ -387,7 +390,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
             const SizedBox(height: 10.0),
            isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Container(
+              :allProductLedgerData.isNotEmpty? Container(
               height: MediaQuery.of(context).size.height / 1.43,
               width: double.infinity,
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -467,7 +470,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                   ),
                 ),
               ),
-            ),
+            ):const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
           ],
         ),
       ),

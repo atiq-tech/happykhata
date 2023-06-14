@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:intl/intl.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_profit&loss/Api_all_profit_&_loss.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_customers_Class.dart';
@@ -23,6 +20,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
   final TextEditingController _DateController = TextEditingController();
   final TextEditingController _Date2Controller = TextEditingController();
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondtDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -34,11 +33,13 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -55,11 +56,13 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondtDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
     }else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondtDate = Utils.formatBackEndDate(toDay);
         print("Firstdateee $firstPickedDate");
       });
     }
@@ -83,6 +86,8 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
   void initState() {
     //Customers
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondtDate = Utils.formatBackEndDate(DateTime.now());
     secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     ApiAllCustomers apiAllCustomers;
     Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
@@ -300,12 +305,12 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                 .getProfitLoss(
                                     context,
                                     "${_selectedAccount}",
-                                    "${firstPickedDate}",
-                                    "${secondPickedDate}");
+                                    "${backEndFirstDate}",
+                                    "${backEndSecondtDate}");
 
-                            print("firstDate ++++++=====::${firstPickedDate}");
+                            print("firstDate ++++++=====::${backEndFirstDate}");
                             print(
-                                "secondPickedDate ++++++=====::${secondPickedDate}");
+                                "secondPickedDate ++++++=====::${backEndSecondtDate}");
 
                             // for (int i = 0;
                             //     i <= allProfitLossData.length;

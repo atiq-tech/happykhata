@@ -204,7 +204,7 @@ class CounterProvider extends ChangeNotifier {
   //Bank Transactions
   List<AllBankTransactionModelClass> allBankTransactionslist = [];
 
-  Future<List<AllBankTransactionModelClass>>getBankTransactions(context, {String? accountId,
+  Future<List<AllBankTransactionModelClass>>getAllBankTransactions(context, {String? accountId,
       String? dateFrom,
       String? dateTo,
       String? transactionType}) async {

@@ -33,15 +33,18 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
 
   final TextEditingController _DescriptionController = TextEditingController();
   final TextEditingController _AmountController = TextEditingController();
+  final TextEditingController tnxIdNoController = TextEditingController();
+
 
   String? paymentType;
   String? _selectedType;
-  List<String> _selectedTypeList = [
+  final List<String> _selectedTypeList = [
     'Cash Receive',
     'Cash Payment',
   ];
   String? _selectedAccount;
   String? firstPickedDate;
+  var backEndFirstDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -53,13 +56,15 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
@@ -70,13 +75,28 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    _selectedType = 'Cash Receive';
+    getCashTransactionId();
     // ACCOUNTS
-    ApiAllAccounts apiAllAccounts;
+    getCashTransectionData(backEndFirstDate);
     Provider.of<CounterProvider>(context, listen: false).getAccounts(context);
     // TODO: implement initState
     super.initState();
   }
-  var  _accountController = TextEditingController();
+
+  getCashTransectionData(backEndFirstDate){
+    Provider.of<CounterProvider>(context,
+        listen: false)
+        .getGetCashTransactions(context,
+        "$backEndFirstDate", "$backEndFirstDate"
+      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
+      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}"
+    );
+  }
+
+
+  final  _accountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     //Account
@@ -102,7 +122,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: Container(
-                  height: 260.0,
+                  height: 300.0,
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
@@ -113,6 +133,50 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                   ),
                   child: Column(
                     children: [
+                      Row(
+                        children: [
+                          const Expanded(
+                            flex: 5,
+                            child: Text(
+                              "Transaction Id",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 126, 125, 125)),
+                            ),
+                          ),
+                          Expanded(flex: 1, child: Text(':')),
+                          Expanded(
+                            flex: 11,
+                            child: Container(
+                              height: 28.0,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                      color: const Color.fromARGB(255, 7, 125, 180))),
+                              child: TextField(
+                                controller: tnxIdNoController,
+                                decoration: InputDecoration(
+                                  enabled: false,
+                                  filled: true,
+                                  border: InputBorder.none,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 7, 125, 180),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 7, 125, 180),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
                           const Expanded(
@@ -204,23 +268,23 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       _selectedType = newValue!;
-                                      if (newValue == "Receive") {
+                                      if (newValue == "Cash Receive") {
                                         paymentType = "In Cash";
                                       }
-                                      if (newValue == "Payment") {
+                                      if (newValue == "Cash Payment") {
                                         paymentType = "Out Cash";
                                       }
                                     });
                                   },
                                   items: _selectedTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         location,
                                         style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -310,7 +374,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                             _accountController.text = suggestion.accName!;
                                         setState(() {
                                           _selectedAccount = suggestion.accSlNo.toString();
-                                          getCashTransactionId();
+                                          // getCashTransactionId();
                                         });
                                       },
                                       onSaved: (value) {},
@@ -449,19 +513,13 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                 0,
                                 int.parse(_AmountController.text),
                                 "${_DescriptionController.text}",
-                                "$TransactionId",
+                                "${tnxIdNoController.text}",
                                 0,
                                 "$paymentType",
                                 "Official",
-                                "$firstPickedDate",
+                                "$backEndFirstDate",
                               );
-                              Provider.of<CounterProvider>(context,
-                                      listen: false)
-                                  .getGetCashTransactions(context,
-                                      "$firstPickedDate", "$firstPickedDate"
-                                      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                                      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}"
-                                      );
+                              getCashTransectionData(backEndFirstDate);
                               // });
                             },
                             child: Container(
@@ -652,7 +710,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
         }),
       );
       print(response.data);
-      TransactionId = jsonDecode(response.data);
+      tnxIdNoController.text = jsonDecode(response.data);
       print("getCashTransactionId Code===========> $TransactionId");
     } catch (e) {
       print(e);

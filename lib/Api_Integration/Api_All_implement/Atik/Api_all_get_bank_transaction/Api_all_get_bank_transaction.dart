@@ -9,7 +9,7 @@ import 'package:poss/const_page.dart';
 class ApiAllGetBankTransactions {
   static GetApiAllGetBankTransactions(
       context, String? dateFrom, String? dateTo) async {
-    String Link = "${BaseUrl}api/v1/getAllBankTransactions";
+    String Link = "${BaseUrl}api/v1/getBankTransactions";
     List<AllGetBankTransactionClass> allGetBankTransactionslist = [];
     AllGetBankTransactionClass allGetBankTransactionClass;
     try {

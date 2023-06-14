@@ -8,8 +8,6 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_account
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
-import 'package:poss/Api_Integration/Api_Modelclass/sales_module/sales_module_by_employee_modelclass.dart';
-
 
 import 'package:poss/common_widget/custom_appbar.dart';
 
@@ -37,6 +35,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
   final TextEditingController customerController = TextEditingController();
 
   String? firstPickedDate;
+  var backEndFirstDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -48,57 +47,54 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
-  String? _Get_transactionType;
-  String? _transactionType;
-  List<String> _transactionTypeList = [
+  String? getTransactionType;
+  String? _transactionType = "Receive";
+  final List<String> _transactionTypeList = [
     'Receive',
     'Payment',
   ];
 
   bool isBankListClicked = false;
-  String? _Get_paymentType;
-  String? _paymentType;
-  List<String> _paymentTypeList = [
+  String? getPaymentType;
+  String? _paymentType = 'Cash';
+  final List<String> _paymentTypeList = [
     'Cash',
     'Bank',
   ];
   String? _selectedBank;
-//
-  String? _Get_customerType;
-  String? _customerType;
-  List<String> _customerTypeList = [
+
+  String? getCustomerType;
+  String? _customerType = "Retail";
+  final List<String> _customerTypeList = [
     'Retail',
     'Wholesale',
   ];
   String? _selectedCustomer;
-  List<String> customerList = [
-    'Atiq',
-    'Nitish',
-    'Maruf',
-    'Mehedi',
-    'Nahid',
-    'Nuzmul',
-    'Joy',
-    'Musha'
-  ];
+
   ApiAllBankAccounts? apiAllBankAccounts;
   ApiAllCustomers? apiAllCustomers;
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    getTransactionType = "CR";
+    getPaymentType = "cash";
+    getCustomerType = "retail";
+
     //bank ACCOUNTS
-    ApiAllBankAccounts apiAllBankAccounts;
     Provider.of<CounterProvider>(context, listen: false)
         .getBankAccounts(context);
     //Customers
@@ -137,14 +133,14 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Container(
                   height: isBankListClicked ? 350.0 : 320,
                   width: double.infinity,
-                  padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                  padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromARGB(255, 5, 107, 155),
+                      color: const Color.fromARGB(255, 5, 107, 155),
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -152,7 +148,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Transaction Type",
@@ -160,50 +156,50 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'Select Type',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _transactionType,
                                   onChanged: (newValue) {
                                     setState(() {
                                       _transactionType = newValue!;
                                       if (newValue == "Receive") {
-                                        _Get_transactionType = "CR";
+                                        getTransactionType = "CR";
                                       }
                                       if (newValue == "Payment") {
-                                        _Get_transactionType = "CP";
+                                        getTransactionType = "CP";
                                       }
                                     });
                                   },
                                   items: _transactionTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -212,11 +208,11 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.0),
+                      const SizedBox(height: 5.0),
                       Container(
                         child: Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 6,
                               child: Text(
                                 "Payment Type",
@@ -224,40 +220,40 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                     color: Color.fromARGB(255, 126, 125, 125)),
                               ),
                             ),
-                            Expanded(flex: 1, child: Text(":")),
+                            const Expanded(flex: 1, child: Text(":")),
                             Expanded(
                               flex: 11,
                               child: Container(
                                 height: 28.0,
                                 width: MediaQuery.of(context).size.width / 2,
-                                padding: EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 5.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Color.fromARGB(255, 5, 107, 155),
+                                    color: const Color.fromARGB(255, 5, 107, 155),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
-                                    hint: Text(
+                                    hint: const Text(
                                       'Select Type',
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    dropdownColor: Color.fromARGB(255, 231, 251,
+                                    dropdownColor: const Color.fromARGB(255, 231, 251,
                                         255), // Not necessary for Option 1
                                     value: _paymentType,
                                     onChanged: (newValue) {
                                       setState(() {
                                         _paymentType = newValue!;
 
-                                        // if (newValue == "Cash") {
-                                        //   _Get_paymentType = "cash";
-                                        // }
-                                        // if (newValue == "Bank") {
-                                        //   _Get_paymentType = "bank";
-                                        // }
+                                        if (newValue == "Cash") {
+                                          getPaymentType = "cash";
+                                        }
+                                        if (newValue == "Bank") {
+                                          getPaymentType = "bank";
+                                        }
                                         _paymentType == "Bank"
                                             ? isBankListClicked = true
                                             : isBankListClicked = false;
@@ -265,13 +261,13 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                     },
                                     items: _paymentTypeList.map((location) {
                                       return DropdownMenuItem(
+                                        value: location,
                                         child: Text(
                                           location,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 14,
                                           ),
                                         ),
-                                        value: location,
                                       );
                                     }).toList(),
                                   ),
@@ -281,12 +277,12 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       isBankListClicked == true
                           ? Container(
                         child: Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 6,
                               child: Text(
                                 "Bank account",
@@ -295,18 +291,18 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                         255, 126, 125, 125)),
                               ),
                             ),
-                            Expanded(flex: 1, child: Text(":")),
+                            const Expanded(flex: 1, child: Text(":")),
                             Expanded(
                               flex: 11,
                               child: Container(
                                 height: 40.0,
                                 width:
                                 MediaQuery.of(context).size.width / 2,
-                                padding: EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 5.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color:
-                                    Color.fromARGB(255, 5, 107, 155),
+                                    const Color.fromARGB(255, 5, 107, 155),
                                   ),
                                   borderRadius:
                                   BorderRadius.circular(10.0),
@@ -418,10 +414,10 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                       )
                           : Container(),
 
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Customer Type",
@@ -429,50 +425,50 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'Select Type',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _customerType,
                                   onChanged: (newValue) {
                                     setState(() {
                                       _customerType = newValue!;
                                       if (newValue == "Retail") {
-                                        _Get_customerType = "retail";
+                                        getCustomerType = "retail";
                                       }
                                       if (newValue == "Wholesale") {
-                                        _Get_customerType = "wholesale";
+                                        getCustomerType = "wholesale";
                                       }
                                     });
                                   },
                                   items: _customerTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -481,11 +477,11 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 6.0),
+                      const SizedBox(height: 6.0),
 
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Customer",
@@ -493,16 +489,16 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 40.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -648,7 +644,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
 
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Payment Date",
@@ -656,11 +652,11 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 5,
                                 top: 5,
                                 bottom: 5,
@@ -674,17 +670,17 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   enabled: false,
                                   decoration: InputDecoration(
                                     contentPadding:
-                                    EdgeInsets.only(top: 10, left: 10),
+                                    const EdgeInsets.only(top: 10, left: 10),
                                     filled: true,
                                     fillColor: Colors.blue[50],
-                                    suffixIcon: Icon(
+                                    suffixIcon: const Icon(
                                       Icons.calendar_month,
                                       color: Colors.black87,
                                     ),
-                                    border: OutlineInputBorder(
+                                    border: const OutlineInputBorder(
                                         borderSide: BorderSide.none),
                                     hintText: firstPickedDate,
-                                    hintStyle: TextStyle(
+                                    hintStyle: const TextStyle(
                                         fontSize: 14, color: Colors.black87),
                                   ),
                                   validator: (value) {
@@ -701,7 +697,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                       ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Description",
@@ -709,26 +705,26 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _DescriptionController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -739,10 +735,10 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.0),
+                      const SizedBox(height: 5.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Amount",
@@ -750,26 +746,26 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _AmountController,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -780,7 +776,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -790,13 +786,13 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   .GetApiAllAddCustomerPayment(
                                 context,
                                 "$_paymentType",
-                                "$_Get_transactionType",
-                                "${_AmountController.text}",
+                                "$getTransactionType",
+                                _AmountController.text,
                                 "$_selectedCustomer",
-                                "$firstPickedDate",
+                                "$backEndFirstDate",
                                 0,
-                                "${_DescriptionController.text}",
-                                "${_DueController.text}",
+                                _DescriptionController.text,
+                                _DueController.text,
                                 "$_selectedBank",
                                 //  CPayment_Paymentby,
                                 // CPayment_TransactionType,
@@ -813,20 +809,20 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   listen: false)
                                   .getGetCustomerPayment(
                                   context,
-                                  "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                                  "${DateFormat('yyyy-MM-dd').format(DateTime.now())}");
+                                  DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                                  DateFormat('yyyy-MM-dd').format(DateTime.now()));
                             },
                             child: Container(
                               height: 35.0,
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 88, 204, 91),
+                                    color: const Color.fromARGB(255, 88, 204, 91),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 5, 114, 165),
+                                color: const Color.fromARGB(255, 5, 114, 165),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                     "SAVE",
                                     style: TextStyle(
@@ -836,7 +832,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   )),
                             ),
                           ),
-                          SizedBox(width: 4.0),
+                          const SizedBox(width: 4.0),
                           InkWell(
                             onTap: () {
                               _DescriptionController.text = "";
@@ -848,12 +844,12 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 88, 204, 91),
+                                    color: const Color.fromARGB(255, 88, 204, 91),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 252, 33, 4),
+                                color: const Color.fromARGB(255, 252, 33, 4),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                     "CANCEL",
                                     style: TextStyle(
@@ -892,12 +888,12 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
               //   ),
               // ),
 
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Container(
                 height: MediaQuery.of(context).size.height / 1.43,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Container(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
                   child: SingleChildScrollView(
@@ -910,31 +906,31 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           border:
                           TableBorder.all(color: Colors.black54, width: 1),
                           columns: [
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Transaction Id')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Date')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Customer Name')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Customer Type')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Transaction Type')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Payment by')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Amount')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Description')),
                             ),
-                            DataColumn(
+                            const DataColumn(
                               label: Center(child: Text('Save By')),
                             ),
                           ],

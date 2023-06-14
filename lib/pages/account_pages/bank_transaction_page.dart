@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:intl/intl.dart';
-import 'package:jiffy/jiffy.dart' as jiffy;
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_bank_transaction/Api_all_add_bank_transaction.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_accounts/Api_all_bank_accounts.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
@@ -28,6 +26,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
   final TextEditingController accountController = TextEditingController();
   String? _selectedAccount;
   String? firstPickedDate;
+  var backEndFirstDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -39,20 +38,22 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
     }
     else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
   String? paymentType;
-  String? _transactionType;
-  List<String> _transactionTypeList = [
+  String? _transactionType = 'Deposit';
+  final List<String> _transactionTypeList = [
     'Deposit',
     'Withdraw',
   ];
@@ -62,13 +63,22 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
   ApiAllAddBankTransactions? apiAllAddBankTransactions;
   @override
   void initState() {
+    paymentType = "deposit";
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     //bank ACCOUNTS
-    ApiAllBankAccounts apiAllBankAccounts;
+    getBankTrasectionData(backEndFirstDate);
     Provider.of<CounterProvider>(context, listen: false)
         .getBankAccounts(context);
     // TODO: implement initState
     super.initState();
+  }
+
+  getBankTrasectionData(backEndFirstDate){
+    Provider.of<CounterProvider>(context,
+        listen: false)
+        .getGetBankTransactions(context,
+        "$backEndFirstDate", "$backEndFirstDate");
   }
 
   @override
@@ -175,7 +185,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 38.0,
+                              height: 40.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
@@ -316,8 +326,8 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                     'Select Type',
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color:
-                                            Color.fromARGB(255, 100, 98, 98)),
+                                        color: Colors.black54
+                                    ),
                                   ), // Not necessary for Option 1
                                   value: _transactionType,
                                   onChanged: (newValue) {
@@ -333,14 +343,14 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                   },
                                   items: _transactionTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         location,
                                         style: const TextStyle(
                                             fontSize: 14,
-                                            color: Color.fromARGB(
-                                                255, 126, 125, 125)),
+                                            color: Colors.black54,
+                                        ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -440,25 +450,21 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           onTap: () {
                             setState(() {
                               isLoading = true;
-                            });                          
+                            });
+                            print("asjdfnhkasjfn $paymentType");
                               ApiAllAddBankTransactions
                                   .GetApiAllAddBankTransactions(
                                 context,
                                 "$_selectedAccount",
-                                "${_amountController.text}",
-                                "${_noteController.text}",
-                                "$firstPickedDate",
+                                _amountController.text,
+                                _noteController.text,
+                                "$backEndFirstDate",
                                 0,
                                 "$paymentType",
                               );
-                              Provider.of<CounterProvider>(context,
-                                      listen: false)
-                                  .getGetBankTransactions(context,
-                                      "$firstPickedDate", "$firstPickedDate"
-                                      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                                      // "${DateFormat('yyyy-MM-dd').format(DateTime.now())}"
-                                      );
-                       
+
+                              getBankTrasectionData(backEndFirstDate);
+
                             Future.delayed(const Duration(seconds: 3), () {
                               setState(() {
                                 isLoading = false;

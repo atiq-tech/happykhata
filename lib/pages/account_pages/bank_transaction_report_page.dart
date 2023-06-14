@@ -28,7 +28,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   String? _selectedAccount;
 //
   String? paymentType;
-  String? _selectedType;
+  String? _selectedType = 'All';
   List<String> _selectedTypeList = [
     'All',
     'Deposit',
@@ -39,6 +39,8 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   final TextEditingController _Date2Controller = TextEditingController();
   final TextEditingController accountController = TextEditingController();
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -50,18 +52,20 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
   String? secondPickedDate;
-
   void _secondSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -70,16 +74,20 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $secondPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $secondPickedDate");
       });
     }
   }
+
 
   bool isLoading = false;
 
@@ -89,6 +97,8 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
   void initState() {
     // TODO: implement initState
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
     secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     //bank ACCOUNTS
     ApiAllBankAccounts apiAllBankAccounts;
@@ -142,7 +152,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         Expanded(
                           flex: 11,
                           child: Container(
-                            height: 38.0,
+                            height: 40.0,
                             width: MediaQuery.of(context).size.width / 2,
                             padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
@@ -304,13 +314,13 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                                 },
                                 items: _selectedTypeList.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),
@@ -330,7 +340,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                         ),
                         Expanded(
                           flex: 1,
-                          child: Container(
+                          child: SizedBox(
                             height: 35,
                             child: GestureDetector(
                               onTap: (() {
@@ -363,12 +373,10 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                             ),
                           ),
                         ),
-                        Container(
-                          child: const Text("to"),
-                        ),
+                        const Text("to"),
                         Expanded(
                           flex: 1,
-                          child: Container(
+                          child: SizedBox(
                             height: 35,
                             child: GestureDetector(
                               onTap: (() {
@@ -412,21 +420,21 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                             isLoading = true;
                           });
                           Provider.of<CounterProvider>(context, listen: false)
-                              .getBankTransactions(
+                              .getAllBankTransactions(
                             context,
-                           accountId: "${_selectedAccount}",
-                            dateFrom: "${firstPickedDate}",
-                            dateTo: "${secondPickedDate}",
-                             transactionType: "${paymentType}",
+                           accountId: "$_selectedAccount" == 'null'? '' : "$_selectedAccount",
+                            dateFrom: "$backEndFirstDate",
+                            dateTo: "$backEndSecondDate",
+                            transactionType: "$paymentType" == 'null' ?'' : "$paymentType",
                           );
 
-                          print("CashTransactions ::${_selectedAccount}");
+                          print("CashTransactions ::$_selectedAccount");
                           print(
-                              "firstDate CashTransactions+++++=====::${firstPickedDate}");
+                              "firstDate CashTransactions+++++=====::$backEndFirstDate");
                           print(
-                              "secondPickedDate +CashTransactions+++++=====::${secondPickedDate}");
+                              "secondPickedDate +CashTransactions+++++=====::$backEndSecondDate");
                           print(
-                              "CashTransactions selectedType::${paymentType}");
+                              "CashTransactions selectedType::$paymentType");
                           Future.delayed(const Duration(seconds: 3), () {
                             setState(() {
                               isLoading = false;
@@ -465,7 +473,7 @@ class _BankTransactionReportPageState extends State<BankTransactionReportPage> {
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
                       child: SingleChildScrollView(

@@ -127,71 +127,62 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
-                              builder: (context,
-                                  AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                    TextFieldConfiguration(
-                                        onChanged: (value){
-                                          if (value == '') {
-                                            _selectedCategory = '';
-                                          }
-                                        },
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                        controller: categoryController,
-                                        decoration: InputDecoration(
-                                          hintText: 'Select Category',
-                                          suffix: _selectedCategory == '' ? null : GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                categoryController.text = '';
-                                              });
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 5),
-                                              child: Icon(Icons.close,size: 14,),
-                                            ),
-                                          ),
-                                        )
+                            child: TypeAheadFormField(
+                              textFieldConfiguration:
+                              TextFieldConfiguration(
+                                  onChanged: (value){
+                                    if (value == '') {
+                                      _selectedCategory = '';
+                                    }
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  controller: categoryController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Category',
+                                    suffix: _selectedCategory == '' ? null : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          categoryController.text = '';
+                                        });
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 5),
+                                        child: Icon(Icons.close,size: 14,),
+                                      ),
                                     ),
-                                    suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element.productCategoryName!
-                                          .toLowerCase()
-                                          .contains(pattern
-                                          .toString()
-                                          .toLowerCase()))
-                                          .take(allCategoryListData.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (CategoryWiseStockModel suggestion) {
-                                      categoryController.text = suggestion.productCategoryName!;
-                                      setState(() {
-                                        _selectedCategory = suggestion.productCategorySlNo.toString();
-                                        getProductCode();
-                                      });
-                                    },
-                                    onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
+                                  )
+                              ),
+                              suggestionsCallback: (pattern) {
+                                return allCategoryListData
+                                    .where((element) => element.productCategoryName!
+                                    .toLowerCase()
+                                    .contains(pattern
+                                    .toString()
+                                    .toLowerCase()))
+                                    .take(allCategoryListData.length)
+                                    .toList();
+                                // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                               },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                );
+                              },
+                              transitionBuilder:
+                                  (context, suggestionsBox, controller) {
+                                return suggestionsBox;
+                              },
+                              onSuggestionSelected:
+                                  (CategoryWiseStockModel suggestion) {
+                                categoryController.text = suggestion.productCategoryName!;
+                                setState(() {
+                                  _selectedCategory = suggestion.productCategorySlNo.toString();
+                                  getProductCode();
+                                });
+                              },
+                              onSaved: (value) {},
                             ),
 
                             // child: DropdownButtonHideUnderline(

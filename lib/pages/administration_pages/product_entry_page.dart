@@ -153,7 +153,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                               });
                                             },
                                             child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              padding: EdgeInsets.symmetric(horizontal: 5),
                                               child: Icon(Icons.close,size: 14,),
                                             ),
                                           ),

@@ -175,7 +175,7 @@ class _ProductLedgerPageState extends State<ProductLedgerPage> {
                                               });
                                             },
                                             child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              padding: EdgeInsets.symmetric(horizontal: 5),
                                               child: Icon(Icons.close,size: 14,),
                                             ),
                                           ),

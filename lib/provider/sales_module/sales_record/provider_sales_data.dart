@@ -52,7 +52,7 @@ class AllProductProvider extends ChangeNotifier {
 
   List<By_all_employee_ModelClass> By_all_employee_ModelClass_List = [];
   //FetchAllSalseData(String? dateFrom, String? dateTo, String? customerId, String? employeeId,String? productId,String? userFullName//
-  Future<List<By_all_employee_ModelClass>> Fatch_By_all_Employee(
+  Fatch_By_all_Employee(
       BuildContext context,
       {String? dateFrom,
       String? dateTo,
@@ -63,7 +63,7 @@ class AllProductProvider extends ChangeNotifier {
     By_all_employee_ModelClass_List =
         await Api_Uzzal_implement_Class.FetchAllEmployee(
             dateFrom, dateTo, customerId, employeeId, productId, userFullName);
-    return By_all_employee_ModelClass_List;
+    // return By_all_employee_ModelClass_List;
     notifyListeners();
   }
   ////////////////////////////////By all Salse Recorde Employee/////////////////////////

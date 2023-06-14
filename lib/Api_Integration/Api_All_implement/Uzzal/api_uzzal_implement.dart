@@ -346,6 +346,8 @@ class Api_Uzzal_implement_Class {
     return CategoryWiseSaleDetailsList;
   }
 
+  static bool isLoading = false;
+
   //////////////////// Customer Due List //////////////////////////////////
   static FetchAllCustomerDueList(context, String? customerId) async {
     String link = "${BaseUrl}api/v1/getCustomerDue";
@@ -371,7 +373,7 @@ class Api_Uzzal_implement_Class {
         totalD = totalDue.toStringAsFixed(2);
         GetStorage().write("totalDue", totalD);
         print(AllCustomerDueListList[0].customerName);
-
+        isLoading = false;
       }
     } catch (e) {
       print(e);

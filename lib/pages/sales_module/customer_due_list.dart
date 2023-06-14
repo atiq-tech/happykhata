@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Uzzal/api_uzzal_implement.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/providers/counter_provider.dart';
@@ -23,7 +24,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
     'All',
     'By Customer',
   ];
-  bool isLoading = false; //loading circularprogress indicator
+  //loading circularprogress indicator
   String? _selectedCustomer;
   ApiAllCustomers? apiAllCustomers;
   var aLLCustomerDueList;
@@ -280,7 +281,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    isLoading = true;
+                    Api_Uzzal_implement_Class.isLoading = true;
                     _searchType == "By Customer"
                         ? data = 'by customer'
                         : _searchType == "All"
@@ -295,16 +296,6 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
                     context,
                     customerId: _selectedCustomer??'',
                   );
-
-                  _selectedCustomer=='' ? Future.delayed( Duration(seconds: 15), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  }) : Future.delayed( Duration(seconds: 5), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
 
                 },
                 child: Container(
@@ -331,7 +322,7 @@ class _Customer_Due_ListState extends State<Customer_Due_List> {
           ),
 
           if (data == 'all' || data == 'by customer' )
-         isLoading ? const Center(child: CircularProgressIndicator(),)
+            Api_Uzzal_implement_Class.isLoading ? const Center(child: CircularProgressIndicator(),)
              : Expanded(child: Container(
            padding: EdgeInsets.all(10),
              child: SingleChildScrollView(

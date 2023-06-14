@@ -95,9 +95,12 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
 
   late final Box box;
 
+  bool isSellBtnClk = false;
+
   @override
   void initState() {
     super.initState();
+    Provider.of<AllProductProvider>(context, listen: false).Fatch_By_all_Employee(context);
     Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
     _quantityController.text = "1";
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
@@ -136,6 +139,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
       print("responses result========> ${data[0]['dueAmount']}");
       setState(() {
         _previousDueController.text = "${data[0]['dueAmount']}";
+        _nameController.text = "${data[0]['Customer_Name']}";
       });
     }
   }
@@ -233,70 +237,61 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context).Fatch_By_all_Employee(context),
-                              builder: (context,
-                                  AsyncSnapshot<List<By_all_employee_ModelClass>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                    TextFieldConfiguration(
-                                        onChanged: (value){
-                                          if (value == '') {
-                                            employeeSlNo = '';
-                                          }
-                                        },
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                        controller: empluyeeNameController,
-                                        decoration: InputDecoration(
-                                          hintText: 'Select Employee',
-                                          suffix: employeeSlNo == '' ? null : GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                empluyeeNameController.text = '';
-                                              });
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 3),
-                                              child: Icon(Icons.close,size: 14,),
-                                            ),
-                                          ),
-                                        ),
-                                    ),
-                                    suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element.employeeName!
-                                          .toLowerCase()
-                                          .contains(pattern
-                                          .toString()
-                                          .toLowerCase()))
-                                          .take(All_Employee.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.employeeName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (By_all_employee_ModelClass suggestion) {
-                                      empluyeeNameController.text = suggestion.employeeName!;
+                            child: TypeAheadFormField(
+                              textFieldConfiguration:
+                              TextFieldConfiguration(
+                                onChanged: (value){
+                                  if (value == '') {
+                                    employeeSlNo = '';
+                                  }
+                                },
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                controller: empluyeeNameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Select Employee',
+                                  suffix: employeeSlNo == '' ? null : GestureDetector(
+                                    onTap: () {
                                       setState(() {
-                                        employeeSlNo = suggestion.employeeSlNo.toString();
+                                        empluyeeNameController.text = '';
                                       });
                                     },
-                                    onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      child: Icon(Icons.close,size: 14,),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              suggestionsCallback: (pattern) {
+                                return All_Employee
+                                    .where((element) => element.employeeName!
+                                    .toLowerCase()
+                                    .contains(pattern
+                                    .toString()
+                                    .toLowerCase()))
+                                    .take(All_Employee.length)
+                                    .toList();
+                                // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                               },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: SizedBox(child: Text("${suggestion.employeeName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                );
+                              },
+                              transitionBuilder:
+                                  (context, suggestionsBox, controller) {
+                                return suggestionsBox;
+                              },
+                              onSuggestionSelected:
+                                  (By_all_employee_ModelClass suggestion) {
+                                empluyeeNameController.text = suggestion.employeeName!;
+                                setState(() {
+                                  employeeSlNo = suggestion.employeeSlNo.toString();
+                                });
+                              },
+                              onSaved: (value) {},
                             ),
                             // child: DropdownButtonHideUnderline(
                             //   child: DropdownButton(
@@ -1011,74 +1006,65 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
-                              builder: (context,
-                                  AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                    TextFieldConfiguration(
-                                        onChanged: (value){
-                                          if (value == '') {
-                                            categoryId = '';
-                                          }
-                                        },
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                        controller: categoryController,
-                                      decoration: InputDecoration(
-                                        hintText: 'Select Category',
-                                        suffix: categoryId == '' ? null : GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              categoryController.text = '';
-                                            });
-                                          },
-                                          child: const Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 3),
-                                            child: Icon(Icons.close,size: 14,),
-                                          ),
-                                        ),
-                                      )
+                            child: TypeAheadFormField(
+                              textFieldConfiguration:
+                              TextFieldConfiguration(
+                                  onChanged: (value){
+                                    if (value == '') {
+                                      categoryId = '';
+                                    }
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  controller: categoryController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Category',
+                                    suffix: categoryId == '' ? null : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          categoryController.text = '';
+                                        });
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 3),
+                                        child: Icon(Icons.close,size: 14,),
                                       ),
-                                      suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element.productCategoryName!
-                                          .toLowerCase()
-                                          .contains(pattern
-                                          .toString()
-                                          .toLowerCase()))
-                                          .take(All_Category.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (CategoryWiseStockModel suggestion) {
-                                      categoryController.text = suggestion.productCategoryName!;
-                                      setState(() {
-                                        _selectedCategory = suggestion.productCategorySlNo.toString();
-                                        categoryId = suggestion.productCategorySlNo;
-                                         Provider.of<AllProductProvider>(context,
-                                                        listen: false)
-                                                    .CategoryWiseProduct(isService: "false",categoryId:  categoryId);
-                                      });
-                                    },
-                                    onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
+                                    ),
+                                  )
+                              ),
+                              suggestionsCallback: (pattern) {
+                                return All_Category
+                                    .where((element) => element.productCategoryName!
+                                    .toLowerCase()
+                                    .contains(pattern
+                                    .toString()
+                                    .toLowerCase()))
+                                    .take(All_Category.length)
+                                    .toList();
+                                // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                               },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                );
+                              },
+                              transitionBuilder:
+                                  (context, suggestionsBox, controller) {
+                                return suggestionsBox;
+                              },
+                              onSuggestionSelected:
+                                  (CategoryWiseStockModel suggestion) {
+                                categoryController.text = suggestion.productCategoryName!;
+                                setState(() {
+                                  _selectedCategory = suggestion.productCategorySlNo.toString();
+                                  categoryId = suggestion.productCategorySlNo;
+                                  Provider.of<AllProductProvider>(context,
+                                      listen: false)
+                                      .CategoryWiseProduct(isService: "false",categoryId:  categoryId);
+                                });
+                              },
+                              onSaved: (value) {},
                             ),
 
                             // child: DropdownButtonHideUnderline(
@@ -1130,7 +1116,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                            height: 40,
+                            height: 41,
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             margin: const EdgeInsets.only(bottom: 5),
                             decoration: BoxDecoration(
@@ -1476,7 +1462,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                           width: 5,
                         ),
                         Text(
-                          "$availableStock",
+                          availableStock,
                           style: const TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
@@ -1490,27 +1476,39 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 const Color.fromARGB(255, 6, 118, 170),
                           ),
                           onPressed: () {
-                            if(availableStock != '0'){
-                              setState(() {
-                                SalesCartList.add(SalesApiModelClass(
-                                    productId: "$cproductId",
-                                    categoryName: "$ccategoryName",
-                                    name: "$cname",
-                                    salesRate: "${_salesRateController.text}",
-                                    vat: "${_VatController.text}",
-                                    quantity: "${_quantityController.text}",
-                                    total: "$Total",
-                                    purchaseRate: "$cpurchaseRate"));
+                            if(productController.text!=''||productController.text.isNotEmpty){
+                              if(_quantityController.text.toString().isNotEmpty
+                                  ||_quantityController.text != ''){
+                                if(availableStock != '0'){
+                                  setState(() {
+                                    SalesCartList.add(SalesApiModelClass(
+                                        productId: "$cproductId",
+                                        categoryName: "$ccategoryName",
+                                        name: "$cname",
+                                        salesRate: _salesRateController.text,
+                                        vat: _VatController.text,
+                                        quantity: _quantityController.text,
+                                        total: "$Total",
+                                        purchaseRate: "$cpurchaseRate"));
 
-                                CartTotal += Total;
-                                AfteraddVatTotal = CartTotal;
-                                DiccountTotal = AfteraddVatTotal;
-                                TransportTotal = DiccountTotal;
-                                print("CartTotal ----------------- $CartTotal");
-                              });
-                              totalStack(cproductId);
+                                    CartTotal += Total;
+                                    AfteraddVatTotal = CartTotal;
+                                    DiccountTotal = AfteraddVatTotal;
+                                    TransportTotal = DiccountTotal;
+                                    print("CartTotal ----------------- $CartTotal");
+                                  });
+                                  // totalStack(cproductId);
+                                }else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text(
+                                        "Stock Unavailable", style: TextStyle(
+                                          fontSize: 16, color: Colors.red),)));
+                                }
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Select Quantity",style: TextStyle(fontSize: 16,color: Colors.red),)));
+                              }
                             }else{
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Stock Unavailable",style: TextStyle(color: Colors.red),)));
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Select Product",style: TextStyle(fontSize: 16,color: Colors.red),)));
                             }
                           },
                           child: const Text("Add to cart")),
@@ -2232,50 +2230,28 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                               backgroundColor: Colors.green,
                             ),
                             onPressed: () {
+                              setState(() {
+                                isSellBtnClk = true;
+                              });
                               if (DiccountTotal == 0) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text("Please Add to Cart")));
                               } else {
-
                                 print("Name controller ${_nameController.text}");
                                 print("Name controller $_selectedCustomer");
-                                AddSales();
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text("Sales Successfull"),
-                                      actions: [
-                                        ActionChip(
-                                          label: const Text("Back"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        ActionChip(
-                                          label: const Text("Home"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                    name: "",
-                                                  ),
-                                                ));
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                SalesCartList.clear();
-                                DiccountTotal = 0;
+                                addSales();
                               }
                             },
-                            child: const Text("Sale")),
+                            child: Center(
+                                child: isSellBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                  "Sale",
+                                  style: TextStyle(
+                                      letterSpacing: 1.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                )),
+                        ),
                         const SizedBox(
                           width: 20,
                         ),
@@ -2315,7 +2291,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     }
   }
 
-  AddSales() async {
+  addSales() async {
     String link = "${BaseUrl}api/v1/addSales";
     try {
       var studentsmap = SalesCartList.map((e) {
@@ -2351,7 +2327,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             //"total": "$DiccountTotal",
             "paid": _paidController.text.trim(),
             "previousDue": "$previousDue",
-            "due": "${totalDue.toString()}".trim(),
+            "due": totalDue.toString().trim(),
             //"due": "$DiccountTotal",
             "isService": "false",
             "note": "Note Here"
@@ -2374,26 +2350,50 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
       );
       print(response.data);
       var item = jsonDecode(response.data);
-      print("${item["message"]}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text("${item["message"]}")));
-      _nameController.text = "";
-      _paidController.text = "";
-      _discountPercentController.text = "";
-      _mobileNumberController.text = "";
-      _addressController.text = "";
-      _salesRateController.text = "";
-      _DiscountController.text = "";
-      _VatController.text = "";
-      _quantityController.text = "";
-      _transportController.text = "";
-      DiccountTotal = 0;
-      previousDue = "0";
-      TotalVat = 0;
-      CartTotal = 0;
+
+      if(item["success"] == true){
+
+        setState(() {
+          isSellBtnClk = false;
+        });
+        _nameController.text = "";
+        _paidController.text = "";
+        _discountPercentController.text = "";
+        _mobileNumberController.text = "";
+        _addressController.text = "";
+        _salesRateController.text = "";
+        _DiscountController.text = "";
+        _VatController.text = "";
+        _quantityController.text = "";
+        _transportController.text = "";
+        DiccountTotal = 0;
+        previousDue = "0";
+        TotalVat = 0;
+        CartTotal = 0;
+        SalesCartList.clear();
+        DiccountTotal = 0;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+            content: Text("${item["message"]}",style: const TextStyle(fontSize: 16,color: Colors.white),)));
+        Navigator.pop(context);
+      }
+      else{
+        setState(() {
+          isSellBtnClk = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+            content: Text("${item["message"]}",style: const TextStyle(fontSize: 16,color: Colors.red),)));
+      }
+
     } catch (e) {
       print(e);
+      setState(() {
+        isSellBtnClk = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),backgroundColor: Colors.black,
+          content: Text(e.toString(),style: const TextStyle(fontSize: 16,color: Colors.red),)));
     }
   }
 }

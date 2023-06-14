@@ -7,6 +7,7 @@ import 'package:poss/Api_Integration/Api_Modelclass/production_record_model_clas
 import 'package:poss/const_page.dart';
 
 class ApiallProductionRecord {
+  static bool isLoading = false;
   static GetApiProductionRecord(
       context, String? dateFrom, String? dateTo) async {
     String Link = "${BaseUrl}api/v1/getProductionRecord";
@@ -27,11 +28,13 @@ class ApiallProductionRecord {
       for (var i in data) {
         productionRecordModelClass = ProductionRecordModelClass.fromJson(i);
         allProductionRecordlist.add(productionRecordModelClass);
+        isLoading = false;
       }
       print("production_record=========daaaataaa============production_record");
       print(
           "allProductionRecordlista================= ${allProductionRecordlist.length}");
     } catch (e) {
+      isLoading = false;
       print("Something is wrong all production_record=======:$e");
     }
     return allProductionRecordlist;

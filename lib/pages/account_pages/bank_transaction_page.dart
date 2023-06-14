@@ -185,7 +185,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                           Expanded(
                             flex: 11,
                             child: Container(
-                              height: 40.0,
+                              height: 41.0,
                               width: MediaQuery.of(context).size.width / 2,
                               padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
@@ -239,7 +239,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                       },
                                       itemBuilder: (context, suggestion) {
                                         return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.accountName} - ${suggestion.accountNumber} (${suggestion.bankName})",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                          title: SizedBox(child: Text("${suggestion.accountName} - ${suggestion.accountNumber} (${suggestion.bankName})",style: const TextStyle(fontSize: 11), maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                         );
                                       },
                                       transitionBuilder:
@@ -379,6 +379,7 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _amountController,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
@@ -470,8 +471,9 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                                 isLoading = false;
                               });
                             });
-                            _amountController.text;
-                            _noteController.text;
+                            _amountController.text='';
+                            accountController.text='';
+                            _noteController.text='';
                           },
                           child: Container(
                             height: 35.0,

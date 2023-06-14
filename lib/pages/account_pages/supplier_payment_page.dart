@@ -754,28 +754,28 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
-                child: Container(
-                  height: 40.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Colors.black38, width: 1)),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            /* Clear the search field */
-                          },
-                        ),
-                        hintText: 'Filter...',
-                        border: InputBorder.none),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+              //   child: Container(
+              //     height: 40.0,
+              //     width: double.infinity,
+              //     decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(8.0),
+              //         border: Border.all(color: Colors.black38, width: 1)),
+              //     child: TextField(
+              //       decoration: InputDecoration(
+              //           prefixIcon: const Icon(Icons.search),
+              //           suffixIcon: IconButton(
+              //             icon: const Icon(Icons.clear),
+              //             onPressed: () {
+              //               /* Clear the search field */
+              //             },
+              //           ),
+              //           hintText: 'Filter...',
+              //           border: InputBorder.none),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 10.0),
               Container(
                 height: MediaQuery.of(context).size.height / 1.43,

@@ -809,85 +809,74 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: FutureBuilder(
-                              future: Provider.of<AllProductProvider>(context)
-                                  .Fatch_By_all_Employee(context),
-                              builder: (context,
-                                  AsyncSnapshot<List<By_all_employee_ModelClass>>
-                                  snapshot) {
-                                if (snapshot.hasData) {
-                                  return TypeAheadFormField(
-                                    textFieldConfiguration:
-                                    TextFieldConfiguration(
-                                      onChanged: (newValue) {
-                                        print("On change Value is $newValue");
-                                        // if (newValue == '') {
-                                        //   customerSlNo = '';
-                                        // }
-                                      },
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      controller: employeeController,
-                                      decoration: InputDecoration(
-                                        hintText: 'Select Employee',
-                                        suffix: customerId == '' ? null : GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              employeeController.text = '';
-                                            });
-                                          },
-                                          child: const Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 3),
-                                            child: Icon(Icons.close,size: 14,),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    suggestionsCallback: (pattern) {
-                                      return snapshot.data!
-                                          .where((element) => element
-                                          .displayName!
-                                          .toLowerCase()
-                                          .contains(pattern
-                                          .toString()
-                                          .toLowerCase()))
-                                          .take(get_all_customer.length)
-                                          .toList();
-                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                    },
-                                    itemBuilder: (context, suggestion) {
-                                      return ListTile(
-                                        title: SizedBox(
-                                            child: Text(
-                                              "${suggestion.employeeName}",
-                                              style: const TextStyle(fontSize: 12),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            )),
-                                      );
-                                    },
-                                    transitionBuilder:
-                                        (context, suggestionsBox, controller) {
-                                      return suggestionsBox;
-                                    },
-                                    onSuggestionSelected:
-                                        (By_all_employee_ModelClass suggestion) {
+                            child: TypeAheadFormField(
+                              textFieldConfiguration:
+                              TextFieldConfiguration(
+                                onChanged: (newValue) {
+                                  print("On change Value is $newValue");
+                                  // if (newValue == '') {
+                                  //   customerSlNo = '';
+                                  // }
+                                },
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                controller: employeeController,
+                                decoration: InputDecoration(
+                                  hintText: 'Select Employee',
+                                  suffix: customerId == '' ? null : GestureDetector(
+                                    onTap: () {
                                       setState(() {
-                                        employeeController.text = suggestion.employeeName!;
-
-                                        print(
-                                            "Customerttttttttttttttttttttttttttt ${suggestion.employeeSlNo}");
-                                        _selectedEmployeeTypes =
-                                            suggestion.employeeSlNo.toString();
-                                        employeeId = "${suggestion.employeeSlNo}";
+                                        employeeController.text = '';
                                       });
                                     },
-                                    onSaved: (value) {},
-                                  );
-                                }
-                                return const SizedBox();
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      child: Icon(Icons.close,size: 14,),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              suggestionsCallback: (pattern) {
+                                return get_all_Employee
+                                    .where((element) => element
+                                    .displayName!
+                                    .toLowerCase()
+                                    .contains(pattern
+                                    .toString()
+                                    .toLowerCase()))
+                                    .take(get_all_Employee.length)
+                                    .toList();
+                                // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                               },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: SizedBox(
+                                      child: Text(
+                                        "${suggestion.employeeName}",
+                                        style: const TextStyle(fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                );
+                              },
+                              transitionBuilder:
+                                  (context, suggestionsBox, controller) {
+                                return suggestionsBox;
+                              },
+                              onSuggestionSelected:
+                                  (By_all_employee_ModelClass suggestion) {
+                                setState(() {
+                                  employeeController.text = suggestion.employeeName!;
+
+                                  print(
+                                      "Customerttttttttttttttttttttttttttt ${suggestion.employeeSlNo}");
+                                  _selectedEmployeeTypes =
+                                      suggestion.employeeSlNo.toString();
+                                  employeeId = "${suggestion.employeeSlNo}";
+                                });
+                              },
+                              onSaved: (value) {},
                             ),
                           ),
                         )

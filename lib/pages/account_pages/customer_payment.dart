@@ -536,6 +536,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                   ),
                                 ),
                                 suggestionsCallback: (pattern) {
+                                  allCustomersData.removeAt(0);
                                   return allCustomersData
                                       .where((element) => element.displayName!
                                       .toLowerCase()

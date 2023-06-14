@@ -69,8 +69,6 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
     }
   }
 
-  bool isLoading = false; //for loading circulerprogressindicator
-
   ApiallProductionRecord? apiallProductionRecord;
   @override
   void initState() {
@@ -131,7 +129,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                         const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 35,
                             child: GestureDetector(
                               onTap: (() {
@@ -180,7 +178,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                         const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
-                          child: Container(
+                          child: SizedBox(
                             height: 35,
                             child: GestureDetector(
                               onTap: (() {
@@ -221,7 +219,7 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            isLoading = true;
+                            ApiallProductionRecord.isLoading = true;
                             print(
                                 "firstDate ++++ProductionRecord=====::${backEndFirstDate}");
                             print(
@@ -229,11 +227,11 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
                           });
                           fetchProductionReport(context, backEndFirstDate, backEndSecondDate);
 
-                          Future.delayed(const Duration(seconds: 3), () {
-                            setState(() {
-                              isLoading = false;
-                            });
-                          });
+                          // Future.delayed(const Duration(seconds: 3), () {
+                          //   setState(() {
+                          //     isLoading = false;
+                          //   });
+                          // });
                         },
                         child: Container(
                           height: 35.0,
@@ -261,144 +259,140 @@ class _ProductionRecordPageState extends State<ProductionRecordPage> {
               ),
             ),
             const SizedBox(height: 10.0),
-            isLoading
+            ApiallProductionRecord.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.vertical,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Container(
-                            // color: Colors.red,
-                            // padding:EdgeInsets.only(bottom: 16.0),
-                            child: DataTable(
-                              showCheckboxColumn: true,
-                              border: TableBorder.all(
-                                  color: Colors.black54, width: 1),
-                              columns: [
-                                const DataColumn(
-                                  label: Center(child: Text('Production Id.')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Date')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Incharge')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Shift')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Total Cost')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Note')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Product Name')),
-                                ),
-                                const DataColumn(
-                                  label: Center(child: Text('Quantity')),
-                                ),
-                              ],
-                              rows: List.generate(
-                                allProductionRecordData.length,
-                                (int index) => DataRow(
-                                  cells: <DataCell>[
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].productionSl}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].date}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].inchargeName}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].shift}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].totalCost}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: Text(
-                                              '${allProductionRecordData[index].note}')),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: SizedBox(
-                                            // color: Colors.green,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                0.5,
-                                            child: ListView.builder(
-                                              scrollDirection:
-                                              Axis.vertical,
-                                              itemCount:
-                                              allProductionRecordData[
-                                              index]
-                                                  .products!
-                                                  .length,
-                                              itemBuilder: (context, j) {
-                                                return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
-                                                  child: Center(
-                                                    child: Text(
-                                                        "${allProductionRecordData[index].products![j].name}"),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )),
-                                    ),
-                                    DataCell(
-                                      Center(
-                                          child: SizedBox(
-                                            // color: Colors.green,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                0.5,
-                                            child: ListView.builder(
-                                              scrollDirection:
-                                              Axis.vertical,
-                                              itemCount:
-                                              allProductionRecordData[
-                                              index]
-                                                  .products!
-                                                  .length,
-                                              itemBuilder: (context, j) {
-                                                return Container(
-                                                  decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
-                                                  child: Center(
-                                                    child: Text(
-                                                        "${allProductionRecordData[index].products![j].quantity}"),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )),
-                                    ),
-                                  ],
-                                ),
+                          child: DataTable(
+                            showCheckboxColumn: true,
+                            border: TableBorder.all(
+                                color: Colors.black54, width: 1),
+                            columns: const [
+                              DataColumn(
+                                label: Center(child: Text('Production Id.')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Date')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Incharge')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Shift')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Total Cost')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Note')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Product Name')),
+                              ),
+                              DataColumn(
+                                label: Center(child: Text('Quantity')),
+                              ),
+                            ],
+                            rows: List.generate(
+                              allProductionRecordData.length,
+                              (int index) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].productionSl}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].date}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].inchargeName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].shift}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].totalCost}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            '${allProductionRecordData[index].note}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: SizedBox(
+                                          // color: Colors.green,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.5,
+                                          child: ListView.builder(
+                                            scrollDirection:
+                                            Axis.vertical,
+                                            itemCount:
+                                            allProductionRecordData[
+                                            index]
+                                                .products!
+                                                .length,
+                                            itemBuilder: (context, j) {
+                                              return Container(
+                                                decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
+                                                child: Center(
+                                                  child: Text(
+                                                      "${allProductionRecordData[index].products![j].name}"),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: SizedBox(
+                                          // color: Colors.green,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.5,
+                                          child: ListView.builder(
+                                            scrollDirection:
+                                            Axis.vertical,
+                                            itemCount:
+                                            allProductionRecordData[
+                                            index]
+                                                .products!
+                                                .length,
+                                            itemBuilder: (context, j) {
+                                              return Container(
+                                                decoration: BoxDecoration(border: Border.all(color: Colors.black,width: 0.05)),
+                                                child: Center(
+                                                  child: Text(
+                                                      "${allProductionRecordData[index].products![j].quantity}"),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

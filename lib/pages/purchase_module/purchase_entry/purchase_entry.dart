@@ -72,6 +72,8 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
   }
 
+
+
   Response? result;
   void dueReport(String? supplierId) async {
     print("Call Api $supplierId");

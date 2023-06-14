@@ -9,9 +9,6 @@ import 'package:poss/Api_Integration/Api_Modelclass/get_purchases_mclass.dart';
 import '../../../../const_page.dart';
 
 class ApiGetPurchases {
-
-  static bool isLoading = false;
-
   static GetApiGetPurchases(
       context,
       String? dateFrom,
@@ -89,11 +86,10 @@ class ApiGetPurchases {
             "${Purchasess.fromJson(i).purchaseMasterDueAmount}");
         totalD = totalDue.toStringAsFixed(2);
         GetStorage().write("totalDue", totalD);
-        isLoading = false;
+
       }
       print("getPurchaseslist getPurchaseslist length is ${getPurchasesslist.length}");
     } catch (e) {
-      isLoading = false;
       print("Something is wrong getPurchaseslist=======:$e");
     }
     return getPurchasesslist;

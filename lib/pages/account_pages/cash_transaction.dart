@@ -77,6 +77,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     _selectedType = 'Cash Receive';
+    paymentType = 'Cash Received';
     getCashTransactionId();
     // ACCOUNTS
     getCashTransectionData(backEndFirstDate);
@@ -84,6 +85,8 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
     // TODO: implement initState
     super.initState();
   }
+
+  bool isLoading = false;
 
   getCashTransectionData(backEndFirstDate){
     Provider.of<CounterProvider>(context,
@@ -143,7 +146,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(':')),
+                          const Expanded(flex: 1, child: Text(':')),
                           Expanded(
                             flex: 11,
                             child: Container(
@@ -269,10 +272,10 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                     setState(() {
                                       _selectedType = newValue!;
                                       if (newValue == "Cash Receive") {
-                                        paymentType = "In Cash";
+                                        paymentType = "Cash Received";
                                       }
                                       if (newValue == "Cash Payment") {
-                                        paymentType = "Out Cash";
+                                        paymentType = "Cash Payment";
                                       }
                                     });
                                   },
@@ -432,7 +435,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 45.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
@@ -473,11 +476,12 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                           const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _AmountController,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
@@ -506,21 +510,35 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                         children: [
                           InkWell(
                             onTap: () {
-                              // setState(() {
-                              ApiAllAddCashTransactions
-                                  .GetApiAllAddCashTransactions(
-                                "$_selectedAccount",
-                                0,
-                                int.parse(_AmountController.text),
-                                "${_DescriptionController.text}",
-                                "${tnxIdNoController.text}",
-                                0,
-                                "$paymentType",
-                                "Official",
-                                "$backEndFirstDate",
-                              );
-                              getCashTransectionData(backEndFirstDate);
-                              // });
+                              if(_accountController.text !=''){
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                // setState(() {
+                                ApiAllAddCashTransactions
+                                    .GetApiAllAddCashTransactions(
+                                  context,
+                                  "$_selectedAccount",
+                                  0,
+                                  int.parse(_AmountController.text),
+                                  "${_DescriptionController.text}",
+                                  "${tnxIdNoController.text}",
+                                  0,
+                                  "$paymentType",
+                                  "Official",
+                                  "$backEndFirstDate",
+                                );
+                                _AmountController.text = '';
+                                _DescriptionController.text = '';
+                                _selectedAccount = "";
+                                _accountController.text = "";
+                                getCashTransectionData(backEndFirstDate);
+                                // });
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    backgroundColor: Colors.black,
+                                    content: Center(child: Text("Please select Account",style: TextStyle(fontSize: 16,color: Colors.red),))));
+                              }
                             },
                             child: Container(
                               height: 35.0,
@@ -532,14 +550,15 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                 color: const Color.fromARGB(255, 105, 170, 88),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: const Center(
-                                  child: Text(
-                                "SAVE",
-                                style: TextStyle(
-                                    letterSpacing: 1.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              )),
+                              child: Center(
+                                  child: ApiAllAddCashTransactions.isLoading ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                    "SAVE",
+                                    style: TextStyle(
+                                        letterSpacing: 1.0,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500),
+                                  )),
+
                             ),
                           ),
                           const SizedBox(width: 4.0),
@@ -601,88 +620,87 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
               // ),
 
               const SizedBox(height: 10.0),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  :
               Container(
                 height: MediaQuery.of(context).size.height / 1.43,
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Container(
+                child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
-                        // color: Colors.red,
-                        // padding:EdgeInsets.only(bottom: 16.0),
-                        child: DataTable(
-                          showCheckboxColumn: true,
-                          border:
-                              TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            const DataColumn(
-                              label: Center(child: Text('Transaction Id')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Account Name')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Date')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Description')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Received Amount ')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Paid Amount ')),
-                            ),
-                            const DataColumn(
-                              label: Center(child: Text('Saved By ')),
-                            ),
-                          ],
-                          rows: List.generate(
-                            allGetCashTransactionData.length,
-                            (int index) => DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].trId}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].accName}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].trDate}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].trDescription}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].inAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].outAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetCashTransactionData[index].addBy}')),
-                                ),
-                              ],
-                            ),
+                      child: DataTable(
+                        showCheckboxColumn: true,
+                        border:
+                            TableBorder.all(color: Colors.black54, width: 1),
+                        columns: const [
+                          DataColumn(
+                            label: Center(child: Text('Transaction Id')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Account Name')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Date')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Description')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Received Amount ')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Paid Amount ')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Saved By ')),
+                          ),
+                        ],
+                        rows: List.generate(
+                          allGetCashTransactionData.length,
+                          (int index) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].trId}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].accName}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].trDate}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].trDescription}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].inAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].outAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetCashTransactionData[index].addBy}')),
+                              ),
+                            ],
                           ),
                         ),
                       ),

@@ -61,7 +61,6 @@ class _LogInPageState extends State<LogInPage> {
         var user_name = "${GetStorage().read("name")}";
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.black,
-            duration: const Duration(seconds: 1),
             content: Center(child: Text("${item["message"]}",style: const TextStyle(color: Colors.white),))));
         Navigator.pushReplacement(
             context,

@@ -510,6 +510,8 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                         children: [
                           InkWell(
                             onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+
                               if(_accountController.text !=''){
                                 setState(() {
                                   isLoading = false;

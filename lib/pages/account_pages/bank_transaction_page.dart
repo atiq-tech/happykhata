@@ -449,10 +449,17 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
                         alignment: Alignment.bottomRight,
                         child: InkWell(
                           onTap: () {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            print("asjdfnhkasjfn $paymentType");
+                            FocusScope.of(context).requestFocus(FocusNode());
+
+                            if(accountController.text==''){
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  backgroundColor: Colors.black,
+                                  content: Center(child: Text("Please Select Account",style: TextStyle(fontSize: 16,color: Colors.red),))));
+                            }else{
+                              setState(() {
+                                isLoading = true;
+                              });
+                              print("asjdfnhkasjfn $paymentType");
                               ApiAllAddBankTransactions
                                   .GetApiAllAddBankTransactions(
                                 context,
@@ -466,14 +473,15 @@ class _BankTransactionPageState extends State<BankTransactionPage> {
 
                               getBankTrasectionData(backEndFirstDate);
 
-                            Future.delayed(const Duration(seconds: 3), () {
-                              setState(() {
-                                isLoading = false;
+                              Future.delayed(const Duration(seconds: 3), () {
+                                setState(() {
+                                  isLoading = false;
+                                });
                               });
-                            });
-                            _amountController.text='';
-                            accountController.text='';
-                            _noteController.text='';
+                              _amountController.text='';
+                              accountController.text='';
+                              _noteController.text='';
+                            }
                           },
                           child: Container(
                             height: 35.0,

@@ -169,8 +169,21 @@ class _ProfitLossReportPageState extends State<ProfitLossReportPage> {
                                           fontSize: 15,
                                         ),
                                         controller: customerNameController,
-                                        decoration: const InputDecoration(
-                                            hintText: 'Select Customer')),
+                                        decoration: InputDecoration(
+                                          hintText: 'Select customer',
+                                          suffix: _selectedAccount == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                customerNameController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 5),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
+                                          ),
+                                        )
+                                    ),
                                     suggestionsCallback: (pattern) {
                                       return snapshot.data!
                                           .where((element) => element.displayName!

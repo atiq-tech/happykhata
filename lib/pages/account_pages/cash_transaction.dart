@@ -335,7 +335,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                           ),
                                           controller: _accountController,
                                           decoration: InputDecoration(
-                                            hintText: 'Select Category',
+                                            hintText: 'Select account',
                                             suffix: _selectedAccount == '' ? null : GestureDetector(
                                               onTap: () {
                                                 setState(() {
@@ -343,7 +343,7 @@ class _CashTransactionPageState extends State<CashTransactionPage> {
                                                 });
                                               },
                                               child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 3),
+                                                padding: EdgeInsets.symmetric(horizontal: 5),
                                                 child: Icon(Icons.close,size: 14,),
                                               ),
                                             ),

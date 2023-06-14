@@ -242,8 +242,9 @@ class _LogInPageState extends State<LogInPage> {
                             //   },
                             // ),
                             ///
-                            InkWell(
+                            GestureDetector(
                               onTap: () {
+                                FocusScope.of(context).requestFocus(FocusNode());
                                 setState(() {
                                   isLogInBtnClk = true;
                                 });

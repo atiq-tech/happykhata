@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:intl/intl.dart';
-import 'package:jiffy/jiffy.dart' as jiffy;
-import 'package:jiffy/jiffy.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_add_supplier_payment/Api_all_add_supplier_payment.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_accounts/Api_all_bank_accounts.dart';
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_get_suppliers/api_all_suppliers.dart';
@@ -23,18 +18,15 @@ class SupplierPaymentPage extends StatefulWidget {
 }
 
 class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
-  final TextEditingController _transactionTypeController =
-  TextEditingController();
-  final TextEditingController _paymentTypeController = TextEditingController();
-  final TextEditingController _supplierController = TextEditingController();
-  final TextEditingController _DuoController = TextEditingController();
-  final TextEditingController _paymentDateController = TextEditingController();
+
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController bankController = TextEditingController();
-  final TextEditingController supplyerController = TextEditingController();
+  final TextEditingController supplierController = TextEditingController();
   //
   String? firstPickedDate;
+  String? backEndFirstDate;
+
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -46,27 +38,26 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
       });
     }
     else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
       });
     }
   }
 
-  String? _Get_transactionType;
-  String? _transactionType;
-  List<String> _transactionTypeList = [
+  String? getTransactionType;
+  String? _transactionType = 'Receive';
+  final List<String> _transactionTypeList = [
     'Receive',
     'Payment',
   ];
   bool isBankListClicked = false;
-  String? _Get_paymentType;
-  String? _paymentType;
-  List<String> _paymentTypeList = [
+  String? _paymentType = 'Cash';
+  final List<String> _paymentTypeList = [
     'Cash',
     'Bank',
   ];
@@ -78,13 +69,14 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
-    //bank ACCOUNTS
-    ApiAllBankAccounts apiAllBankAccounts;
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    getTransactionType = 'CR';
+
     Provider.of<CounterProvider>(context, listen: false)
         .getBankAccounts(context);
-    // Suppliers
-    ApiAllSuppliers apiAllSuppliers;
+
     Provider.of<CounterProvider>(context, listen: false).getSupplier(context);
+
     // TODO: implement initState
     super.initState();
   }
@@ -115,14 +107,14 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Container(
                   height: isBankListClicked ? 350 : 320.0,
                   width: double.infinity,
-                  padding: EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
+                  padding: const EdgeInsets.only(top: 6.0, left: 10.0, right: 8.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromARGB(255, 5, 107, 155),
+                      color: const Color.fromARGB(255, 5, 107, 155),
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -130,7 +122,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Transaction Type",
@@ -138,50 +130,50 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: Text(
+                                  hint: const Text(
                                     'Select Type',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  dropdownColor: Color.fromARGB(255, 231, 251,
+                                  dropdownColor: const Color.fromARGB(255, 231, 251,
                                       255), // Not necessary for Option 1
                                   value: _transactionType,
                                   onChanged: (newValue) {
                                     setState(() {
                                       _transactionType = newValue!;
                                       if (newValue == "Receive") {
-                                        _Get_transactionType = "CR";
+                                        getTransactionType = "CR";
                                       }
                                       if (newValue == "Payment") {
-                                        _Get_transactionType = "CP";
+                                        getTransactionType = "CP";
                                       }
                                     });
                                   },
                                   items: _transactionTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -190,11 +182,11 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Container(
                         child: Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 6,
                               child: Text(
                                 "Payment Type",
@@ -202,28 +194,28 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                     color: Color.fromARGB(255, 126, 125, 125)),
                               ),
                             ),
-                            Expanded(flex: 1, child: Text(":")),
+                            const Expanded(flex: 1, child: Text(":")),
                             Expanded(
                               flex: 11,
                               child: Container(
                                 height: 28.0,
                                 width: MediaQuery.of(context).size.width / 2,
-                                padding: EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 5.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Color.fromARGB(255, 5, 107, 155),
+                                    color: const Color.fromARGB(255, 5, 107, 155),
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
-                                    hint: Text(
+                                    hint: const Text(
                                       'Select Type',
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    dropdownColor: Color.fromARGB(255, 231, 251,
+                                    dropdownColor: const Color.fromARGB(255, 231, 251,
                                         255), // Not necessary for Option 1
                                     value: _paymentType,
                                     onChanged: (newValue) {
@@ -236,13 +228,13 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                     },
                                     items: _paymentTypeList.map((location) {
                                       return DropdownMenuItem(
+                                        value: location,
                                         child: Text(
                                           location,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 14,
                                           ),
                                         ),
-                                        value: location,
                                       );
                                     }).toList(),
                                   ),
@@ -252,12 +244,12 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       isBankListClicked == true
                           ? Container(
                         child: Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 6,
                               child: Text(
                                 "Bank account",
@@ -266,18 +258,18 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                         255, 126, 125, 125)),
                               ),
                             ),
-                            Expanded(flex: 1, child: Text(":")),
+                            const Expanded(flex: 1, child: Text(":")),
                             Expanded(
                               flex: 11,
                               child: Container(
-                                height: 38.0,
+                                height: 40.0,
                                 width:
                                 MediaQuery.of(context).size.width / 2,
-                                padding: EdgeInsets.only(left: 5.0),
+                                padding: const EdgeInsets.only(left: 5.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color:
-                                    Color.fromARGB(255, 5, 107, 155),
+                                    const Color.fromARGB(255, 5, 107, 155),
                                   ),
                                   borderRadius:
                                   BorderRadius.circular(10.0),
@@ -388,10 +380,10 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                         ),
                       )
                           : Container(),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Supplier",
@@ -399,86 +391,78 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
                               height: 38.0,
                               width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color.fromARGB(255, 5, 107, 155),
+                                  color: const Color.fromARGB(255, 5, 107, 155),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: FutureBuilder(
-                                future: Provider.of<CounterProvider>(context, listen: false).getSupplier(context),
-                                builder: (context,
-                                    AsyncSnapshot<List<AllSuppliersClass>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return TypeAheadFormField(
-                                      textFieldConfiguration:
-                                      TextFieldConfiguration(
-                                          onChanged: (value){
-                                            if (value == '') {
-                                              _selectedSupplier = '';
-                                            }
-                                          },
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                          controller: supplyerController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Select Supplier',
-                                            suffix: _selectedSupplier == '' ? null : GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  supplyerController.text = '';
-                                                });
-                                              },
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                                child: Icon(Icons.close,size: 14,),
-                                              ),
-                                            ),
-                                          )
+                              child: TypeAheadFormField(
+                                textFieldConfiguration:
+                                TextFieldConfiguration(
+                                    onChanged: (value){
+                                      if (value == '') {
+                                        _selectedSupplier = '';
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    controller: supplierController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Select Supplier',
+                                      suffix: _selectedSupplier == '' ? null : GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            supplierController.text = '';
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 3),
+                                          child: Icon(Icons.close,size: 14,),
+                                        ),
                                       ),
-                                      suggestionsCallback: (pattern) {
-                                        return snapshot.data!
-                                            .where((element) => element.supplierName.toString()
-                                            .toLowerCase()
-                                            .contains(pattern
-                                            .toString()
-                                            .toLowerCase()))
-                                            .take(allSuppliersData.length)
-                                            .toList();
-                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                      },
-                                      itemBuilder: (context, suggestion) {
-                                        return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                        );
-                                      },
-                                      transitionBuilder:
-                                          (context, suggestionsBox, controller) {
-                                        return suggestionsBox;
-                                      },
-                                      onSuggestionSelected:
-                                          (AllSuppliersClass suggestion) {
-                                        supplyerController.text = suggestion.supplierName!;
-                                        setState(() {
-                                          _selectedSupplier =
-                                              suggestion.supplierSlNo;
-                                          print(
-                                              "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
-                                        });
-                                      },
-                                      onSaved: (value) {},
-                                    );
-                                  }
-                                  return const SizedBox();
+                                    )
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  allSuppliersData.removeAt(0);
+                                  return allSuppliersData
+                                      .where((element) => element.supplierName.toString()
+                                      .toLowerCase()
+                                      .contains(pattern
+                                      .toString()
+                                      .toLowerCase()))
+                                      .take(allSuppliersData.length)
+                                      .toList();
+                                  // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                 },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: SizedBox(child: Text("${suggestion.supplierName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected:
+                                    (AllSuppliersClass suggestion) {
+                                  supplierController.text = suggestion.supplierName!;
+                                  setState(() {
+                                    _selectedSupplier =
+                                        suggestion.supplierSlNo;
+                                    print(
+                                        "Customer Wise Category ID ========== > ${suggestion.supplierSlNo} ");
+                                  });
+                                },
+                                onSaved: (value) {},
                               ),
 
                               // child: DropdownButtonHideUnderline(
@@ -513,7 +497,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       // Row(
                       //   children: [
                       //     Expanded(
@@ -554,7 +538,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                       // ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Payment Date",
@@ -562,11 +546,11 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
                             child: Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 5,
                                 top: 5,
                                 bottom: 5,
@@ -580,17 +564,17 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   enabled: false,
                                   decoration: InputDecoration(
                                     contentPadding:
-                                    EdgeInsets.only(top: 10, left: 10),
+                                    const EdgeInsets.only(top: 10, left: 10),
                                     filled: true,
                                     fillColor: Colors.blue[50],
-                                    suffixIcon: Icon(
+                                    suffixIcon: const Icon(
                                       Icons.calendar_month,
                                       color: Colors.black87,
                                     ),
-                                    border: OutlineInputBorder(
+                                    border: const OutlineInputBorder(
                                         borderSide: BorderSide.none),
                                     hintText: firstPickedDate,
-                                    hintStyle: TextStyle(
+                                    hintStyle: const TextStyle(
                                         fontSize: 14, color: Colors.black87),
                                   ),
                                   validator: (value) {
@@ -607,7 +591,7 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                       ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Description",
@@ -615,10 +599,10 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 35.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
@@ -626,13 +610,13 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -643,10 +627,10 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 3.0),
+                      const SizedBox(height: 3.0),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             flex: 6,
                             child: Text(
                               "Amount",
@@ -654,24 +638,25 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   color: Color.fromARGB(255, 126, 125, 125)),
                             ),
                           ),
-                          Expanded(flex: 1, child: Text(":")),
+                          const Expanded(flex: 1, child: Text(":")),
                           Expanded(
                             flex: 11,
-                            child: Container(
+                            child: SizedBox(
                               height: 28.0,
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _amountController,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 7, 125, 180),
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
@@ -682,52 +667,53 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 7.0),
+                      const SizedBox(height: 7.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           InkWell(
                             onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+
+                              ApiAllAddSupplierPayment.isBtnClk = true;
+
                               ApiAllAddSupplierPayment
-                                  .GetApiAllAddSupplierPayment(
+                                  .getApiAllAddSupplierPayment(
                                 context,
                                 "$_paymentType",
-                                "$_Get_transactionType",
-                                "${_amountController.text}",
+                                "$getTransactionType",
+                                _amountController.text,
                                 "$_selectedSupplier",
-                                "$firstPickedDate",
+                                "$backEndFirstDate",
                                 0,
-                                "${_descriptionController.text}",
+                                _descriptionController.text,
                                 "$_selectedBank",
-                                // SPayment_Paymentby,
-                                // SPayment_TransactionType,
-                                // SPayment_amount,
-                                // SPayment_customerID,
-                                // SPayment_date,
-                                // SPayment_id,
-                                // SPayment_notes,
-                                // account_id,
                               );
+
+                              _descriptionController.text = "";
+                              supplierController.text = '';
+                              _amountController.text = "";
+
                               Provider.of<CounterProvider>(context,
                                   listen: false)
                                   .getGetSupplierPayment(
                                   context,
-                                  "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                                  "${DateFormat('yyyy-MM-dd').format(DateTime.now())}");
+                                  "$backEndFirstDate",
+                                  "$backEndFirstDate");
                             },
                             child: Container(
                               height: 35.0,
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 88, 204, 91),
+                                    color: const Color.fromARGB(255, 88, 204, 91),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 5, 114, 165),
+                                color: const Color.fromARGB(255, 5, 114, 165),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Center(
-                                  child: Text(
-                                    "SAVE",
+                                  child: ApiAllAddSupplierPayment.isBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                    "Save",
                                     style: TextStyle(
                                         letterSpacing: 1.0,
                                         color: Colors.white,
@@ -735,10 +721,11 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                                   )),
                             ),
                           ),
-                          SizedBox(width: 4.0),
+                          const SizedBox(width: 4.0),
                           InkWell(
                             onTap: () {
                               _descriptionController.text = "";
+                              supplierController.text = '';
                               _amountController.text = "";
                             },
                             child: Container(
@@ -746,12 +733,12 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                               width: 85.0,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromARGB(255, 88, 204, 91),
+                                    color: const Color.fromARGB(255, 88, 204, 91),
                                     width: 2.0),
-                                color: Color.fromARGB(255, 252, 33, 4),
+                                color: const Color.fromARGB(255, 252, 33, 4),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                     "CANCEL",
                                     style: TextStyle(
@@ -789,97 +776,93 @@ class _SupplierPaymentPageState extends State<SupplierPaymentPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Container(
                 height: MediaQuery.of(context).size.height / 1.43,
                 width: double.infinity,
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Container(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
-                        // color: Colors.red,
-                        // padding:EdgeInsets.only(bottom: 16.0),
-                        child: DataTable(
-                          showCheckboxColumn: true,
-                          border:
-                          TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            DataColumn(
-                              label: Center(child: Text('Transaction Id')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Date')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Supplier')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Transaction Type')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Payment by')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Amount')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Description')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Save By')),
-                            ),
-                          ],
-                          rows: List.generate(
-                            allGetSupplierPaymentData.length,
-                                (int index) => DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].sPaymentInvoice}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].sPaymentDate}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].supplierName}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].transactionType}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].paymentBy}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].sPaymentAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].sPaymentNotes}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSupplierPaymentData[index].sPaymentAddby}')),
-                                ),
-                              ],
-                            ),
+                      child: DataTable(
+                        showCheckboxColumn: true,
+                        border:
+                        TableBorder.all(color: Colors.black54, width: 1),
+                        columns: const [
+                          DataColumn(
+                            label: Center(child: Text('Transaction Id')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Date')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Supplier')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Transaction Type')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Payment by')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Amount')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Description')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Save By')),
+                          ),
+                        ],
+                        rows: List.generate(
+                          allGetSupplierPaymentData.length,
+                              (int index) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].sPaymentInvoice}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].sPaymentDate}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].supplierName}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].transactionType}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].paymentBy}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].sPaymentAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].sPaymentNotes}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSupplierPaymentData[index].sPaymentAddby}')),
+                              ),
+                            ],
                           ),
                         ),
                       ),

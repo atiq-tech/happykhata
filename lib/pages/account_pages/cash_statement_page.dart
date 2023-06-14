@@ -26,7 +26,10 @@ class CashStatementPage extends StatefulWidget {
 }
 
 class _CashStatementPageState extends State<CashStatementPage> {
+
   String? firstPickedDate;
+  var backEndFirstDate;
+  var backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -38,18 +41,20 @@ class _CashStatementPageState extends State<CashStatementPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
   String? secondPickedDate;
-
   void _secondSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -58,21 +63,27 @@ class _CashStatementPageState extends State<CashStatementPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $secondPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $secondPickedDate");
       });
     }
   }
+
  bool isLoading = false;
   @override
   void initState() {
     // firstPickedDate = "2000-03-01";
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
     secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
     super.initState();
   }
@@ -221,74 +232,74 @@ class _CashStatementPageState extends State<CashStatementPage> {
                           // print("totalBankWithdraw: ${double.parse(GetStorage().read("totalBankWithdraw") ?? "0")}");
                           Provider.of<GetSaleProvider>(context, listen: false).getSaleData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetPurchaseProvider>(context, listen: false).getPurchaseData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetBankWithdrawTransactionProvider>(context, listen: false)
                               .getBankWithdrawTransactionData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetBankDepositTransactionProvider>(context, listen: false)
                               .getBankDepositTransactionData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashPaidTransactionProvider>(context, listen: false)
                               .getCashPaidTransactionData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashReceivedTransactionProvider>(context, listen: false)
                               .getCashReceivedTransactionData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashReceivedFromCustomerProvider>(context, listen: false)
                               .getCashReceivedFromCustomerData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashPaidToCustomerProvider>(context, listen: false).getCashPaidToCustomerData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashPaidToSupplierProvider>(context, listen: false).getCashPaidToSupplierData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GetCashReceivedFromSupplierProvider>(context, listen: false)
                               .getCashReceivedFromSupplierData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           Provider.of<GeEmployeePaymentProvider>(context, listen: false).getEmployeePaymentData(
                             context,
-                            firstPickedDate,
-                            secondPickedDate,
+                            backEndFirstDate,
+                            backEndSecondDate,
                           );
 
                           // provideSaleList.length == 0

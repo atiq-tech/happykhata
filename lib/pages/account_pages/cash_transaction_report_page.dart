@@ -24,17 +24,18 @@ class CashTransactionReportPage extends StatefulWidget {
 
 class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
   String? paymentType;
-  String? _selectedType;
-  List<String> _selectedTypeList = [
+  String? _selectedType = 'All';
+  final List<String> _selectedTypeList = [
     'All',
     'Received',
     'Payment',
   ];
 
-  final TextEditingController _DateController = TextEditingController();
-  final TextEditingController _Date2Controller = TextEditingController();
   final TextEditingController accountController = TextEditingController();
+
   String? firstPickedDate;
+  String? backEndFirstDate;
+  String? backEndSecondDate;
   var toDay = DateTime.now();
 
   void _firstSelectedDate() async {
@@ -46,18 +47,20 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
     if (selectedDate != null) {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $firstPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        backEndFirstDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $firstPickedDate");
       });
     }
   }
 
   String? secondPickedDate;
-
   void _secondSelectedDate() async {
     final selectedDate = await showDatePicker(
         context: context,
@@ -66,17 +69,19 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
         lastDate: DateTime(2050));
     if (selectedDate != null) {
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(selectedDate);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(selectedDate);
+        backEndSecondDate = Utils.formatBackEndDate(selectedDate);
+        print("First Selected date $secondPickedDate");
       });
-    }else{
+    }
+    else{
       setState(() {
-        firstPickedDate = Utils.formatFrontEndDate(toDay);
-        print("Firstdateee $firstPickedDate");
+        secondPickedDate = Utils.formatFrontEndDate(toDay);
+        backEndSecondDate = Utils.formatBackEndDate(toDay);
+        print("First Selected date $secondPickedDate");
       });
     }
   }
-
   bool isLoading = false;
 
   String? _selectedAccount;
@@ -85,7 +90,10 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
+    backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
     secondPickedDate = Utils.formatFrontEndDate(DateTime.now());
+    paymentType = '';
     // ACCOUNTS
     ApiAllAccounts apiAllAccounts;
     Provider.of<CounterProvider>(context, listen: false).getAccounts(context);
@@ -112,14 +120,14 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: Container(
                 height: 180.0,
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
+                padding: const EdgeInsets.only(top: 6.0, left: 8.0, right: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromARGB(255, 5, 107, 155),
+                    color: const Color.fromARGB(255, 5, 107, 155),
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -127,7 +135,7 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Transaction Type",
@@ -135,29 +143,29 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
                             height: 28.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'All',
                                   style: TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
-                                dropdownColor: Color.fromARGB(255, 231, 251,
+                                dropdownColor: const Color.fromARGB(255, 231, 251,
                                     255), // Not necessary for Option 1
                                 value: _selectedType,
                                 onChanged: (newValue) {
@@ -176,13 +184,13 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                                 },
                                 items: _selectedTypeList.map((location) {
                                   return DropdownMenuItem(
+                                    value: location,
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
-                                    value: location,
                                   );
                                 }).toList(),
                               ),
@@ -191,10 +199,10 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 6,
                           child: Text(
                             "Accounts",
@@ -202,16 +210,16 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                                 color: Color.fromARGB(255, 126, 125, 125)),
                           ),
                         ),
-                        Expanded(flex: 1, child: Text(":")),
+                        const Expanded(flex: 1, child: Text(":")),
                         Expanded(
                           flex: 11,
                           child: Container(
                             height: 38.0,
                             width: MediaQuery.of(context).size.width / 2,
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromARGB(255, 5, 107, 155),
+                                color: const Color.fromARGB(255, 5, 107, 155),
                               ),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -315,14 +323,14 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           flex: 1,
                           child: Container(
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                               right: 5,
                               top: 5,
                               bottom: 5,
@@ -336,20 +344,17 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 10),
+                                      const EdgeInsets.only(top: 10, left: 10),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: firstPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : firstPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: firstPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -363,13 +368,13 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                           ),
                         ),
                         Container(
-                          child: Text("to"),
+                          child: const Text("to"),
                         ),
                         Expanded(
                           flex: 1,
                           child: Container(
                             height: 40,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                               left: 5,
                               top: 5,
                               bottom: 5,
@@ -382,20 +387,17 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                      EdgeInsets.only(top: 10, left: 10),
+                                      const EdgeInsets.only(top: 10, left: 10),
                                   filled: true,
                                   fillColor: Colors.blue[50],
-                                  suffixIcon: Icon(
+                                  suffixIcon: const Icon(
                                     Icons.calendar_month,
                                     color: Colors.black87,
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide.none),
-                                  hintText: secondPickedDate == null
-                                      ? DateFormat('yyyy-MM-dd')
-                                          .format(DateTime.now())
-                                      : secondPickedDate,
-                                  hintStyle: TextStyle(
+                                  hintText: secondPickedDate,
+                                  hintStyle: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                                 validator: (value) {
@@ -410,11 +412,18 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: InkWell(
                         onTap: () {
+                          print(
+                              "CashTransactions selectedType::$paymentType");
+                          print("CashTransactions ::${_selectedAccount.toString()=='null'?'dd':_selectedAccount}");
+                          print(
+                              "firstDate CashTransactions+++++=====::$backEndFirstDate");
+                          print(
+                              "secondPickedDate +CashTransactions+++++=====::$backEndSecondDate");
                           setState(() {
                             isLoading = true;
                           });
@@ -422,19 +431,13 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                             Provider.of<CounterProvider>(context, listen: false)
                                 .getCashTransactions(
                                     context,
-                                    "${paymentType}",
-                                    "${_selectedAccount}",
-                                    "${firstPickedDate}",
-                                    "${secondPickedDate}");
-                            print(
-                                "CashTransactions selectedType::${paymentType}");
-                            print("CashTransactions ::${_selectedAccount}");
-                            print(
-                                "firstDate CashTransactions+++++=====::${firstPickedDate}");
-                            print(
-                                "secondPickedDate +CashTransactions+++++=====::${secondPickedDate}");
+                                    paymentType??"",
+                                    _selectedAccount.toString()=='null' ? '' : _selectedAccount.toString(),
+                                    backEndFirstDate??'',
+                                    backEndSecondDate??'');
+
                           });
-                          Future.delayed(Duration(seconds: 3), () {
+                          Future.delayed(const Duration(seconds: 3), () {
                             setState(() {
                               isLoading = false;
                             });
@@ -445,12 +448,12 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                           width: 85.0,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Color.fromARGB(255, 75, 196, 201),
+                                color: const Color.fromARGB(255, 75, 196, 201),
                                 width: 2.0),
-                            color: Color.fromARGB(255, 87, 113, 170),
+                            color: const Color.fromARGB(255, 87, 113, 170),
                             borderRadius: BorderRadius.circular(6.0),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             "Search",
                             style: TextStyle(
@@ -465,13 +468,13 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Container(
                     height: MediaQuery.of(context).size.height / 1.43,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -485,22 +488,22 @@ class _CashTransactionReportPageState extends State<CashTransactionReportPage> {
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
                               columns: [
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Tr.Id')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Date')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Tr.Type')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Account Name')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Received Amount')),
                                 ),
-                                DataColumn(
+                                const DataColumn(
                                   label: Center(child: Text('Payment Amount')),
                                 ),
                               ],

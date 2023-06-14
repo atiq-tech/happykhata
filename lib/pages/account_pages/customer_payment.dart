@@ -8,10 +8,12 @@ import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_bank_account
 import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_all_customers/Api_all_customers.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/account_module/all_bank_account_model_class.dart';
+import 'package:poss/Api_Integration/Api_Modelclass/sales_module/customer_list_model.dart';
 
 import 'package:poss/common_widget/custom_appbar.dart';
 
 import 'package:poss/provider/providers/counter_provider.dart';
+import 'package:poss/provider/sales_module/provider_customer_list_with_customer_type.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
 import 'package:poss/utils/utils.dart';
 
@@ -99,7 +101,8 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
         .getBankAccounts(context);
     //Customers
     ApiAllCustomers apiAllCustomers;
-    Provider.of<CounterProvider>(context, listen: false).getCustomers(context);
+    Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: getCustomerType);
+
     // TODO: implement initState
     super.initState();
   }
@@ -113,7 +116,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
         "BankAccounts Accounts bank Accounts =Lenght is:::::${allBankAccountsData.length}");
     //Customers
     final allCustomersData =
-        Provider.of<CounterProvider>(context).allCustomerslist;
+        Provider.of<CustomerListByCustomerTypeProvider>(context).provideCustomerListByCustomerType;
     print("Customers new Customers =Lenght is:::::${allCustomersData.length}");
     //Get CustomerPayment
     final allGetCustomerPaymentData =
@@ -454,9 +457,12 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                       _customerType = newValue!;
                                       if (newValue == "Retail") {
                                         getCustomerType = "retail";
+                                        Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: getCustomerType);
+
                                       }
                                       if (newValue == "Wholesale") {
                                         getCustomerType = "wholesale";
+                                        Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: getCustomerType);
                                       }
                                     });
                                   },
@@ -502,70 +508,61 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: FutureBuilder(
-                                future: Provider.of<AllProductProvider>(context).Fatch_By_all_Customer(context),
-                                builder: (context,
-                                    AsyncSnapshot<List<By_all_Customer>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return TypeAheadFormField(
-                                      textFieldConfiguration:
-                                      TextFieldConfiguration(
-                                        onChanged: (value){
-                                          if (value == '') {
-                                            _selectedCustomer = '';
-                                          }
-                                        },
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                        controller: customerController,
-                                        decoration: InputDecoration(
-                                          hintText: 'Select Customer',
-                                          suffix: _selectedCustomer == '' ? null : GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                customerController.text = '';
-                                              });
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 3),
-                                              child: Icon(Icons.close,size: 14,),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      suggestionsCallback: (pattern) {
-                                        return snapshot.data!
-                                            .where((element) => element.displayName!
-                                            .toLowerCase()
-                                            .contains(pattern
-                                            .toString()
-                                            .toLowerCase()))
-                                            .take(allCustomersData.length)
-                                            .toList();
-                                        // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                      },
-                                      itemBuilder: (context, suggestion) {
-                                        return ListTile(
-                                          title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                        );
-                                      },
-                                      transitionBuilder:
-                                          (context, suggestionsBox, controller) {
-                                        return suggestionsBox;
-                                      },
-                                      onSuggestionSelected:
-                                          (By_all_Customer suggestion) {
-                                            customerController.text = suggestion.displayName!;
+                              child: TypeAheadFormField(
+                                textFieldConfiguration:
+                                TextFieldConfiguration(
+                                  onChanged: (value){
+                                    if (value == '') {
+                                      _selectedCustomer = '';
+                                    }
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  controller: customerController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Customer',
+                                    suffix: _selectedCustomer == '' ? null : GestureDetector(
+                                      onTap: () {
                                         setState(() {
-                                          _selectedCustomer = suggestion.customerSlNo.toString();
+                                          customerController.text = '';
                                         });
                                       },
-                                      onSaved: (value) {},
-                                    );
-                                  }
-                                  return const SizedBox();
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 3),
+                                        child: Icon(Icons.close,size: 14,),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  return allCustomersData
+                                      .where((element) => element.displayName!
+                                      .toLowerCase()
+                                      .contains(pattern
+                                      .toString()
+                                      .toLowerCase()))
+                                      .take(allCustomersData.length)
+                                      .toList();
+                                  // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                 },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: SizedBox(child: Text("${suggestion.displayName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected:
+                                    (CustomerListModel suggestion) {
+                                  customerController.text = suggestion.displayName!;
+                                  setState(() {
+                                    _selectedCustomer = suggestion.customerSlNo.toString();
+                                  });
+                                },
+                                onSaved: (value) {},
                               ),
 
                               // child: DropdownButtonHideUnderline(
@@ -754,6 +751,7 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                               width: MediaQuery.of(context).size.width / 2,
                               child: TextField(
                                 controller: _AmountController,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 5.0, horizontal: 10.0),
@@ -780,10 +778,16 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          InkWell(
+                          GestureDetector(
                             onTap: () {
+                              print('jkasdfgjkas $_paymentType rsfgasdf $getTransactionType sdgfsdfg $_selectedCustomer');
+
+                              FocusScope.of(context).requestFocus(FocusNode());
+
+                              ApiAllAddCustomerPayment.isBtnClk = true;
+
                               ApiAllAddCustomerPayment
-                                  .GetApiAllAddCustomerPayment(
+                                  .getApiAllAddCustomerPayment(
                                 context,
                                 "$_paymentType",
                                 "$getTransactionType",
@@ -794,23 +798,18 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                 _DescriptionController.text,
                                 _DueController.text,
                                 "$_selectedBank",
-                                //  CPayment_Paymentby,
-                                // CPayment_TransactionType,
-                                // CPayment_amount,
-                                // CPayment_customerID,
-                                // CPayment_date,
-                                // CPayment_id,
-                                // CPayment_notes,
-                                // CPayment_previous_due,
-                                // account_id,
-
                               );
+
+                              _DescriptionController.text = "";
+                              customerController.text = '';
+                              _AmountController.text = "";
+
                               Provider.of<CounterProvider>(context,
                                   listen: false)
                                   .getGetCustomerPayment(
                                   context,
-                                  DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                                  DateFormat('yyyy-MM-dd').format(DateTime.now()));
+                                  backEndFirstDate,
+                                  backEndFirstDate);
                             },
                             child: Container(
                               height: 35.0,
@@ -822,21 +821,22 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                                 color: const Color.fromARGB(255, 5, 114, 165),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: const Center(
-                                  child: Text(
-                                    "SAVE",
+                              child: Center(
+                                  child: ApiAllAddCustomerPayment.isBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                    "Save",
                                     style: TextStyle(
                                         letterSpacing: 1.0,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500),
                                   )),
+
                             ),
                           ),
                           const SizedBox(width: 4.0),
                           InkWell(
                             onTap: () {
                               _DescriptionController.text = "";
-
+                              customerController.text = '';
                               _AmountController.text = "";
                             },
                             child: Container(
@@ -905,32 +905,32 @@ class _CustomerPaymentPageState extends State<CustomerPaymentPage> {
                           showCheckboxColumn: true,
                           border:
                           TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            const DataColumn(
+                          columns: const [
+                            DataColumn(
                               label: Center(child: Text('Transaction Id')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Date')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Customer Name')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Customer Type')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Transaction Type')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Payment by')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Amount')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Description')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Save By')),
                             ),
                           ],

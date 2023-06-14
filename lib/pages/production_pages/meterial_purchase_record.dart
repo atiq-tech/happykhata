@@ -612,7 +612,7 @@ class _MeterialPurchaseRecordState extends State<MeterialPurchaseRecord> {
                                 Row(
                                   children: [
                                     const Text(//5555555
-                                      "Total Ammount        :  ",
+                                      "Total Amount            :  ",
                                       style: TextStyle(
                                           fontWeight:
                                           FontWeight.bold,

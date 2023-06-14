@@ -2234,6 +2234,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 isSellBtnClk = true;
                               });
                               if (DiccountTotal == 0) {
+                                setState(() {
+                                  isSellBtnClk = false;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text("Please Add to Cart")));

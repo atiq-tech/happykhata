@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Riaz/all_api_implement.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
 import 'package:poss/provider/sales_module/sales_record/provider_sales_data.dart';
@@ -23,7 +24,12 @@ class _StockReportPageState extends State<StockReportPage> {
   bool isProductWiseClicked = false;
   double thFontSize = 10.0;
   String data = '';
-  List<String> _types = ['Current Stock', 'Total Stock', 'Category Wise Stock', 'Product Wise Stock'];
+  List<String> _types = [
+    'Current Stock',
+    'Total Stock',
+    'Category Wise Stock',
+    'Product Wise Stock'
+  ];
   String _selectedTypes = 'Current Stock';
   String? _selectedCategory;
   String? _selectedProduct;
@@ -33,28 +39,38 @@ class _StockReportPageState extends State<StockReportPage> {
   var categoryController = TextEditingController();
   var productAllController = TextEditingController();
 
-  bool isLoading = false;//for loading circulerprogressindicator
   @override
   void initState() {
-    Provider.of<CurrentStockProvider>(context, listen: false).getAllCurrentStockData(context);
-    Provider.of<TotalStockProvider>(context, listen: false).getAllTotalStockData(context);
-    Provider.of<CategoryWiseStockProvider>(context, listen: false).getCategoryWiseStockData(context, categoryId: categoryId);
-    Provider.of<ProductWiseStockProvider>(context, listen: false).getProductWiseStockData(context, productId);
-    // Provider.of<TotalStockWithCategoryProvider>(context, listen: false)
-    //     .getAllTotalStockWithCategoryData(context, categoryId);
+    Provider.of<CurrentStockProvider>(context, listen: false)
+        .getAllCurrentStockData(context);
+    Provider.of<TotalStockProvider>(context, listen: false)
+        .getAllTotalStockData(context);
+    Provider.of<CategoryWiseStockProvider>(context, listen: false)
+        .getCategoryWiseStockData(context, categoryId: categoryId);
+    Provider.of<ProductWiseStockProvider>(context, listen: false)
+        .getProductWiseStockData(context, productId);
+    Provider.of<CategoryWiseStockProvider>(context, listen: false).getCategoryWiseStockData(context, categoryId: '');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final provideCurrentStockList = Provider.of<CurrentStockProvider>(context).provideCurrentStockList;
-    final provideTotalStockList = Provider.of<CurrentStockProvider>(context).provideCurrentStockList;
-    final provideCategoryWiseStockList = Provider.of<CategoryWiseStockProvider>(context).provideCategoryWiseStockList;
+    final provideCurrentStockList =
+        Provider.of<CurrentStockProvider>(context).provideCurrentStockList;
+    final provideTotalStockList =
+        Provider.of<CurrentStockProvider>(context).provideCurrentStockList;
+    final provideCategoryWiseStockList =
+        Provider.of<CategoryWiseStockProvider>(context)
+            .provideCategoryWiseStockList;
     final provideTotalStockWithCategoryList =
-        Provider.of<TotalStockWithCategoryProvider>(context).provideTotalStockWithCategoryList;
-    final provideProductWiseStockList = Provider.of<ProductWiseStockProvider>(context).provideProductWiseStockList;
+        Provider.of<TotalStockWithCategoryProvider>(context)
+            .provideTotalStockWithCategoryList;
+    final provideProductWiseStockList =
+        Provider.of<ProductWiseStockProvider>(context)
+            .provideProductWiseStockList;
     final provideTotalStockWithProductList =
-        Provider.of<TotalStockWithProductProvider>(context).provideTotalStockWithProductList;
+        Provider.of<TotalStockWithProductProvider>(context)
+            .provideTotalStockWithProductList;
 
     // for (var i = 0; i <= provideTotalStockWithCategoryList.length; i++) {
     //   print(provideTotalStockWithCategoryList[i].productName);
@@ -64,14 +80,14 @@ class _StockReportPageState extends State<StockReportPage> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           "Select Type:",
@@ -83,13 +99,13 @@ class _StockReportPageState extends State<StockReportPage> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            margin: const EdgeInsets.only(top: 5, bottom: 5),
                             height: 30,
-                            padding: EdgeInsets.only(left: 5, right: 5),
+                            padding: const EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Color.fromARGB(255, 7, 125, 180),
+                                color: const Color.fromARGB(255, 7, 125, 180),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10.0),
@@ -97,7 +113,7 @@ class _StockReportPageState extends State<StockReportPage> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                hint: Text(
+                                hint: const Text(
                                   'Please select a type',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -121,7 +137,7 @@ class _StockReportPageState extends State<StockReportPage> {
                                     value: location,
                                     child: Text(
                                       location,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                       ),
                                     ),
@@ -138,7 +154,7 @@ class _StockReportPageState extends State<StockReportPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
+                            const Expanded(
                               flex: 1,
                               child: Text(
                                 "Select Category:",
@@ -150,90 +166,113 @@ class _StockReportPageState extends State<StockReportPage> {
                             Expanded(
                               flex: 3,
                               child: Container(
-                                margin: EdgeInsets.only(top: 5, bottom: 5),
+                                margin:
+                                    const EdgeInsets.only(top: 5, bottom: 5),
                                 height: 38,
-                                padding: EdgeInsets.only(left: 5, right: 5),
+                                padding:
+                                    const EdgeInsets.only(left: 5, right: 5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                    color: Color.fromARGB(255, 7, 125, 180),
+                                    color:
+                                        const Color.fromARGB(255, 7, 125, 180),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                child: FutureBuilder(
-                                  future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
-                                  builder: (context,
-                                      AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
-                                    if (snapshot.hasData) {
-                                      return TypeAheadFormField(
-                                        textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                            onChanged: (value){
-                                              if (value == '') {
-                                                categoryId = '';
-                                              }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
+                                child: TypeAheadFormField(
+                                  textFieldConfiguration:
+                                  TextFieldConfiguration(
+                                      onChanged: (value) {
+                                        if (value == '') {
+                                          categoryId = '';
+                                        }
+                                      },
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                      controller: categoryController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Select Category',
+                                        suffix: categoryId == ''
+                                            ? null
+                                            : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              categoryController
+                                                  .text = '';
+                                            });
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets
+                                                .symmetric(
+                                                horizontal:
+                                                3),
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 14,
                                             ),
-                                            controller: categoryController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Category',
-                                              suffix: categoryId == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    categoryController.text = '';
-                                                  });
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
-                                                ),
-                                              ),
-                                            )
+                                          ),
                                         ),
-                                        suggestionsCallback: (pattern) {
-                                          return snapshot.data!
-                                              .where((element) => element.productCategoryName
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains(pattern
-                                              .toString()
-                                              .toLowerCase()))
-                                              .take(provideCategoryWiseStockList.length)
-                                              .toList();
-                                          // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                        },
-                                        itemBuilder: (context, suggestion) {
-                                          return ListTile(
-                                            title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                          );
-                                        },
-                                        transitionBuilder:
-                                            (context, suggestionsBox, controller) {
-                                          return suggestionsBox;
-                                        },
-                                        onSuggestionSelected:
-                                            (CategoryWiseStockModel suggestion) {
-                                          categoryController.text = suggestion.productCategoryName!;
-                                                    setState(() {
-                                                      categoryId = '${suggestion.productCategorySlNo}';
-                                                      Provider.of<CategoryWiseStockProvider>(context, listen: false)
-                                                          .getCategoryWiseStockData(context, categoryId: categoryId);
-
-                                                      _selectedCategory = suggestion.productCategorySlNo.toString();
-
-                                                      Provider.of<TotalStockWithCategoryProvider>(context, listen: false)
-                                                          .getAllTotalStockWithCategoryData(context, categoryId);
-                                                      // print("first index =====${provideTotalStockWithCategoryList[0].productName}");
-                                                    });
-                                        },
-                                        onSaved: (value) {},
-                                      );
-                                    }
-                                    return const SizedBox();
+                                      )),
+                                  suggestionsCallback: (pattern) {
+                                    return provideCategoryWiseStockList
+                                        .where((element) => element
+                                        .productCategoryName
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(pattern
+                                        .toString()
+                                        .toLowerCase()))
+                                        .take(provideCategoryWiseStockList
+                                        .length)
+                                        .toList();
+                                    // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                   },
+                                  itemBuilder: (context, suggestion) {
+                                    return ListTile(
+                                      title: SizedBox(
+                                          child: Text(
+                                            "${suggestion.productCategoryName}",
+                                            style:
+                                            const TextStyle(fontSize: 12),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    );
+                                  },
+                                  transitionBuilder: (context,
+                                      suggestionsBox, controller) {
+                                    return suggestionsBox;
+                                  },
+                                  onSuggestionSelected:
+                                      (CategoryWiseStockModel
+                                  suggestion) {
+                                    categoryController.text =
+                                    suggestion.productCategoryName!;
+                                    setState(() {
+                                      categoryId =
+                                      '${suggestion.productCategorySlNo}';
+                                      Provider.of<CategoryWiseStockProvider>(
+                                          context,
+                                          listen: false)
+                                          .getCategoryWiseStockData(
+                                          context,
+                                          categoryId: categoryId);
+
+                                      _selectedCategory = suggestion
+                                          .productCategorySlNo
+                                          .toString();
+
+                                      Provider.of<TotalStockWithCategoryProvider>(
+                                          context,
+                                          listen: false)
+                                          .getAllTotalStockWithCategoryData(
+                                          context, categoryId);
+                                      // print("first index =====${provideTotalStockWithCategoryList[0].productName}");
+                                    });
+                                  },
+                                  onSaved: (value) {},
                                 ),
                                 // child: DropdownButtonHideUnderline(
                                 //   child: DropdownButton(
@@ -296,83 +335,117 @@ class _StockReportPageState extends State<StockReportPage> {
                             Expanded(
                               flex: 3,
                               child: Container(
-                                margin: EdgeInsets.only(top: 5, bottom: 5),
-                                height: 38,
-                                padding: EdgeInsets.only(left: 5, right: 5),
+                                margin:
+                                    const EdgeInsets.only(top: 5, bottom: 5),
+                                height: 41,
+                                padding:
+                                    const EdgeInsets.only(left: 5, right: 5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                    color: Color.fromARGB(255, 7, 125, 180),
+                                    color:
+                                        const Color.fromARGB(255, 7, 125, 180),
                                     width: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 child: FutureBuilder(
-                                  future: Provider.of<AllProductProvider>(context).FetchAllProduct(context),
+                                  future:
+                                      Provider.of<AllProductProvider>(context)
+                                          .FetchAllProduct(context),
                                   builder: (context,
-                                      AsyncSnapshot<List<AllProductModelClass>> snapshot) {
+                                      AsyncSnapshot<List<AllProductModelClass>>
+                                          snapshot) {
                                     if (snapshot.hasData) {
                                       return TypeAheadFormField(
                                         textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                            onChanged: (value){
-                                              if (value == '') {
-                                                _selectedProduct = '';
-                                              }
-                                            },
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                            controller: productAllController,
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Product',
-                                              suffix: _selectedProduct == '' ? null : GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    productAllController.text = '';
-                                                  });
+                                            TextFieldConfiguration(
+                                                onChanged: (value) {
+                                                  if (value == '') {
+                                                    _selectedProduct = '';
+                                                  }
                                                 },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 3),
-                                                  child: Icon(Icons.close,size: 14,),
+                                                style: const TextStyle(
+                                                  fontSize: 15,
                                                 ),
-                                              ),
-                                            )
-                                        ),
+                                                controller:
+                                                    productAllController,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Select Product',
+                                                  suffix: _selectedProduct == ''
+                                                      ? null
+                                                      : GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              productAllController
+                                                                  .text = '';
+                                                            });
+                                                          },
+                                                          child: const Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        3),
+                                                            child: Icon(
+                                                              Icons.close,
+                                                              size: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                )),
                                         suggestionsCallback: (pattern) {
                                           return snapshot.data!
-                                              .where((element) => element.displayText
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains(pattern
-                                              .toString()
-                                              .toLowerCase()))
-                                              .take(provideProductWiseStockList.length)
+                                              .where((element) => element
+                                                  .displayText
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains(pattern
+                                                      .toString()
+                                                      .toLowerCase()))
+                                              .take(provideProductWiseStockList
+                                                  .length)
                                               .toList();
                                           // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                         },
                                         itemBuilder: (context, suggestion) {
                                           return ListTile(
-                                            title: SizedBox(child: Text("${suggestion.displayText}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                            title: SizedBox(
+                                                child: Text(
+                                              "${suggestion.displayText}",
+                                              style:
+                                                  const TextStyle(fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
                                           );
                                         },
-                                        transitionBuilder:
-                                            (context, suggestionsBox, controller) {
+                                        transitionBuilder: (context,
+                                            suggestionsBox, controller) {
                                           return suggestionsBox;
                                         },
                                         onSuggestionSelected:
                                             (AllProductModelClass suggestion) {
-                                          productAllController.text = suggestion.displayText!;
-                                                    setState(() {
-                                                      productId = "${suggestion.productSlNo}";
-                                                      Provider.of<ProductWiseStockProvider>(context, listen: false)
-                                                          .getProductWiseStockData(context, productId);
+                                          productAllController.text =
+                                              suggestion.displayText!;
+                                          setState(() {
+                                            productId =
+                                                "${suggestion.productSlNo}";
+                                            Provider.of<ProductWiseStockProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getProductWiseStockData(
+                                                    context, productId);
 
-                                                      _selectedProduct = suggestion.productSlNo.toString();
+                                            _selectedProduct = suggestion
+                                                .productSlNo
+                                                .toString();
 
-                                                      Provider.of<TotalStockWithProductProvider>(context, listen: false)
-                                                          .getAllTotalStockWithProductData(context, productId);
-                                                    });
+                                            Provider.of<TotalStockWithProductProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getAllTotalStockWithProductData(
+                                                    context, productId);
+                                          });
                                         },
                                         onSaved: (value) {},
                                       );
@@ -428,13 +501,13 @@ class _StockReportPageState extends State<StockReportPage> {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    color: Color.fromARGB(255, 3, 91, 150),
-                    padding: EdgeInsets.all(1.0),
+                    color: const Color.fromARGB(255, 3, 91, 150),
+                    padding: const EdgeInsets.all(1.0),
                     child: InkWell(
                       onTap: () {
-                           setState(() {
-                    isLoading = true;
-                  });
+                        setState(() {
+                          AllApiImplement.isLoading = true;
+                        });
                         setState(() {
                           _selectedTypes == "Current Stock"
                               ? data = 'current stock'
@@ -446,20 +519,20 @@ class _StockReportPageState extends State<StockReportPage> {
                                           ? data = "Product Wise Stock"
                                           : data = '';
                         });
-                         Future.delayed(Duration(seconds: 3), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
+                        Future.delayed(const Duration(seconds: 3), () {
+                          setState(() {
+                            AllApiImplement.isLoading = false;
+                          });
+                        });
                       },
                       child: Container(
                         height: 30.0,
                         width: 120.0,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 4, 113, 185),
+                          color: const Color.fromARGB(255, 4, 113, 185),
                           borderRadius: BorderRadius.circular(3.0),
                         ),
-                        child: Center(
+                        child: const Center(
                             child: Text(
                           "Show Report",
                           style: TextStyle(color: Colors.white),
@@ -471,432 +544,586 @@ class _StockReportPageState extends State<StockReportPage> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
           if (data == 'current stock')
-            isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    :Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    // color: Colors.red,
-                    // padding:EdgeInsets.only(bottom: 16.0),
-                    child: DataTable(
-                      showCheckboxColumn: true,
-                      columnSpacing: 20,
-                      border: TableBorder.all(color: Colors.black54, width: 1),
-                      columns: const [
-                        DataColumn(
-                          label: Center(child: Text('Product Id',textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Product Name',textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Category',textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Current Quantity',textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Stock Value',textAlign: TextAlign.center)),
-                        ),
-                      ],
-                      rows: List.generate(
-                        provideCurrentStockList.length,
-                        (int index) => DataRow(
-                          cells: <DataCell>[
-                            DataCell(
-                              SizedBox(
-                                  width: 50, child: Center(child: Text('${provideCurrentStockList[index].productCode}',textAlign: TextAlign.center,))),
-                            ),
-                            DataCell(
-                              SizedBox(width: 200, child: Text('${provideCurrentStockList[index].productName}',textAlign: TextAlign.center)),
-                            ),
-                            DataCell(
-                              SizedBox(width: 200, child: Text('${provideCurrentStockList[index].productCategoryName}',textAlign: TextAlign.center)),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 80,
-                                  child: Center(child: Text('${provideCurrentStockList[index].currentQuantity}',textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 80,
-                                  child: Center(child: Text('${provideCurrentStockList[index].stockValue}',textAlign: TextAlign.center))),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
-          else if (data == 'Total Stock')
-           isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    // color: Colors.red,
-                    // padding:EdgeInsets.only(bottom: 16.0),
-                    child: DataTable(
-                      showCheckboxColumn: true,
-                      border: TableBorder.all(color: Colors.black54, width: 1),
-                      columns: const [
-                        DataColumn(
-                          label: Center(child: Text('Product Id', textAlign: TextAlign.center,)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Product Name', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Category', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Production Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Purchased Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Purchase Returned Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Damaged Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Sold Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Sales Returned Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Transferred In Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Transferred Out Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Current Quantity', textAlign: TextAlign.center)),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Stock Value', textAlign: TextAlign.center)),
-                        ),
-                      ],
-                      rows: List.generate(
-                        provideTotalStockList.length,
-                        (int index) => DataRow(
-                          cells: <DataCell>[
-                            DataCell(
-                              SizedBox(
-                                  width: 50, child: Center(child: Text('${provideTotalStockList[index].productCode}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(width: 100, child: Text('${provideTotalStockList[index].productName}', textAlign: TextAlign.center)),
-                            ),
-                            DataCell(
-                              SizedBox(width: 80, child: Text('${provideTotalStockList[index].productCategoryName}', textAlign: TextAlign.center)),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideTotalStockList[index].productionQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideTotalStockList[index].purchaseQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child:
-                                      Center(child: Text('${provideCurrentStockList[index].purchaseReturnQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].damageQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].salesQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].salesReturnQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].transferFromQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].transferToQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].currentQuantity}', textAlign: TextAlign.center))),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                  width: 50,
-                                  child: Center(child: Text('${provideCurrentStockList[index].stockValue}', textAlign: TextAlign.center))),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
-          else if (data == 'Category Wise Stock')
-           isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              // color: Colors.red,
-                              // padding:EdgeInsets.only(bottom: 16.0),
-                              child: DataTable(
-                                showCheckboxColumn: true,
-                                border: TableBorder.all(color: Colors.black54, width: 1),
-                                columns: const [
-                                  DataColumn(
-                                    label: Center(child: Text('Product Id')),
+            AllApiImplement.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          // color: Colors.red,
+                          // padding:EdgeInsets.only(bottom: 16.0),
+                          child: DataTable(
+                            showCheckboxColumn: true,
+                            columnSpacing: 20,
+                            border: TableBorder.all(
+                                color: Colors.black54, width: 1),
+                            columns: const [
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Product Id',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Product Name',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Category',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Current Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Stock Value',
+                                        textAlign: TextAlign.center)),
+                              ),
+                            ],
+                            rows: List.generate(
+                              provideCurrentStockList.length,
+                              (int index) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                          '${provideCurrentStockList[index].productCode}',
+                                          textAlign: TextAlign.center,
+                                        ))),
                                   ),
-                                  DataColumn(
-                                    label: Center(child: Text('Product Name')),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 200,
+                                        child: Text(
+                                            '${provideCurrentStockList[index].productName}',
+                                            textAlign: TextAlign.center)),
                                   ),
-                                  DataColumn(
-                                    label: Center(child: Text('Category')),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 200,
+                                        child: Text(
+                                            '${provideCurrentStockList[index].productCategoryName}',
+                                            textAlign: TextAlign.center)),
                                   ),
-                                  DataColumn(
-                                    label: Center(child: Text('Production Quantity')),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 80,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].currentQuantity}',
+                                                textAlign: TextAlign.center))),
                                   ),
-                                  DataColumn(
-                                    label: Center(child: Text('Purchased Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Purchase Returned Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Damaged Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Sold Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Sales Returned Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Transferred In Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Transferred Out Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Current Quantity')),
-                                  ),
-                                  DataColumn(
-                                    label: Center(child: Text('Stock Value')),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 80,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].stockValue}',
+                                                textAlign: TextAlign.center))),
                                   ),
                                 ],
-                                rows: List.generate(
-                                  provideTotalStockWithCategoryList.length,
-                                  (int index) => DataRow(
-                                    cells: <DataCell>[
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].productCode}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].productName}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].productCategoryName}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].productionQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].purchasedQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child:
-                                                Text(' ${provideTotalStockWithCategoryList[index].purchaseReturnedQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].damagedQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].soldQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text('${provideTotalStockWithCategoryList[index].salesReturnedQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child:
-                                                Text('${provideTotalStockWithCategoryList[index].transferredFromQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(
-                                            child: Text('${provideTotalStockWithCategoryList[index].transferredToQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].currentQuantity}')),
-                                      ),
-                                      DataCell(
-                                        Center(child: Text('${provideTotalStockWithCategoryList[index].stockValue}')),
-                                      ),
-                                    ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+          else if (data == 'Total Stock')
+            AllApiImplement.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          // color: Colors.red,
+                          // padding:EdgeInsets.only(bottom: 16.0),
+                          child: DataTable(
+                            showCheckboxColumn: true,
+                            border: TableBorder.all(
+                                color: Colors.black54, width: 1),
+                            columns: const [
+                              DataColumn(
+                                label: Center(
+                                    child: Text(
+                                  'Product Id',
+                                  textAlign: TextAlign.center,
+                                )),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Product Name',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Category',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Production Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Purchased Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Purchase Returned Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Damaged Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Sold Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Sales Returned Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Transferred In Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Transferred Out Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Current Quantity',
+                                        textAlign: TextAlign.center)),
+                              ),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Stock Value',
+                                        textAlign: TextAlign.center)),
+                              ),
+                            ],
+                            rows: List.generate(
+                              provideTotalStockList.length,
+                              (int index) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideTotalStockList[index].productCode}',
+                                                textAlign: TextAlign.center))),
                                   ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 100,
+                                        child: Text(
+                                            '${provideTotalStockList[index].productName}',
+                                            textAlign: TextAlign.center)),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text(
+                                            '${provideTotalStockList[index].productCategoryName}',
+                                            textAlign: TextAlign.center)),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideTotalStockList[index].productionQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideTotalStockList[index].purchaseQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].purchaseReturnQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].damageQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].salesQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].salesReturnQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].transferFromQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].transferToQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].currentQuantity}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Text(
+                                                '${provideCurrentStockList[index].stockValue}',
+                                                textAlign: TextAlign.center))),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+          else if (data == 'Category Wise Stock')
+            AllApiImplement.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            // color: Colors.red,
+                            // padding:EdgeInsets.only(bottom: 16.0),
+                            child: DataTable(
+                              showCheckboxColumn: true,
+                              border: TableBorder.all(
+                                  color: Colors.black54, width: 1),
+                              columns: const [
+                                DataColumn(
+                                  label: Center(child: Text('Product Id')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Product Name')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Category')),
+                                ),
+                                DataColumn(
+                                  label: Center(
+                                      child: Text('Production Quantity')),
+                                ),
+                                DataColumn(
+                                  label:
+                                      Center(child: Text('Purchased Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(
+                                      child:
+                                          Text('Purchase Returned Quantity')),
+                                ),
+                                DataColumn(
+                                  label:
+                                      Center(child: Text('Damaged Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Sold Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(
+                                      child: Text('Sales Returned Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(
+                                      child: Text('Transferred In Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(
+                                      child: Text('Transferred Out Quantity')),
+                                ),
+                                DataColumn(
+                                  label:
+                                      Center(child: Text('Current Quantity')),
+                                ),
+                                DataColumn(
+                                  label: Center(child: Text('Stock Value')),
+                                ),
+                              ],
+                              rows: List.generate(
+                                provideTotalStockWithCategoryList.length,
+                                (int index) => DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].productCode}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].productName}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].productCategoryName}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].productionQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].purchasedQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              ' ${provideTotalStockWithCategoryList[index].purchaseReturnedQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].damagedQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].soldQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].salesReturnedQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].transferredFromQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].transferredToQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].currentQuantity}')),
+                                    ),
+                                    DataCell(
+                                      Center(
+                                          child: Text(
+                                              '${provideTotalStockWithCategoryList[index].stockValue}')),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    )
+                    ),
+                  )
           else if (data == 'Product Wise Stock')
-            isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : Expanded(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      // color: Colors.red,
-                      // padding:EdgeInsets.only(bottom: 16.0),
-                      child: DataTable(
-                        showCheckboxColumn: true,
-                        border: TableBorder.all(color: Colors.black54, width: 1),
-                        columns: const [
-                          DataColumn(
-                            label: Center(child: Text('Product Id')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Product Name')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Category')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Production Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Purchased Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Purchase Returned Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Damaged Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Sold Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Sales Returned Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Transferred In Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Transferred Out Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Current Quantity')),
-                          ),
-                          DataColumn(
-                            label: Center(child: Text('Stock Value')),
-                          ),
-                        ],
-                        rows: List.generate(
-                          provideTotalStockWithProductList.length,
-                          (int index) => DataRow(
-                            cells: <DataCell>[
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].productCode}')),
+            AllApiImplement.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            showCheckboxColumn: true,
+                            border: TableBorder.all(
+                                color: Colors.black54, width: 1),
+                            columns: const [
+                              DataColumn(
+                                label: Center(child: Text('Product Id')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].productName}')),
+                              DataColumn(
+                                label: Center(child: Text('Product Name')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].productCategoryName}')),
+                              DataColumn(
+                                label: Center(child: Text('Category')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].productionQuantity}')),
+                              DataColumn(
+                                label:
+                                    Center(child: Text('Production Quantity')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].purchasedQuantity}')),
+                              DataColumn(
+                                label:
+                                    Center(child: Text('Purchased Quantity')),
                               ),
-                              DataCell(
-                                Center(
-                                    child:
-                                        Text(' ${provideTotalStockWithProductList[index].purchaseReturnedQuantity}')),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Purchase Returned Quantity')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].damagedQuantity}')),
+                              DataColumn(
+                                label: Center(child: Text('Damaged Quantity')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].soldQuantity}')),
+                              DataColumn(
+                                label: Center(child: Text('Sold Quantity')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(' ${provideTotalStockWithProductList[index].salesReturnedQuantity}')),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Sales Returned Quantity')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(' ${provideTotalStockWithProductList[index].transferredFromQuantity}')),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Transferred In Quantity')),
                               ),
-                              DataCell(
-                                Center(
-                                    child: Text(' ${provideTotalStockWithProductList[index].transferredToQuantity}')),
+                              DataColumn(
+                                label: Center(
+                                    child: Text('Transferred Out Quantity')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].currentQuantity}')),
+                              DataColumn(
+                                label: Center(child: Text('Current Quantity')),
                               ),
-                              DataCell(
-                                Center(child: Text(' ${provideTotalStockWithProductList[index].stockValue}')),
+                              DataColumn(
+                                label: Center(child: Text('Stock Value')),
                               ),
                             ],
+                            rows: List.generate(
+                              provideTotalStockWithProductList.length,
+                              (int index) => DataRow(
+                                cells: <DataCell>[
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].productCode}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].productName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].productCategoryName}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].productionQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].purchasedQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].purchaseReturnedQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].damagedQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].soldQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].salesReturnedQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].transferredFromQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].transferredToQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].currentQuantity}')),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                        child: Text(
+                                            ' ${provideTotalStockWithProductList[index].stockValue}')),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            )
+                  )
         ],
       ),
     );

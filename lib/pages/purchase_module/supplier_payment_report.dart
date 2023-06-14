@@ -429,24 +429,30 @@ class _SupplierPaymentReportState extends State<SupplierPaymentReport> {
                   child: Container(
                     child: InkWell(
                       onTap: () {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        Provider.of<SupplierPaymentReportProvider>(context,
-                                listen: false)
-                            .getSupplierPaymentData(
-                          context,
-                          "$supplierId",
-                          backEndFirstDate,
-                          backEndSecondDate,
-                        );
-                        print('lkjnfgalksfgak ${backEndFirstDate} sdfgsdg${backEndSecondDate}dfgsd${supplierId}');
-
-                        Future.delayed(const Duration(seconds: 3), () {
+                        if(supplyerController.text != ''){
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                        });
+                          Provider.of<SupplierPaymentReportProvider>(context,
+                              listen: false)
+                              .getSupplierPaymentData(
+                            context,
+                            "$supplierId",
+                            backEndFirstDate,
+                            backEndSecondDate,
+                          );
+                          print('lkjnfgalksfgak ${backEndFirstDate} sdfgsdg${backEndSecondDate}dfgsd${supplierId}');
+
+                          Future.delayed(const Duration(seconds: 3), () {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
+                        }else{
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              backgroundColor: Colors.black,
+                              content: Center(child: Text("Please Select Supplier",style: TextStyle(color: Colors.red),))));
+                        }
                       },
                       child: Container(
                         height: 32.0,

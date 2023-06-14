@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Atik/Api_get_sales_record/api_get_sales_record.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_customer_wisee_category_modelclass.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
@@ -129,7 +130,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
   String categoryId = "";
   final provideSalesdetailsRecordList = [];
   List<SaleDetails> provideSalesdetailsRecordListt = [];
-  bool isLoading = false;
+  // bool isLoading = false;
   @override
   void initState() {
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
@@ -2075,7 +2076,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select record type',style: TextStyle(color: Colors.red),)));
                         }
                         setState(() {
-                          isLoading = true;
+                          ApiGetSalesRecord.isLoading = true;
                         });
                         setState(() {
                           // AllType
@@ -2250,7 +2251,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                         });
                         Future.delayed(const Duration(seconds: 3), () {
                           setState(() {
-                            isLoading = false;
+                            ApiGetSalesRecord.isLoading = false;
                           });
                         });
                       },
@@ -2278,7 +2279,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           ),
           data == 'showAllWithoutDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SizedBox(
               width: double.infinity,
@@ -2595,7 +2596,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showAllWithDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SizedBox(
               width: double.infinity,
@@ -2604,104 +2605,76 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                 scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: Container(
-                    // color: Colors.red,
-                    // padding:EdgeInsets.only(bottom: 16.0),
-                    child: DataTable(
-                      showCheckboxColumn: true,
-                      border: TableBorder.all(
-                          color: Colors.black54, width: 1),
-                      columns: const [
-                        DataColumn(
-                          label:
-                          Center(child: Text('Invoice No')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Date')),
-                        ),
-                        DataColumn(
-                          label: Center(
-                              child: Text('Customer Name')),
-                        ),
-                        DataColumn(
-                          label: Center(
-                              child: Text('Employee Name')),
-                        ),
-                        DataColumn(
-                          label:
-                          Center(child: Text('Saved By')),
-                        ),
-                        DataColumn(
-                          label: Center(
-                              child: Text('Product Name')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Price')),
-                        ),
-                        DataColumn(
-                          label:
-                          Center(child: Text('Quantity')),
-                        ),
-                        DataColumn(
-                          label: Center(child: Text('Total')),
-                        ),
-                      ],
-                      rows: List.generate(
-                        allGetSalesRecordData.length,
-                            (int index) => DataRow(
-                          cells: <DataCell>[
-                            DataCell(
-                              Center(
-                                  child: Text(
-                                      "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: Text(
-                                      '${allGetSalesRecordData[index].saleMasterSaleDate}')),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: Text(
-                                      '${allGetSalesRecordData[index].customerName}')),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: Text(
-                                      '${allGetSalesRecordData[index].employeeName}')),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: Text(
-                                      '${allGetSalesRecordData[index].addBy}')),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: SizedBox(
-                                    // color: Colors.green,
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        0.5,
-                                    child: ListView.builder(
-                                      scrollDirection:
-                                      Axis.vertical,
-                                      itemCount:
-                                      allGetSalesRecordData[
-                                      index]
-                                          .saleDetails!
-                                          .length,
-                                      itemBuilder: (context, j) {
-                                        return Center(
-                                          child: Text(
-                                              "${allGetSalesRecordData[index].saleDetails![j].productName}"),
-                                        );
-                                      },
-                                    ),
-                                  )),
-                            ),
-                            DataCell(
-                              Center(
+                  child: DataTable(
+                    showCheckboxColumn: true,
+                    border: TableBorder.all(
+                        color: Colors.black54, width: 1),
+                    columns: const [
+                      DataColumn(
+                        label:
+                        Center(child: Text('Invoice No')),
+                      ),
+                      DataColumn(
+                        label: Center(child: Text('Date')),
+                      ),
+                      DataColumn(
+                        label: Center(
+                            child: Text('Customer Name')),
+                      ),
+                      DataColumn(
+                        label: Center(
+                            child: Text('Employee Name')),
+                      ),
+                      DataColumn(
+                        label:
+                        Center(child: Text('Saved By')),
+                      ),
+                      DataColumn(
+                        label: Center(
+                            child: Text('Product Name')),
+                      ),
+                      DataColumn(
+                        label: Center(child: Text('Price')),
+                      ),
+                      DataColumn(
+                        label:
+                        Center(child: Text('Quantity')),
+                      ),
+                      DataColumn(
+                        label: Center(child: Text('Total')),
+                      ),
+                    ],
+                    rows: List.generate(
+                      allGetSalesRecordData.length,
+                          (int index) => DataRow(
+                        cells: <DataCell>[
+                          DataCell(
+                            Center(
+                                child: Text(
+                                    "${allGetSalesRecordData[index].saleMasterInvoiceNo}")),
+                          ),
+                          DataCell(
+                            Center(
+                                child: Text(
+                                    '${allGetSalesRecordData[index].saleMasterSaleDate}')),
+                          ),
+                          DataCell(
+                            Center(
+                                child: Text(
+                                    '${allGetSalesRecordData[index].customerName}')),
+                          ),
+                          DataCell(
+                            Center(
+                                child: Text(
+                                    '${allGetSalesRecordData[index].employeeName}')),
+                          ),
+                          DataCell(
+                            Center(
+                                child: Text(
+                                    '${allGetSalesRecordData[index].addBy}')),
+                          ),
+                          DataCell(
+                            Center(
                                 child: SizedBox(
                                   // color: Colors.green,
                                   width: MediaQuery.of(context)
@@ -2719,65 +2692,89 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                                     itemBuilder: (context, j) {
                                       return Center(
                                         child: Text(
-                                            "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
+                                            "${allGetSalesRecordData[index].saleDetails![j].productName}"),
                                       );
                                     },
                                   ),
+                                )),
+                          ),
+                          DataCell(
+                            Center(
+                              child: SizedBox(
+                                // color: Colors.green,
+                                width: MediaQuery.of(context)
+                                    .size
+                                    .width *
+                                    0.5,
+                                child: ListView.builder(
+                                  scrollDirection:
+                                  Axis.vertical,
+                                  itemCount:
+                                  allGetSalesRecordData[
+                                  index]
+                                      .saleDetails!
+                                      .length,
+                                  itemBuilder: (context, j) {
+                                    return Center(
+                                      child: Text(
+                                          "${allGetSalesRecordData[index].saleDetails![j].saleDetailsRate}"),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
-                            DataCell(
-                              Center(
-                                  child: SizedBox(
-                                    // color: Colors.green,
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        0.5,
-                                    child: ListView.builder(
-                                      scrollDirection:
-                                      Axis.vertical,
-                                      itemCount:
-                                      allGetSalesRecordData[
-                                      index]
-                                          .saleDetails!
-                                          .length,
-                                      itemBuilder: (context, j) {
-                                        return Center(
-                                          child: Text(
-                                              "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
-                                        );
-                                      },
-                                    ),
-                                  )),
-                            ),
-                            DataCell(
-                              Center(
-                                  child: SizedBox(
-                                    // color: Colors.green,
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        0.5,
-                                    child: ListView.builder(
-                                      scrollDirection:
-                                      Axis.vertical,
-                                      itemCount:
-                                      allGetSalesRecordData[
-                                      index]
-                                          .saleDetails!
-                                          .length,
-                                      itemBuilder: (context, j) {
-                                        return Center(
-                                          child: Text(
-                                              "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
-                                        );
-                                      },
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
+                          ),
+                          DataCell(
+                            Center(
+                                child: SizedBox(
+                                  // color: Colors.green,
+                                  width: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.5,
+                                  child: ListView.builder(
+                                    scrollDirection:
+                                    Axis.vertical,
+                                    itemCount:
+                                    allGetSalesRecordData[
+                                    index]
+                                        .saleDetails!
+                                        .length,
+                                    itemBuilder: (context, j) {
+                                      return Center(
+                                        child: Text(
+                                            "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalQuantity}"),
+                                      );
+                                    },
+                                  ),
+                                )),
+                          ),
+                          DataCell(
+                            Center(
+                                child: SizedBox(
+                                  // color: Colors.green,
+                                  width: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.5,
+                                  child: ListView.builder(
+                                    scrollDirection:
+                                    Axis.vertical,
+                                    itemCount:
+                                    allGetSalesRecordData[
+                                    index]
+                                        .saleDetails!
+                                        .length,
+                                    itemBuilder: (context, j) {
+                                      return Center(
+                                        child: Text(
+                                            "${allGetSalesRecordData[index].saleDetails![j].saleDetailsTotalAmount}"),
+                                      );
+                                    },
+                                  ),
+                                )),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -2787,7 +2784,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByCustomerWithoutDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SizedBox(
               width: double.infinity,
@@ -2799,126 +2796,124 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        child: DataTable(
-                          showCheckboxColumn: true,
-                          border: TableBorder.all(
-                              color: Colors.black54, width: 1),
-                          columns: const [
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Invoice No')),
-                            ),
-                            DataColumn(
-                              label:
-                              Center(child: Text('Date')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Customer Name')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Employee Name')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Saved By')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Sub Total')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Vat')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child: Text('Discount')),
-                            ),
-                            DataColumn(
-                              label: Center(
-                                  child:
-                                  Text('Transport Cost')),
-                            ),
-                            DataColumn(
-                              label:
-                              Center(child: Text('Total')),
-                            ),
-                            DataColumn(
-                              label:
-                              Center(child: Text('Paid')),
-                            ),
-                            DataColumn(
-                              label: Center(child: Text('Due')),
-                            ),
-                          ],
-                          rows: List.generate(
-                            allGetSalesData.length,
-                                (int index) => DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${allGetSalesData[index].saleMasterInvoiceNo}")),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].saleMasterSaleDate}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].customerName}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].employeeName}' == null ? '' : '${allGetSalesData[index].employeeName}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].addBy}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${allGetSalesData[index].saleMasterSubTotalAmount}")),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${allGetSalesData[index].saleMasterTaxAmount}")),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          "${allGetSalesData[index].saleMasterFreight}")),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].saleMasterPaidAmount}')),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: Text(
-                                          '${allGetSalesData[index].saleMasterDueAmount}')),
-                                ),
-                              ],
-                            ),
+                      DataTable(
+                        showCheckboxColumn: true,
+                        border: TableBorder.all(
+                            color: Colors.black54, width: 1),
+                        columns: const [
+                          DataColumn(
+                            label: Center(
+                                child: Text('Invoice No')),
+                          ),
+                          DataColumn(
+                            label:
+                            Center(child: Text('Date')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child: Text('Customer Name')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child: Text('Employee Name')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child: Text('Saved By')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child: Text('Sub Total')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Vat')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child: Text('Discount')),
+                          ),
+                          DataColumn(
+                            label: Center(
+                                child:
+                                Text('Transport Cost')),
+                          ),
+                          DataColumn(
+                            label:
+                            Center(child: Text('Total')),
+                          ),
+                          DataColumn(
+                            label:
+                            Center(child: Text('Paid')),
+                          ),
+                          DataColumn(
+                            label: Center(child: Text('Due')),
+                          ),
+                        ],
+                        rows: List.generate(
+                          allGetSalesData.length,
+                              (int index) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        "${allGetSalesData[index].saleMasterInvoiceNo}")),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].saleMasterSaleDate}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].customerName}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].employeeName}' == null ? '' : '${allGetSalesData[index].employeeName}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].addBy}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        "${allGetSalesData[index].saleMasterSubTotalAmount}")),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        "${allGetSalesData[index].saleMasterTaxAmount}")),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].saleMasterTotalDiscountAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        "${allGetSalesData[index].saleMasterFreight}")),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].saleMasterTotalSaleAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].saleMasterPaidAmount}')),
+                              ),
+                              DataCell(
+                                Center(
+                                    child: Text(
+                                        '${allGetSalesData[index].saleMasterDueAmount}')),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -3109,7 +3104,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByCustomerWithDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SizedBox(
               width: double.infinity,
@@ -3345,7 +3340,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByEmployeeWithoutDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child: CircularProgressIndicator())
                 : SizedBox(
@@ -3495,7 +3490,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByEmployeeWithDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())
@@ -3623,7 +3618,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByCategoryDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())
@@ -3737,7 +3732,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showByQuantityDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())
@@ -3852,7 +3847,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
           )
               : data == 'showBySummaryDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())
@@ -3935,7 +3930,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
               : data ==
               'showByUserWithoutDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())
@@ -4070,7 +4065,7 @@ class _SalesRecordPageState extends State<SalesRecordPage> {
               : data ==
               'showByUserWithDetails'
               ? Expanded(
-            child: isLoading
+            child: ApiGetSalesRecord.isLoading
                 ? const Center(
                 child:
                 CircularProgressIndicator())

@@ -29,7 +29,7 @@ class _LogInPageState extends State<LogInPage> {
       });
       final response = await Dio().post(link, data: formData);
       var item = jsonDecode(response.data);
-      print(item);
+      print('sgjliklsdfg $item');
       // if (item["message"] == "User login successfully") {
       //   Navigator.pushReplacement(
       //       context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -38,7 +38,7 @@ class _LogInPageState extends State<LogInPage> {
       //       duration: Duration(seconds: 1),
       //       content: Center(child: Text("Login successfull"))));
       // }
-      print(item["message"]);
+      print("sdfgsdgsdgsdf ${item["message"]}");
       if (item["status"] == true) {
         setState(() {
           isLogInBtnClk = false;

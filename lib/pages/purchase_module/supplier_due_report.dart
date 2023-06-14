@@ -24,7 +24,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
     'All',
     'By Supplier',
   ];
-  bool isLoading = false;
+
   var data;
 
   String? _selectedSupplier;
@@ -124,6 +124,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                   },
                                   items: _searchTypeList.map((location) {
                                     return DropdownMenuItem(
+                                      value: location,
                                       child: Text(
                                         maxLines: 1,
                                         location,
@@ -131,7 +132,6 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      value: location,
                                     );
                                   }).toList(),
                                 ),
@@ -347,7 +347,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            isLoading = true;
+                            ApiAllSupplierDue.isLoading = true;
                             _searchType == "By Supplier"
                                 ? data = 'by supplier'
                                 : _searchType == "All"
@@ -358,11 +358,11 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                                 .getSupplierDue(context, _selectedSupplier??"");
                             print("Supplier due repot======================::${_selectedSupplier}");
                           });
-                           Future.delayed(const Duration(seconds: 3), () {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
+                  //          Future.delayed(const Duration(seconds: 3), () {
+                  //   setState(() {
+                  //     isLoading = false;
+                  //   });
+                  // });
                         },
                         child: Container(
                           height: 35.0,
@@ -390,7 +390,7 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
               ),
               const SizedBox(height: 10.0),
               if (data == 'all' || data == 'by supplier' )
-                isLoading
+                ApiAllSupplierDue.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : Container(
                 height: MediaQuery.of(context).size.height / 1.43,
@@ -413,23 +413,23 @@ class _SupplierDueReportState extends State<SupplierDueReport> {
                               showCheckboxColumn: true,
                               border:
                                   TableBorder.all(color: Colors.black54, width: 1),
-                              columns: [
-                                const DataColumn(
+                              columns: const [
+                                DataColumn(
                                   label: Center(child: Text('Supplier Code')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Supplier Name')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Bill Amount')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Paid Amount')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Returned Amount')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Due')),
                                 ),
                               ],

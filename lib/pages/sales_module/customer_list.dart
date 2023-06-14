@@ -69,20 +69,20 @@ class _Customer_ListState extends State<Customer_List> {
                         child: DataTable(
                           showCheckboxColumn: true,
                           border: TableBorder.all(color: Colors.black54, width: 1),
-                          columns: [
-                            const DataColumn(
+                          columns: const [
+                            DataColumn(
                               label: Center(child: Text('SI.')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Customer Id')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Customer Name')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Address')),
                             ),
-                            const DataColumn(
+                            DataColumn(
                               label: Center(child: Text('Contact No')),
                             ),
                           ],

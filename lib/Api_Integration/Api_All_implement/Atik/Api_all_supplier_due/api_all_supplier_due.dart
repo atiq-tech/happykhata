@@ -7,6 +7,7 @@ import 'package:poss/const_page.dart';
 
 class ApiAllSupplierDue{
 
+  static bool isLoading = false;
     static GetApiAllSupplierDue(
       context, String? supplierId) async {
     String Link = "${BaseUrl}api/v1/getSupplierDue";
@@ -34,9 +35,11 @@ print(response.data);
             "${AllSupplierDueClass.fromJson(i).due}");
         totalD = totalDue.toStringAsFixed(2);
         GetStorage().write("totalDue", totalD);
+        isLoading = false;
       }
 
     } catch (e) {
+      isLoading = false;
       print("Something is wrong allSupplierDueClass=======:$e");
     }
     return allSupplierDuelist;

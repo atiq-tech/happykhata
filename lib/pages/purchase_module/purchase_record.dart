@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Atik/api_get_purchases/api_get_purchases.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/all_product_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/all_suppliers_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/category_wise_stock_model.dart';
@@ -114,7 +115,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
     }
   }
 
-  bool isLoading = false;
+
   ApiAllProducts? apiAllProducts;
   @override
   void initState() {
@@ -346,71 +347,62 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: FutureBuilder(
-                                    future: Provider.of<CategoryWiseStockProvider>(context).getCategoryWiseStockData(context),
-                                    builder: (context,
-                                        AsyncSnapshot<List<CategoryWiseStockModel>> snapshot) {
-                                      if (snapshot.hasData) {
-                                        return TypeAheadFormField(
-                                          textFieldConfiguration:
-                                          TextFieldConfiguration(
-                                              onChanged: (value){
-                                                if (value == '') {
-                                                  categoryId = '';
-                                                }
-                                              },
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                              ),
-                                              controller: categoryController,
-                                              decoration: InputDecoration(
-                                                hintText: 'Select Category',
-                                                suffix: categoryId == '' ? null : GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      categoryController.text = '';
-                                                    });
-                                                  },
-                                                  child: const Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 3),
-                                                    child: Icon(Icons.close,size: 14,),
-                                                  ),
-                                                ),
-                                              )
+                                  child:  TypeAheadFormField(
+                                    textFieldConfiguration:
+                                    TextFieldConfiguration(
+                                        onChanged: (value){
+                                          if (value == '') {
+                                            categoryId = '';
+                                          }
+                                        },
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                        controller: categoryController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Select Category',
+                                          suffix: categoryId == '' ? null : GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                categoryController.text = '';
+                                              });
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                              child: Icon(Icons.close,size: 14,),
+                                            ),
                                           ),
-                                          suggestionsCallback: (pattern) {
-                                            return snapshot.data!
-                                                .where((element) => element.productCategoryName!
-                                                .toLowerCase()
-                                                .contains(pattern
-                                                .toString()
-                                                .toLowerCase()))
-                                                .take(All_Actegory_List.length)
-                                                .toList();
-                                            // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
-                                          },
-                                          itemBuilder: (context, suggestion) {
-                                            return ListTile(
-                                              title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
-                                            );
-                                          },
-                                          transitionBuilder:
-                                              (context, suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (CategoryWiseStockModel suggestion) {
-                                            categoryController.text = suggestion.productCategoryName!;
-                                            setState(() {
-                                              _selectedCustomerTypes = suggestion.productCategorySlNo.toString();
-                                              print('Category id is $_selectedCustomerTypes');
-                                            });
-                                          },
-                                          onSaved: (value) {},
-                                        );
-                                      }
-                                      return const SizedBox();
+                                        )
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      return All_Actegory_List
+                                          .where((element) => element.productCategoryName!
+                                          .toLowerCase()
+                                          .contains(pattern
+                                          .toString()
+                                          .toLowerCase()))
+                                          .take(All_Actegory_List.length)
+                                          .toList();
+                                      // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
                                     },
+                                    itemBuilder: (context, suggestion) {
+                                      return ListTile(
+                                        title: SizedBox(child: Text("${suggestion.productCategoryName}",style: const TextStyle(fontSize: 12), maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected:
+                                        (CategoryWiseStockModel suggestion) {
+                                      categoryController.text = suggestion.productCategoryName!;
+                                      setState(() {
+                                        _selectedCustomerTypes = suggestion.productCategorySlNo.toString();
+                                        print('Category id is $_selectedCustomerTypes');
+                                      });
+                                    },
+                                    onSaved: (value) {},
                                   ),
 
                                   // child: DropdownButtonHideUnderline(
@@ -856,7 +848,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                         ],
                       )
                     : Container(),
-                Container(
+                SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: Row(
@@ -972,7 +964,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          isLoading = true;
+                          ApiGetPurchases.isLoading = true;
                         });
 
                         setState(() {
@@ -1045,11 +1037,11 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             );
                           }
                         });
-                        Future.delayed(const Duration(seconds: 3), () {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
+                        // Future.delayed(const Duration(seconds: 3), () {
+                        //   setState(() {
+                        //     isLoading = false;
+                        //   });
+                        // });
                       },
                       child: Container(
                         height: 30.0,
@@ -1075,9 +1067,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
           ),
           data == 'showAllWithoutDetails'
               ? Expanded(
-                  child: isLoading
+                  child: ApiGetPurchases.isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : Container(
+                      : SizedBox(
                           width: double.infinity,
                           height: double.infinity,
                           child: SingleChildScrollView(
@@ -1198,9 +1190,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1222,9 +1212,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1246,9 +1234,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1270,9 +1256,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1294,9 +1278,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1318,9 +1300,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1343,9 +1323,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                   FontWeight.bold,
                                                   fontSize: 14),
                                             ),
-                                            allGetPurchasesData
-                                                .length ==
-                                                0
+                                            allGetPurchasesData.isEmpty
                                                 ? const Text(
                                               "0",
                                               style: TextStyle(
@@ -1369,9 +1347,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                         ),
                 )
           :data == 'showAllWithDetails' ? Expanded(
-            child: isLoading
+            child:  ApiGetPurchases.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : Container(
+                : SizedBox(
               width: double.infinity,
               height: double.infinity,
               child: SingleChildScrollView(
@@ -1594,9 +1572,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
           )
               : data == 'showByCategoryDetails'
                   ? Expanded(
-                      child: isLoading
+                      child:  ApiGetPurchases.isLoading && allPurchaseRecordData.isNotEmpty
                           ? const Center(child: CircularProgressIndicator())
-                          : Container(
+                          : SizedBox(
                               width: double.infinity,
                               height: double.infinity,
                               child: SingleChildScrollView(
@@ -1687,9 +1665,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                     FontWeight.bold,
                                                     fontSize: 14),
                                               ),
-                                              allPurchaseDetailsData
-                                                  .length ==
-                                                  0
+                                              allPurchaseDetailsData.isEmpty
                                                   ? const Text(
                                                 "0",
                                                 style: TextStyle(
@@ -1712,9 +1688,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                     )
                   : data == 'showByQuantityDetails'
                       ? Expanded(
-                          child: isLoading
+                          child:  ApiGetPurchases.isLoading && allPurchaseRecordData.isNotEmpty
                               ? const Center(child: CircularProgressIndicator())
-                              : Container(
+                              : SizedBox(
                                   width: double.infinity,
                                   height: double.infinity,
                                   child: SingleChildScrollView(
@@ -1805,9 +1781,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                       FontWeight.bold,
                                                       fontSize: 14),
                                                 ),
-                                                allPurchaseDetailsData
-                                                    .length ==
-                                                    0
+                                                allPurchaseDetailsData.isEmpty
                                                     ? const Text(
                                                   "0",
                                                   style: TextStyle(
@@ -1829,9 +1803,9 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                         )
                       : data == 'showByUserWithoutDetails'
                           ? Expanded(
-                              child: isLoading
+                              child: ApiGetPurchases.isLoading && allPurchaseRecordData.isNotEmpty
                                   ? const Center(child: CircularProgressIndicator())
-                                  : Container(
+                                  : SizedBox(
                                       width: double.infinity,
                                       height: double.infinity,
                                       child: SingleChildScrollView(
@@ -1959,9 +1933,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -1983,9 +1955,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2007,9 +1977,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2031,9 +1999,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2055,9 +2021,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2079,9 +2043,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2104,9 +2066,7 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                                                 FontWeight.bold,
                                                                 fontSize: 14),
                                                           ),
-                                                          UserWisePurchaseslist
-                                                              .length ==
-                                                              0
+                                                          UserWisePurchaseslist.isEmpty
                                                               ? const Text(
                                                             "0",
                                                             style: TextStyle(
@@ -2132,10 +2092,10 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                             )
                           : data == 'showByUserWithDetails'
                               ? Expanded(
-                                  child: isLoading
+                                  child: ApiGetPurchases.isLoading && allPurchaseRecordData.isNotEmpty
                                       ? const Center(
                                           child: CircularProgressIndicator())
-                                      : Container(
+                                      : SizedBox(
                                           width: double.infinity,
                                           height: double.infinity,
                                           child: SingleChildScrollView(

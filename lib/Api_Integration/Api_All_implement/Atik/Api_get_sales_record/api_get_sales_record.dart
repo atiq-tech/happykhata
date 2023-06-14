@@ -6,6 +6,9 @@ import 'package:poss/Api_Integration/Api_Modelclass/sales_module/salse_record_mo
 import 'package:poss/const_page.dart';
 
 class ApiGetSalesRecord {
+
+  static bool isLoading = false;
+
   static GetApiGetSalesRecord(
       context,
       String? customerId,
@@ -40,10 +43,12 @@ class ApiGetSalesRecord {
       for (var i in data) {
         salseRecordModelClass = SalseRecordModelClass.fromJson(i);
         getSalesRecordlist.add(salseRecordModelClass);
+        isLoading = false;
       }
       print(
           "getSalesRecordlist getSalesRecordlist length is ${getSalesRecordlist.length}");
     } catch (e) {
+      isLoading = false;
       print("Something is wrong getSalesRecordlist=======:$e");
     }
     return getSalesRecordlist;

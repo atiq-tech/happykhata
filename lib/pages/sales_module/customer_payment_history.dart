@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Riaz/all_api_implement.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
 import 'package:poss/provider/sales_module/provider_customer_payment_history.dart';
@@ -47,10 +48,9 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
   String customerId = "";
   String paymentType = "";
 
-  bool isLoading = false; //for loading circulerprogressindicator
   @override
   void initState() {
-   // firstPickedDate = "2000-03-01";
+    // firstPickedDate = "2000-03-01";
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
@@ -58,17 +58,17 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
 
     Provider.of<CustomerListProvider>(context, listen: false)
         .getCustomerListData(context);
-    getCustomerPaymentData();
+    // getCustomerPaymentData();
     super.initState();
   }
 
   var customerController = TextEditingController();
 
-  getCustomerPaymentData(){
-    Provider.of<CustomerPaymentHistoryProvider>(context,
-        listen: false)
-        .getCustomerPaymentData(context, customerId,
-        backEndFirstDate, backEndSecondDate, paymentType);
+  getCustomerPaymentData(
+      backEndFirstDate, backEndSecondDate, customerId, paymentType) {
+    Provider.of<CustomerPaymentHistoryProvider>(context, listen: false)
+        .getCustomerPaymentData(context, customerId, backEndFirstDate,
+            backEndSecondDate, paymentType);
   }
 
   @override
@@ -106,27 +106,26 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                            margin: const EdgeInsets.only(top: 5, bottom: 5),
-                            height: 40,
-                            padding: const EdgeInsets.only(left: 5, right: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 7, 125, 180),
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(10.0),
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
+                          height: 40,
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 7, 125, 180),
+                              width: 1.0,
                             ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                           child: FutureBuilder(
                             future: Provider.of<AllProductProvider>(context)
                                 .Fatch_By_all_Customer(context),
                             builder: (context,
-                                AsyncSnapshot<List<By_all_Customer>>
-                                snapshot) {
+                                AsyncSnapshot<List<By_all_Customer>> snapshot) {
                               if (snapshot.hasData) {
                                 return TypeAheadFormField(
                                   textFieldConfiguration:
-                                  TextFieldConfiguration(
+                                      TextFieldConfiguration(
                                     onChanged: (newValue) {
                                       print("On change Value is $newValue");
                                       if (newValue == '') {
@@ -139,27 +138,32 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                                     controller: customerController,
                                     decoration: InputDecoration(
                                       hintText: 'Select Customer',
-                                      suffix: _selectedCustomer == '' ? null : GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            customerController.text = '';
-                                          });
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 3),
-                                          child: Icon(Icons.close,size: 14,),
-                                        ),
-                                      ),
+                                      suffix: _selectedCustomer == ''
+                                          ? null
+                                          : GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  customerController.text = '';
+                                                });
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 3),
+                                                child: Icon(
+                                                  Icons.close,
+                                                  size: 14,
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   suggestionsCallback: (pattern) {
                                     return snapshot.data!
-                                        .where((element) => element
-                                        .displayName!
-                                        .toLowerCase()
-                                        .contains(pattern
-                                        .toString()
-                                        .toLowerCase()))
+                                        .where((element) => element.displayName!
+                                            .toLowerCase()
+                                            .contains(pattern
+                                                .toString()
+                                                .toLowerCase()))
                                         .take(provideCustomerList.length)
                                         .toList();
                                     // return placesSearchResult.where((element) => element.name.toLowerCase().contains(pattern.toString().toLowerCase())).take(10).toList();
@@ -168,11 +172,11 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                                     return ListTile(
                                       title: SizedBox(
                                           child: Text(
-                                            "${suggestion.displayName}",
-                                            style: const TextStyle(fontSize: 12),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          )),
+                                        "${suggestion.displayName}",
+                                        style: const TextStyle(fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
                                     );
                                   },
                                   transitionBuilder:
@@ -182,9 +186,12 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                                   onSuggestionSelected:
                                       (By_all_Customer suggestion) {
                                     setState(() {
-                                      customerController.text = suggestion.displayName!;
-                                      _selectedCustomer = suggestion.customerSlNo;
-                                      customerId = suggestion.customerSlNo.toString();
+                                      customerController.text =
+                                          suggestion.displayName!;
+                                      _selectedCustomer =
+                                          suggestion.customerSlNo;
+                                      customerId =
+                                          suggestion.customerSlNo.toString();
                                     });
                                   },
                                   onSaved: (value) {},
@@ -195,37 +202,37 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                           ),
 
                           // child: DropdownButtonHideUnderline(
-                            //   child: DropdownButton(
-                            //     isExpanded: true,
-                            //     hint: Text(
-                            //       'Please select a customer',
-                            //       style: TextStyle(
-                            //         fontSize: 14,
-                            //       ),
-                            //     ),
-                            //     value: _selectedCustomer,
-                            //     onChanged: (newValue) {
-                            //       setState(() {
-                            //         customerId = "$newValue";
-                            //         print("Customer Id============$newValue");
-                            //         _selectedCustomer = newValue.toString();
-                            //         print(
-                            //             "dropdown value================$newValue");
-                            //       });
-                            //     },
-                            //     items: provideCustomerList.map((location) {
-                            //       return DropdownMenuItem(
-                            //         child: Text(
-                            //           "${location.customerName}",
-                            //           style: TextStyle(
-                            //             fontSize: 14,
-                            //           ),
-                            //         ),
-                            //         value: location.customerSlNo,
-                            //       );
-                            //     }).toList(),
-                            //   ),
-                            // ),
+                          //   child: DropdownButton(
+                          //     isExpanded: true,
+                          //     hint: Text(
+                          //       'Please select a customer',
+                          //       style: TextStyle(
+                          //         fontSize: 14,
+                          //       ),
+                          //     ),
+                          //     value: _selectedCustomer,
+                          //     onChanged: (newValue) {
+                          //       setState(() {
+                          //         customerId = "$newValue";
+                          //         print("Customer Id============$newValue");
+                          //         _selectedCustomer = newValue.toString();
+                          //         print(
+                          //             "dropdown value================$newValue");
+                          //       });
+                          //     },
+                          //     items: provideCustomerList.map((location) {
+                          //       return DropdownMenuItem(
+                          //         child: Text(
+                          //           "${location.customerName}",
+                          //           style: TextStyle(
+                          //             fontSize: 14,
+                          //           ),
+                          //         ),
+                          //         value: location.customerSlNo,
+                          //       );
+                          //     }).toList(),
+                          //   ),
+                          // ),
                         ),
                       ),
                     ],
@@ -273,10 +280,10 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                                   _selectedPaymentType == 'Paid'
                                       ? paymentType = 'paid'
                                       : _selectedPaymentType == 'Received'
-                                      ? paymentType = "received"
-                                      : _selectedPaymentType == 'All'
-                                      ? paymentType = ""
-                                      : paymentType = "";
+                                          ? paymentType = "received"
+                                          : _selectedPaymentType == 'All'
+                                              ? paymentType = ""
+                                              : paymentType = "";
                                   print("Payment Type: $paymentType");
                                 });
                               },
@@ -298,7 +305,6 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                     ],
                   ),
                 ),
-
                 SizedBox(
                   height: 40,
                   width: double.infinity,
@@ -308,7 +314,8 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          margin: const EdgeInsets.only(
+                              right: 5, top: 5, bottom: 5),
                           height: 30,
                           padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
@@ -358,7 +365,8 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          margin:
+                              const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                           height: 30,
                           padding: const EdgeInsets.only(
                               top: 5, bottom: 5, left: 5, right: 5),
@@ -412,19 +420,21 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        isLoading = true;
+                        AllApiImplement.isCustomerPaymentHistoryLoading = true;
                       });
-                      getCustomerPaymentData();
+                      getCustomerPaymentData(backEndFirstDate,
+                          backEndSecondDate, customerId, paymentType);
 
                       print("datessss $backEndFirstDate");
                       print("datessss $backEndSecondDate");
                       print("datessss $customerId");
+                      print("datessss $paymentType");
 
-                      Future.delayed(const Duration(seconds: 3), () {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      });
+                      // Future.delayed(const Duration(seconds: 3), () {
+                      //   setState(() {
+                      //     AllApiImplement.isCustomerPaymentHistoryLoading = fa;
+                      //   });
+                      // });
                     },
                     child: Container(
                       height: 32.0,
@@ -448,95 +458,115 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
           const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
-          isLoading
+          AllApiImplement.isCustomerPaymentHistoryLoading && provideCustomerPaymentList.isNotEmpty
               ? const Center(child: CircularProgressIndicator())
               : provideCustomerPaymentList.isNotEmpty
-              ? Expanded(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height / 1.31,
-                    width: double.infinity,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            showCheckboxColumn: true,
-                            border: TableBorder.all(
-                                color: Colors.black54, width: 1),
-                            columns: const [
-                              DataColumn(
-                                label: Center(child: Text('Transaction Id')),
-                              ),
-                              DataColumn(
-                                label: Center(child: Text('Date')),
-                              ),
-                              DataColumn(
-                                label: Center(child: Text('Customer')),
-                              ),
-                              DataColumn(
-                                label:
-                                    Center(child: Text('Transaction Type')),
-                              ),
-                              DataColumn(
-                                label: Center(child: Text('Payment by')),
-                              ),
-                              DataColumn(
-                                label: Center(child: Text('Amount')),
-                              ),
-                            ],
-                            rows: List.generate(
-                              provideCustomerPaymentList.length,
-                              (int index) => DataRow(
-                                cells: <DataCell>[
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .cPaymentInvoice.toString())),
+                  ? Expanded(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.31,
+                        width: double.infinity,
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                showCheckboxColumn: true,
+                                border: TableBorder.all(
+                                    color: Colors.black54, width: 1),
+                                columns: const [
+                                  DataColumn(
+                                    label:
+                                        Center(child: Text('Transaction Id')),
                                   ),
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .cPaymentDate.toString())),
+                                  DataColumn(
+                                    label: Center(child: Text('Date')),
                                   ),
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .customerName.toString())),
+                                  DataColumn(
+                                    label: Center(child: Text('Customer')),
                                   ),
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .transactionType.toString())),
+                                  DataColumn(
+                                    label:
+                                        Center(child: Text('Transaction Type')),
                                   ),
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .paymentBy.toString())),
+                                  DataColumn(
+                                    label: Center(child: Text('Payment by')),
                                   ),
-                                  DataCell(
-                                    Center(
-                                        child: Text(
-                                            provideCustomerPaymentList[index]
-                                                .cPaymentAmount.toString())),
+                                  DataColumn(
+                                    label: Center(child: Text('Amount')),
                                   ),
                                 ],
+                                rows: List.generate(
+                                  provideCustomerPaymentList.length,
+                                  (int index) => DataRow(
+                                    cells: <DataCell>[
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .cPaymentInvoice
+                                                    .toString())),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .cPaymentDate
+                                                    .toString())),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .customerName
+                                                    .toString())),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .transactionType
+                                                    .toString())),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .paymentBy
+                                                    .toString())),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                            child: Text(
+                                                provideCustomerPaymentList[
+                                                        index]
+                                                    .cPaymentAmount
+                                                    .toString())),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                )
-              : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
+                    )
+                  : const Align(
+                      alignment: Alignment.center,
+                      child: Center(
+                        child: Text(
+                          "No Data Found",
+                          style: TextStyle(fontSize: 16, color: Colors.red),
+                        ),
+                      ))
         ],
       ),
     );
@@ -559,8 +589,7 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
         backEndFirstDate = Utils.formatBackEndDate(selectedDate);
         print("Firstdateee $firstPickedDate");
       });
-    }
-    else{
+    } else {
       setState(() {
         firstPickedDate = Utils.formatFrontEndDate(toDay);
         backEndFirstDate = Utils.formatBackEndDate(toDay);
@@ -582,8 +611,7 @@ class _Customer_Payment_HistoryState extends State<Customer_Payment_History> {
         backEndSecondDate = Utils.formatBackEndDate(selectedDate);
         print("First Selected date $secondPickedDate");
       });
-    }
-    else{
+    } else {
       setState(() {
         secondPickedDate = Utils.formatFrontEndDate(toDay);
         backEndSecondDate = Utils.formatBackEndDate(toDay);

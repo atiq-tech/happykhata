@@ -165,6 +165,9 @@ class AllApiImplement {
   }
 
   //==================Sales Module ==>Total Stock with Product ID API=======================
+
+  static bool isLoading= false;
+
   static FetchTotalStockWithProduct(context, String? productId) async {
     List<total_stock_model.Stock> totalStockList = [];
     try {
@@ -182,10 +185,12 @@ class AllApiImplement {
       for (var i in data["stock"]) {
         item = total_stock_model.Stock.fromJson(i);
         totalStockList.add(item);
+        isLoading= false;
         // print("product cat name===========================${totalStockList[0].productCategoryName}");
         //print("product name:${currentStockList[0].productName} \n");
       }
     } catch (e) {
+      isLoading= false;
       print(e);
     }
     return totalStockList;
@@ -246,6 +251,8 @@ class AllApiImplement {
   }
 
   //==================Sales Module ==> Customer Payment History API=======================
+
+  static bool isCustomerPaymentHistoryLoading = false;
   static FetchCustomerPaymentHistory(
     context,
     String? customerId,
@@ -274,10 +281,12 @@ class AllApiImplement {
       for (var i in data) {
         item = CustomerPaymentHistoryModel.fromJson(i);
         customerPaymentList.add(item);
+        isCustomerPaymentHistoryLoading = false;
       }
 
       print("customerPaymentList length is==${customerPaymentList.length}");
     } catch (e) {
+      isCustomerPaymentHistoryLoading = false;
       print("Something is wrong customerPaymentList=======:$e");
     }
     return customerPaymentList;
@@ -316,6 +325,8 @@ class AllApiImplement {
   }
 
   //==================Sales Module ==> Customer Payment Report API=======================
+
+  static bool isCustomerPaymentLoading = false;
   static FetchCustomerPaymentReport(
     context,
     String? customerId,
@@ -342,10 +353,12 @@ class AllApiImplement {
       for (var i in data['payments']) {
         item = salesModule.Payments.fromJson(i);
         customerPaymentReportList.add(item);
+        isCustomerPaymentLoading = false;
       }
       print("Api: customerPaymentReportList length is==${customerPaymentReportList.length}");
       print("Api: customerPaymentList description is==${customerPaymentReportList[0].description}");
     } catch (e) {
+      isCustomerPaymentLoading = false;
       print("Api: Something is wrong customerPaymentReportList=======:$e");
     }
     return customerPaymentReportList;

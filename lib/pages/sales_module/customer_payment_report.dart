@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:poss/Api_Integration/Api_All_implement/Riaz/all_api_implement.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/Uzzal_All_Model_Class/by_All_customer_model_class.dart';
 import 'package:poss/Api_Integration/Api_Modelclass/sales_module/customer_list_model.dart';
 import 'package:poss/common_widget/custom_appbar.dart';
@@ -101,11 +102,10 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
     }
   }
 
-  bool isLoading = false; //for loading circulerprogressindicator
   @override
   void initState() {
     Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: _selectedCustomerType);
-    getCustomerPaymentData();
+    // getCustomerPaymentData();
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
     backEndSecondDate = Utils.formatBackEndDate(DateTime.now());
@@ -113,7 +113,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
     super.initState();
   }
 
-  getCustomerPaymentData(){
+  getCustomerPaymentData(backEndFirstDate, backEndSecondDate, customerId){
     Provider.of<CustomerPaymentReportProvider>(context,
         listen: false)
         .getCustomerPaymentData(
@@ -542,17 +542,17 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          isLoading = true;
+                          AllApiImplement.isCustomerPaymentLoading = true;
                         });
-                        getCustomerPaymentData();
+                        getCustomerPaymentData(backEndFirstDate, backEndSecondDate, customerId);
                         print("datessss ${backEndFirstDate}");
                         print("datessss ${backEndSecondDate}");
                         print("datessss ${customerId}");
-                        Future.delayed(const Duration(seconds: 5), () {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
+                        // Future.delayed(const Duration(seconds: 5), () {
+                        //   setState(() {
+                        //     isLoading = false;
+                        //   });
+                        // });
                       },
                       child: Container(
                         height: 32.0,
@@ -577,10 +577,10 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
           const Divider(
             color: Color.fromARGB(255, 92, 90, 90),
           ),
-          isLoading
+          AllApiImplement.isCustomerPaymentLoading
               ? const Center(child: CircularProgressIndicator())
-              // : provideCustomerPaymentReportList.isNotEmpty
-              : Expanded(
+              : provideCustomerPaymentReportList.isNotEmpty
+              ? Expanded(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height / 1.31,
                     width: double.infinity,
@@ -597,30 +597,30 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                               showCheckboxColumn: true,
                               border: TableBorder.all(
                                   color: Colors.black54, width: 1),
-                              columns: [
-                                const DataColumn(
+                              columns: const [
+                                DataColumn(
                                   label: Center(child: Text('Date')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Description')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Bill')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Paid')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Inv.Due')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Retruned')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label:
                                       Center(child: Text('Paid to customer')),
                                 ),
-                                const DataColumn(
+                                DataColumn(
                                   label: Center(child: Text('Balance')),
                                 ),
                               ],
@@ -692,7 +692,7 @@ class _Customer_Payment_ReportState extends State<Customer_Payment_Report> {
                     ),
                   ),
                 )
-                    // : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
+                    : const Align(alignment: Alignment.center,child: Center(child: Text("No Data Found",style: TextStyle(fontSize: 16,color: Colors.red),),))
 
 
     ],

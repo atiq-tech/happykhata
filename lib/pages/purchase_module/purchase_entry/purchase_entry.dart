@@ -647,7 +647,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
                                     productCategoryName="${element[0].productCategoryName}";});
                                   print(productCategoryName);
 
-                                  Provider.of<AllProductProvider>(context,listen: false).CategoryWiseProduct(isService: "false",categoryId: categoryId);
+                                  Provider.of<AllProductProvider>(context,listen: false).categoryWiseProduct(isService: "false",categoryId: categoryId);
 
                                 });
                               },
@@ -1577,7 +1577,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
                               });
                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Add to Cart")));
                             }else{
-                              addPuschase();
+                              addPurchase();
                               // showDialog(context: context, builder: (context) {
                               //   return AlertDialog(
                               //     title: const Text("Purchase Successfull"),
@@ -1667,7 +1667,7 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
 
 
 
-  addPuschase()async{
+  addPurchase()async{
     String link="${BaseUrl}api/v1/addPurchase";
     try{
       var studentsmap = PurchaseCartList.map((e){
@@ -1682,7 +1682,6 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
           "total": e.total,
         };
       }).toList();
-      print(studentsmap);
       Response response=await Dio().post(link,data:{
         "purchase": {
           "purchaseId": 0,
@@ -1739,19 +1738,6 @@ class _PurchaseEntryPageState extends State<PurchaseEntryPage> {
             content: Text("${item["message"]}",style: const TextStyle(color: Colors.red),)));
       }
 
-      // _nameController.text="";
-      // _paidController.text="";
-      // _mobileNumberController.text="";
-      // _addressController.text="";
-      // _salesRateController.text="";
-      // _discountController.text="";
-      // _VatController.text="";
-      // _quantityController.text="";
-      // _transportController.text="";
-      // discountTotal=0;
-      // Previousdue=0;
-      // TotalVat=0;
-      // CartTotal=0;
     }catch(e) {
       print(e);
 

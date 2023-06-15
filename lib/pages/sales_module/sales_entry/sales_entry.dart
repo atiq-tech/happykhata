@@ -103,6 +103,9 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
     Provider.of<AllProductProvider>(context, listen: false).Fatch_By_all_Employee(context);
     Provider.of<CustomerListByCustomerTypeProvider>(context, listen: false).getCustomerListByCustomerTypeData(context,customerType: level);
     _quantityController.text = "1";
+
+    // _discountPercentController.text = 0.0.toString();
+
     firstPickedDate = Utils.formatFrontEndDate(DateTime.now());
     backEndFirstDate = Utils.formatBackEndDate(DateTime.now());
   }
@@ -1061,7 +1064,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                   categoryId = suggestion.productCategorySlNo;
                                   Provider.of<AllProductProvider>(context,
                                       listen: false)
-                                      .CategoryWiseProduct(isService: "false",categoryId:  categoryId);
+                                      .categoryWiseProduct(isService: "false",categoryId:  categoryId);
                                 });
                               },
                               onSaved: (value) {},
@@ -1316,7 +1319,7 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                         ),
                         Expanded(
                           flex: 1,
-                          child: Container(
+                          child: SizedBox(
                             height: 28.0,
                             child: TextField(
                               style: const TextStyle(
@@ -1587,14 +1590,15 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: h2TextSize,
                               ),
-                            )),
+                            ),
+                        ),
                       ],
                     ),
                     const Divider(thickness: 2),
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 height: 200.0,
                 width: double.infinity,
                 child: Column(
@@ -1622,92 +1626,80 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                                         children: [
                                           Expanded(
                                             flex: 1,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${index + 1}.",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black87,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${index + 1}.",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 4,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${SalesCartList[index].categoryName}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black87,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${SalesCartList[index].categoryName}",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 6,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${SalesCartList[index].name}",
-                                                  style: TextStyle(
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    color: Colors.black87,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${SalesCartList[index].name}",
+                                                style: TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 1,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${SalesCartList[index].quantity}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black87,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${SalesCartList[index].quantity}",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 2,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${SalesCartList[index].salesRate}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black87,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${SalesCartList[index].salesRate}",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 3,
-                                            child: Container(
-                                              child: Center(
-                                                child: Text(
-                                                  "${SalesCartList[index].total}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black87,
-                                                    fontSize: h2TextSize,
-                                                  ),
+                                            child: Center(
+                                              child: Text(
+                                                "${SalesCartList[index].total}",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                  fontSize: h2TextSize,
                                                 ),
                                               ),
                                             ),
@@ -1726,549 +1718,548 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
                   ],
                 ),
               ),
-              Container(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 30,
-                      width: double.infinity,
-                      color: const Color.fromARGB(255, 7, 125, 180),
-                      child: const Center(
-                        child: Text(
-                          'Amount Details',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+              Column(
+                children: [
+                  Container(
+                    height: 30,
+                    width: double.infinity,
+                    color: const Color.fromARGB(255, 7, 125, 180),
+                    child: const Center(
+                      child: Text(
+                        'Amount Details',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Sub Total",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                            flex: 3,
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 5, bottom: 5, right: 5),
-                              height: 30,
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 5, bottom: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(
-                                  color: const Color.fromARGB(255, 7, 125, 180),
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Text(
-                                "$CartTotal",
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 126, 125, 125)),
-                              ),
-                            )),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Vat",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(left: 5, right: 5),
-                            child: TextField(
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 126, 125, 125)),
-                              controller: _VatController,
-                              onChanged: (value) {
-                                setState(() {
-                                  TotalVat = CartTotal *
-                                      (double.parse(_VatController.text) / 100);
-                                  AfteraddVatTotal = CartTotal - TotalVat;
-                                  DiccountTotal = AfteraddVatTotal;
-                                  TransportTotal = DiccountTotal;
-
-                                  Totaltc = CartTotal + TotalVat;
-                                });
-                              },
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 3),
-                                hintText: "0",
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "%",
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Sub Total",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 5, bottom: 5, right: 5),
-                              height: 30,
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 5, bottom: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(
-                                  color: const Color.fromARGB(255, 7, 125, 180),
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Text(
-                                "$TotalVat",
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 126, 125, 125)),
-                              ),
-                            )),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Discount",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
+                      ),
+                      Expanded(
+                          flex: 3,
                           child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(left: 5, right: 5),
-                            child: TextField(
+                            margin: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 5),
+                            height: 30,
+                            padding: const EdgeInsets.only(
+                                left: 5, right: 5, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              "$CartTotal",
                               style: const TextStyle(
                                   color: Color.fromARGB(255, 126, 125, 125)),
-                              controller: _DiscountController,
-                              onChanged: (value) {
-                                setState(() {
-                                  Diccountper =  (double.parse(_DiscountController.text)/
-                                      100) * CartTotal;
-                                  print("Dis $Diccountper");
-                                  _discountPercentController.text =
-                                      "$Diccountper";
-                                  DiccountTotal =
-                                      AfteraddVatTotal - Diccountper;
-                                  TransportTotal = DiccountTotal;
-
-                                  Totaltc = CartTotal + TotalVat - Diccountper;
-                                });
-                                // setState(() {
-                                //   Diccountper = AfteraddVatTotal *
-                                //       (double.parse(_DiscountController.text) /
-                                //           100);
-                                //   _discountPercentController.text =
-                                //       "${Diccountper}";
-                                //   DiccountTotal =
-                                //       AfteraddVatTotal - Diccountper;
-                                //   TransportTotal = DiccountTotal;
-                                // });
-                                //  setState(() {
-                                //   Diccountper = AfteraddVatTotal *
-                                //       (double.parse(_DiscountController.text) /
-                                //           100);
-                                //   // _discountPercentController.text =
-                                //   //     "${Diccountper}";
-                                //   DiccountTotal =
-                                //       AfteraddVatTotal - Diccountper;
-                                //   TransportTotal = DiccountTotal;
-                                //   Totaltc = TransportTotal +
-                                //       double.parse(_transportController.text);
-                                // });
-                              },
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.only(left: 6),
-                                hintText: "0.00",
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
                             ),
-                          ),
-                        ),
-                        const Text(
-                          "%",
+                          )),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Vat",
                           style: TextStyle(
                               color: Color.fromARGB(255, 126, 125, 125)),
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(left: 5, right: 5),
-                            child: TextField(
-                              enabled: false,
-                              controller: _discountPercentController,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Transport",
-                            style: TextStyle(
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(left: 5, right: 5),
+                          child: TextField(
+                            style: const TextStyle(
                                 color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(top: 5, bottom: 5),
-                            child: TextField(
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 126, 125, 125)),
-                              controller: _transportController,
-                              onChanged: (value) {
-                                setState(() {
-                                  Totaltc = CartTotal + TotalVat +
-                                      double.parse(_transportController.text);
-                                  Totaltc = Totaltc - Diccountper;
-                                });
-                              },
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                contentPadding:
-                                    const EdgeInsets.only(top: 5, left: 5),
-                                hintText: "0",
-                                // hintText: "$DiccountTotal",
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Total",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                            flex: 3,
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 5, bottom: 5, right: 5),
-                              height: 30,
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 5, bottom: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(
-                                  color: const Color.fromARGB(255, 7, 125, 180),
-                                  width: 1.0,
+                            controller: _VatController,
+                            onChanged: (value) {
+                              setState(() {
+                                TotalVat = CartTotal *
+                                    (double.parse(_VatController.text) / 100);
+                                AfteraddVatTotal = CartTotal - TotalVat;
+                                DiccountTotal = AfteraddVatTotal;
+                                TransportTotal = DiccountTotal;
+
+                                Totaltc = CartTotal + TotalVat;
+
+                              });
+                            },
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 3),
+                              // hintText: "0",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Text(
-                                "$Totaltc",
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 126, 125, 125)),
-                                //"$TransportTotal",
-                              ),
-                            )),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Paid",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 126, 125, 125)),
-                              controller: _paidController,
-                              onChanged: (value) {
-                                setState(() {
-                                  totalDue = Totaltc -
-                                      double.parse(_paidController.text);
-                                  // totalDueTc = Totaltc -
-                                  //     double.parse(_transportController.text);
-
-                                  // DiccountTotal -=
-                                  //     double.parse(_paidController.text);
-                                });
-                                // setState(() {
-                                //   DiccountTotal -=
-                                //       double.parse(_paidController.text);
-                                // });
-                              },
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 6),
-                                hintText: "0",
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
+                      ),
+                      const Text(
+                        "%",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 126, 125, 125)),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
                           flex: 1,
-                          child: Text(
-                            "Previous Due",
-                            style: TextStyle(
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 5),
+                            height: 30,
+                            padding: const EdgeInsets.only(
+                                left: 5, right: 5, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              "$TotalVat",
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 126, 125, 125)),
+                            ),
+                          )),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Discount",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(left: 5, right: 5),
+                          child: TextField(
+                            style: const TextStyle(
                                 color: Color.fromARGB(255, 126, 125, 125)),
+                            controller: _DiscountController,
+                            onChanged: (value) {
+                              setState(() {
+                                Diccountper =  (double.parse(_DiscountController.text)/ 100) * CartTotal;
+                                print("Dis $Diccountper");
+                                _discountPercentController.text =
+                                    "$Diccountper";
+                                DiccountTotal =
+                                    AfteraddVatTotal - Diccountper;
+                                TransportTotal = DiccountTotal;
+
+                                Totaltc = CartTotal + TotalVat - Diccountper;
+                              });
+                              // setState(() {
+                              //   Diccountper = AfteraddVatTotal *
+                              //       (double.parse(_DiscountController.text) /
+                              //           100);
+                              //   _discountPercentController.text =
+                              //       "${Diccountper}";
+                              //   DiccountTotal =
+                              //       AfteraddVatTotal - Diccountper;
+                              //   TransportTotal = DiccountTotal;
+                              // });
+                              //  setState(() {
+                              //   Diccountper = AfteraddVatTotal *
+                              //       (double.parse(_DiscountController.text) /
+                              //           100);
+                              //   // _discountPercentController.text =
+                              //   //     "${Diccountper}";
+                              //   DiccountTotal =
+                              //       AfteraddVatTotal - Diccountper;
+                              //   TransportTotal = DiccountTotal;
+                              //   Totaltc = TransportTotal +
+                              //       double.parse(_transportController.text);
+                              // });
+                            },
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(left: 6),
+                              // hintText: "0.00",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
                           ),
                         ),
-                        Expanded(
+                      ),
+                      const Text(
+                        "%",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 126, 125, 125)),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(left: 5, right: 5),
+                          child: TextField(
+                            enabled: false,
+                            controller: _discountPercentController,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Transport",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(top: 5, bottom: 5),
+                          child: TextField(
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 126, 125, 125)),
+                            controller: _transportController,
+                            onChanged: (value) {
+                              setState(() {
+                                Totaltc = CartTotal + TotalVat +
+                                    double.parse(_transportController.text);
+                                Totaltc = Totaltc - Diccountper;
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.only(top: 5, left: 5),
+                              // hintText: "0",
+                              // hintText: "$DiccountTotal",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Total",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
                           flex: 3,
                           child: Container(
-                            height: 28.0,
-                            margin: const EdgeInsets.only(bottom: 5),
-                            child: TextField(
+                            margin: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 5),
+                            height: 30,
+                            padding: const EdgeInsets.only(
+                                left: 5, right: 5, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              "${Totaltc == 0.0 ? CartTotal : Totaltc}",
                               style: const TextStyle(
+                                  color: Color.fromARGB(255, 126, 125, 125)),
+                              //"$TransportTotal",
+                            ),
+                          )),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Paid",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(bottom: 5),
+                          child: TextField(
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 126, 125, 125)),
+                            controller: _paidController,
+                            onChanged: (value) {
+                              if(_VatController.text == '0'){
+
+                                print("Empthy cart ${Totaltc == 0.0 ? CartTotal : Totaltc}");
+                                print("Empthy kajldfjas ${CartTotal}");
+                                setState(() {
+                                  totalDue = CartTotal - double.parse(_paidController.text);
+                                });
+                                print("Empthy kajldfjas ${totalDue}");
+                              }
+                              else{
+                                setState(() {
+                                  totalDue = Totaltc - double.parse(_paidController.text);
+                                });
+                              }
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 6),
+                              // hintText: "0",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Previous Due",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 28.0,
+                          margin: const EdgeInsets.only(bottom: 5),
+                          child: TextField(
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color.fromARGB(255, 236, 6, 6),
+                            ),
+                            controller: _previousDueController,
+                            //keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              hintText: "0",
+                              hintStyle: const TextStyle(
                                 fontSize: 14,
                                 color: Color.fromARGB(255, 236, 6, 6),
                               ),
-                              controller: _previousDueController,
-                              //keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 5),
-                                hintText: "0",
-                                hintStyle: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 236, 6, 6),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: InputBorder.none,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 7, 125, 180),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            "Due",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 126, 125, 125)),
-                          ),
-                        ),
-                        Expanded(
-                            flex: 3,
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 5, bottom: 5, right: 5),
-                              height: 30,
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 5, bottom: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                border: Border.all(
-                                  color: const Color.fromARGB(255, 7, 125, 180),
-                                  width: 1.0,
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
                                 ),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Text(
-                                "$totalDue",
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 126, 125, 125)),
-                                //"$TransportTotal",
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 7, 125, 180),
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            )),
-                      ],
-                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Text(
+                          "Due",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 126, 125, 125)),
+                        ),
+                      ),
+                      Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 5),
+                            height: 30,
+                            padding: const EdgeInsets.only(
+                                left: 5, right: 5, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 7, 125, 180),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              "${totalDue == 0.0 ? CartTotal : totalDue}",
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 126, 125, 125)),
+                              //"$TransportTotal",
+                            ),
+                          )),
+                    ],
+                  ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: () {
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isSellBtnClk = true;
+                            });
+                            if (DiccountTotal == 0) {
                               setState(() {
-                                isSellBtnClk = true;
+                                isSellBtnClk = false;
                               });
-                              if (DiccountTotal == 0) {
-                                setState(() {
-                                  isSellBtnClk = false;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Please Add to Cart")));
-                              } else {
-                                print("Name controller ${_nameController.text}");
-                                print("Name controller $_selectedCustomer");
-                                addSales();
-                              }
-                            },
-                            child: Center(
-                                child: isSellBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
-                                  "Sale",
-                                  style: TextStyle(
-                                      letterSpacing: 1.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                )),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 6, 118, 170),
-                            ),
-                            onPressed: () {},
-                            child: const Text("New Sale")),
-                      ],
-                    )
-                  ],
-                ),
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Please Add to Cart")));
+                            } else {
+                              print("Name controller ${_nameController.text}");
+                              print("Name controller $_selectedCustomer");
+                              addSales();
+                            }
+                          },
+                          child: Center(
+                              child: isSellBtnClk ? const SizedBox(height: 20,width:20,child: CircularProgressIndicator(color: Colors.white,)) : const Text(
+                                "Sale",
+                                style: TextStyle(
+                                    letterSpacing: 1.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              )),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 6, 118, 170),
+                          ),
+                          onPressed: () {},
+                          child: const Text("New Sale")),
+                    ],
+                  )
+                ],
               )
             ],
           ),
@@ -2326,11 +2317,11 @@ class _SalesEntryPageState extends State<SalesEntryPage> {
             "discount": _discountPercentController.text,
             "vat": "$TotalVat",
             "transportCost": _transportController.text,
-            "total": "$Totaltc",
+            "total": "${Totaltc == 0.0 ? CartTotal : Totaltc}",
             //"total": "$DiccountTotal",
             "paid": _paidController.text.trim(),
             "previousDue": "$previousDue",
-            "due": totalDue.toString().trim(),
+            "due": "${totalDue == 0.0 ? CartTotal : totalDue}",
             //"due": "$DiccountTotal",
             "isService": "false",
             "note": "Note Here"

@@ -1167,11 +1167,14 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                           label: Center(child: Text('Sub Total')),
                                         ),
                                         DataColumn(
-                                          label: Center(child: Text('Discount')),
+                                          label: Center(child: Text('Vat')),
                                         ),
                                         DataColumn(
                                           label:
-                                              Center(child: Text('Transport Cost')),
+                                              Center(child: Text('Discount')),
+                                        ),
+                                        DataColumn(
+                                          label: Center(child: Text('Transport Cost')),
                                         ),
                                         DataColumn(
                                           label: Center(child: Text('Total')),
@@ -1232,6 +1235,11 @@ class _PurchaseRecordState extends State<PurchaseRecord> {
                                               Center(
                                                   child: Text(
                                                       '${allGetPurchasesData[index].purchaseMasterPaidAmount}')),
+                                            ),
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                      '${allGetPurchasesData[index].purchaseMasterDueAmount}')),
                                             ),
                                             // DataCell(
                                             //   Center(child: Text('Action')),
